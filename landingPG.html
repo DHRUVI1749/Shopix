@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Shopix</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,sans-serif}
+body{min-height:100vh;background:radial-gradient(circle at 20% 20%,#3b82f6 0,#0b1636 35%,#050b1d 100%);overflow:hidden;color:#fff}
+nav{display:flex;justify-content:space-between;align-items:center;padding:30px 8%}
+.logo{font-size:2rem;font-weight:800}.logo span{color:#66c7ff}
+nav a{color:#fff;text-decoration:none;margin-left:28px}
+.hero{display:flex;align-items:center;justify-content:space-between;padding:3% 8%}
+.left{max-width:520px}
+.badge{display:inline-block;padding:8px 18px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:30px}
+h1{font-size:70px;line-height:1.05;margin:20px 0}
+h1 span{color:#66c7ff}
+p{opacity:.8;line-height:1.8;margin-bottom:35px}
+.btn{display:inline-block;padding:18px 36px;background:linear-gradient(45deg,#4facfe,#00f2fe);color:#fff;text-decoration:none;border-radius:50px;font-weight:700;box-shadow:0 20px 40px rgba(79,172,254,.35)}
+.right{position:relative;width:520px;height:520px}
+.glow{position:absolute;inset:80px;background:#4facfe;filter:blur(120px);opacity:.25}
+.phone{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:260px;height:500px;border-radius:40px;background:rgba(255,255,255,.08);backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.2);box-shadow:0 30px 60px rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;font-size:40px;font-weight:800}
+.float{position:absolute;width:100px;height:100px;border-radius:24px;background:rgba(255,255,255,.1);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;font-size:42px;animation:f 4s ease-in-out infinite}
+.f1{left:20px;top:40px}.f2{right:10px;top:90px;animation-delay:1s}.f3{left:10px;bottom:70px;animation-delay:2s}.f4{right:20px;bottom:40px;animation-delay:3s}
+@keyframes f{50%{transform:translateY(-18px) rotate(4deg)}}
+.circle{position:absolute;border-radius:50%;background:rgba(255,255,255,.06)}
+.c1{width:220px;height:220px;top:-60px;right:-60px}.c2{width:150px;height:150px;bottom:-30px;left:-20px}
+</style>
+</head>
+<body>
+<nav><div class="logo">Shop<span>ix</span></div><div><a href="#">Home</a><a href="#">Features</a><a href="#">About</a><a class="btn" href="login.html" style="padding:12px 22px">Login</a></div></nav>
+<section class="hero">
+<div class="left">
+<div class="badge">✨ Smart Shopping Assistant</div>
+<h1>Shop <span>Smarter</span><br>With Shopix</h1>
+<p>Organize receipts, track purchases, manage warranties and get AI-powered shopping insights with a beautiful modern experience.</p>
+<a href="login.html" class="btn">Get Started →</a>
+</div>
+<div class="right">
+<div class="glow"></div><div class="circle c1"></div><div class="circle c2"></div>
+<div class="phone">Shopix</div>
+<div class="float f1">🛍️</div>
+<div class="float f2">📦</div>
+<div class="float f3">💳</div>
+<div class="float f4">🧾</div>
+</div>
+</section>
+</body></html>
