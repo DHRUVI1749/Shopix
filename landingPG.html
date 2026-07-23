@@ -2,48 +2,318 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Shopix</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,sans-serif}
-body{min-height:100vh;background:radial-gradient(circle at 20% 20%,#3b82f6 0,#0b1636 35%,#050b1d 100%);overflow:hidden;color:#fff}
-nav{display:flex;justify-content:space-between;align-items:center;padding:30px 8%}
-.logo{font-size:2rem;font-weight:800}.logo span{color:#66c7ff}
-nav a{color:#fff;text-decoration:none;margin-left:28px}
-.hero{display:flex;align-items:center;justify-content:space-between;padding:3% 8%}
-.left{max-width:520px}
-.badge{display:inline-block;padding:8px 18px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:30px}
-h1{font-size:70px;line-height:1.05;margin:20px 0}
-h1 span{color:#66c7ff}
-p{opacity:.8;line-height:1.8;margin-bottom:35px}
-.btn{display:inline-block;padding:18px 36px;background:linear-gradient(45deg,#4facfe,#00f2fe);color:#fff;text-decoration:none;border-radius:50px;font-weight:700;box-shadow:0 20px 40px rgba(79,172,254,.35)}
-.right{position:relative;width:520px;height:520px}
-.glow{position:absolute;inset:80px;background:#4facfe;filter:blur(120px);opacity:.25}
-.phone{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:260px;height:500px;border-radius:40px;background:rgba(255,255,255,.08);backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.2);box-shadow:0 30px 60px rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;font-size:40px;font-weight:800}
-.float{position:absolute;width:100px;height:100px;border-radius:24px;background:rgba(255,255,255,.1);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;font-size:42px;animation:f 4s ease-in-out infinite}
-.f1{left:20px;top:40px}.f2{right:10px;top:90px;animation-delay:1s}.f3{left:10px;bottom:70px;animation-delay:2s}.f4{right:20px;bottom:40px;animation-delay:3s}
-@keyframes f{50%{transform:translateY(-18px) rotate(4deg)}}
-.circle{position:absolute;border-radius:50%;background:rgba(255,255,255,.06)}
-.c1{width:220px;height:220px;top:-60px;right:-60px}.c2{width:150px;height:150px;bottom:-30px;left:-20px}
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Poppins,sans-serif;
+}
+
+body{
+background:#f7f8fc;
+color:#222;
+}
+
+nav{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px 8%;
+background:#fff;
+box-shadow:0 5px 20px rgba(0,0,0,.05);
+position:sticky;
+top:0;
+}
+
+.logo{
+font-size:32px;
+font-weight:700;
+}
+
+.logo span{
+color:#6C63FF;
+}
+
+nav ul{
+display:flex;
+list-style:none;
+gap:35px;
+}
+
+nav a{
+text-decoration:none;
+color:#555;
+font-weight:500;
+}
+
+.login{
+background:#6C63FF;
+color:white;
+padding:12px 24px;
+border-radius:12px;
+}
+
+.hero{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:80px 8%;
+flex-wrap:wrap;
+}
+
+.left{
+max-width:550px;
+}
+
+.badge{
+display:inline-block;
+background:#ecebff;
+color:#6C63FF;
+padding:8px 18px;
+border-radius:30px;
+font-size:14px;
+font-weight:600;
+}
+
+h1{
+font-size:60px;
+margin:25px 0;
+line-height:1.1;
+}
+
+h1 span{
+color:#6C63FF;
+}
+
+p{
+font-size:18px;
+line-height:1.8;
+color:#666;
+margin-bottom:35px;
+}
+
+.btn{
+display:inline-block;
+padding:16px 35px;
+background:#6C63FF;
+color:white;
+text-decoration:none;
+border-radius:14px;
+font-weight:600;
+transition:.3s;
+}
+
+.btn:hover{
+transform:translateY(-4px);
+}
+
+.right{
+display:grid;
+grid-template-columns:repeat(2,170px);
+gap:20px;
+margin-top:30px;
+}
+
+.box{
+background:white;
+padding:30px;
+border-radius:22px;
+text-align:center;
+box-shadow:0 15px 35px rgba(0,0,0,.08);
+transition:.3s;
+}
+
+.box:hover{
+transform:translateY(-10px);
+}
+
+.box h2{
+font-size:42px;
+margin-bottom:10px;
+}
+
+.features{
+padding:20px 8% 80px;
+}
+
+.features h2{
+text-align:center;
+font-size:38px;
+margin-bottom:40px;
+}
+
+.cards{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+gap:25px;
+}
+
+.card{
+background:white;
+padding:30px;
+border-radius:20px;
+box-shadow:0 10px 25px rgba(0,0,0,.06);
+text-align:center;
+}
+
+.card i{
+font-size:42px;
+display:block;
+margin-bottom:15px;
+}
+
+.card h3{
+margin-bottom:10px;
+}
+
+.card p{
+font-size:15px;
+margin:0;
+}
+
+footer{
+background:#fff;
+padding:25px;
+text-align:center;
+color:#777;
+margin-top:40px;
+}
+
+@media(max-width:900px){
+
+.hero{
+flex-direction:column;
+text-align:center;
+}
+
+.right{
+margin-top:50px;
+grid-template-columns:1fr 1fr;
+}
+
+h1{
+font-size:46px;
+}
+
+nav ul{
+display:none;
+}
+
+}
 </style>
+
 </head>
 <body>
-<nav><div class="logo">Shop<span>ix</span></div><div><a href="#">Home</a><a href="#">Features</a><a href="#">About</a><a class="btn" href="login.html" style="padding:12px 22px">Login</a></div></nav>
+
+<nav>
+
+<div class="logo">
+Shop<span>ix</span>
+</div>
+
+<ul>
+<li><a href="#">Home</a></li>
+<li><a href="#">Features</a></li>
+<li><a href="#">Pricing</a></li>
+<li><a href="#">Contact</a></li>
+</ul>
+
+<a href="#" class="login">Login</a>
+
+</nav>
+
 <section class="hero">
+
 <div class="left">
-<div class="badge">✨ Smart Shopping Assistant</div>
-<h1>Shop <span>Smarter</span><br>With Shopix</h1>
-<p>Organize receipts, track purchases, manage warranties and get AI-powered shopping insights with a beautiful modern experience.</p>
-<a href="login.html" class="btn">Get Started →</a>
+
+<div class="badge">
+✨ AI Shopping Assistant
 </div>
+
+<h1>
+Shop Smarter.<br>
+<span>Spend Better.</span>
+</h1>
+
+<p>
+Manage shopping receipts, track expenses, save warranties and get AI-powered insights—all in one beautiful dashboard.
+</p>
+
+<a href="#" class="btn">
+Get Started →
+</a>
+
+</div>
+
 <div class="right">
-<div class="glow"></div><div class="circle c1"></div><div class="circle c2"></div>
-<div class="phone">Shopix</div>
-<div class="float f1">🛍️</div>
-<div class="float f2">📦</div>
-<div class="float f3">💳</div>
-<div class="float f4">🧾</div>
+
+<div class="box">
+<h2>🛍️</h2>
+Shopping
 </div>
+
+<div class="box">
+<h2>🧾</h2>
+Receipts
+</div>
+
+<div class="box">
+<h2>📊</h2>
+Analytics
+</div>
+
+<div class="box">
+<h2>🤖</h2>
+AI Insights
+</div>
+
+</div>
+
 </section>
-</body></html>
+
+<section class="features">
+
+<h2>Why Choose Shopix?</h2>
+
+<div class="cards">
+
+<div class="card">
+<i>📦</i>
+<h3>Track Orders</h3>
+<p>Keep all your online purchases in one place.</p>
+</div>
+
+<div class="card">
+<i>💳</i>
+<h3>Expense Manager</h3>
+<p>Monitor shopping expenses with detailed reports.</p>
+</div>
+
+<div class="card">
+<i>🔔</i>
+<h3>Warranty Alerts</h3>
+<p>Receive reminders before product warranties expire.</p>
+</div>
+
+<div class="card">
+<i>⚡</i>
+<h3>AI Recommendations</h3>
+<p>Get personalized shopping suggestions instantly.</p>
+</div>
+
+</div>
+
+</section>
+
+<footer>
+© 2026 Shopix • Smart Shopping Made Simple
+</footer>
+
+</body>
+</html>
