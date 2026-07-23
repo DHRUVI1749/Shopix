@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Shopix - Login</title>
+
+    <!-- CSS FILE -->
+    <link rel="stylesheet" href="login.css">
+
+</head>
+
+
+<body>
+
+    <main class="login-page">
+
+
+        <!-- LOGO -->
+
+        <div class="logo">
+
+            <div class="logo-icon">
+                🛍️
+            </div>
+
+
+            <div class="logo-text">
+
+                <h1>Shopix</h1>
+
+
+            </div>
+
+        </div>
+
+
+        <!-- WELCOME SECTION -->
+
+        <section class="welcome-section">
+
+            <h3 id="pageTitle">
+                Welcome Back!
+            </h3>
+
+
+            <p id="pageSubtitle">
+                Login to continue or create a new account
+            </p>
+
+        </section>
+
+
+        <!-- ILLUSTRATION -->
+
+        <div class="illustration">
+
+            <div class="circle">
+
+                <div class="lock">
+                    🔒
+                </div>
+
+            </div>
+
+
+            <div class="shopping-bag">
+                🛍️
+            </div>
+
+        </div>
+
+
+        <!-- AUTHENTICATION CARD -->
+
+        <section class="auth-card">
+
+
+            <!-- LOGIN AND SIGN UP TABS -->
+
+            <div class="tabs">
+
+
+                <button
+                    class="tab active"
+                    id="loginTab"
+                    onclick="showLogin()">
+
+                    Login
+
+                </button>
+
+
+                <button
+                    class="tab"
+                    id="signupTab"
+                    onclick="showSignup()">
+
+                    Sign Up
+
+                </button>
+
+
+            </div>
+
+
+            <!-- LOGIN FORM -->
+
+            <form id="loginForm">
+
+
+                <!-- EMAIL -->
+
+                <div class="input-group">
+
+                    <span class="input-icon">
+                        ✉️
+                    </span>
+
+
+                    <input
+                        type="email"
+                        placeholder="Email Address"
+                        required>
+
+                </div>
+
+
+                <!-- PASSWORD -->
+
+                <div class="input-group">
+
+                    <span class="input-icon">
+                        🔒
+                    </span>
+
+
+                    <input
+                        type="password"
+                        placeholder="Password"
+                        required>
+
+
+                    <span class="eye-icon">
+                        👁️
+                    </span>
+
+                </div>
+
+
+                <!-- REMEMBER AND FORGOT PASSWORD -->
+
+                <div class="login-options">
+
+
+                    <label>
+
+                        <input type="checkbox">
+
+                        Remember me
+
+                    </label>
+
+
+                    <a href="#">
+                        Forgot Password?
+                    </a>
+
+
+                </div>
+
+
+                <!-- LOGIN BUTTON -->
+
+                <button
+                    type="submit"
+                    class="login-button">
+
+                    Login
+
+                </button>
+
+
+            </form>
+
+
+            <!-- SIGN UP FORM -->
+
+            <form
+                id="signupForm"
+                style="display: none;">
+
+
+                <!-- FULL NAME -->
+
+                <div class="input-group">
+
+                    <span class="input-icon">
+                        👤
+                    </span>
+
+
+                    <input
+                        type="text"
+                        placeholder="Full Name"
+                        required>
+
+                </div>
+
+
+                <!-- EMAIL -->
+
+                <div class="input-group">
+
+                    <span class="input-icon">
+                        ✉️
+                    </span>
+
+
+                    <input
+                        type="email"
+                        placeholder="Email Address"
+                        required>
+
+                </div>
+
+
+                <!-- PASSWORD -->
+
+                <div class="input-group">
+
+                    <span class="input-icon">
+                        🔒
+                    </span>
+
+
+                    <input
+                        type="password"
+                        placeholder="Password"
+                        required>
+
+                </div>
+
+
+                <!-- CONFIRM PASSWORD -->
+
+                <div class="input-group">
+
+                    <span class="input-icon">
+                        🔒
+                    </span>
+
+
+                    <input
+                        type="password"
+                        placeholder="Confirm Password"
+                        required>
+
+                </div>
+
+
+                <!-- CREATE ACCOUNT BUTTON -->
+
+                <button
+                    type="submit"
+                    class="login-button">
+
+                    Create Account
+
+                </button>
+
+
+            </form>
+
+
+            <!-- DIVIDER -->
+
+            <div class="divider">
+
+                <span>
+                    or continue with
+                </span>
+
+            </div>
+
+
+            <!-- GOOGLE BUTTON -->
+
+            <button class="social-button">
+
+                <span class="google-icon">
+                    G
+                </span>
+
+
+                Continue with Google
+
+            </button>
+
+
+            <!-- FACEBOOK BUTTON -->
+
+            <button class="social-button">
+
+                <span class="facebook-icon">
+                    f
+                </span>
+
+
+                Continue with Facebook
+
+            </button>
+
+
+            <!-- BOTTOM SIGN UP LINK -->
+
+            <p class="bottom-text">
+
+                <span>
+                    Don't have an account?
+                </span>
+
+
+                <a
+                    href="#"
+                    onclick="showSignup(); return false;">
+
+                    Sign Up
+
+                </a>
+
+            </p>
+
+
+        </section>
+
+
+    </main>
+
+
+    <!-- JAVASCRIPT FILE -->
+
+    <script src="login.js"></script>
+
+
+</body>
+
+</html>
