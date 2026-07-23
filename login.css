@@ -1,0 +1,452 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+body {
+    min-height: 100vh;
+
+    background: #ffffff;
+
+    font-family: Arial, sans-serif;
+
+    display: flex;
+
+    justify-content: center;
+
+    color: #111827;
+}
+
+
+.login-page {
+    width: 100%;
+
+    max-width: 650px;
+
+    min-height: 100vh;
+
+    padding: 55px 30px 40px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+}
+
+
+/* Logo */
+
+.logo {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    margin-bottom: 45px;
+}
+
+
+.logo-icon {
+    font-size: 52px;
+}
+
+
+.logo-text h1 {
+    font-size: 25px;
+
+    color: #111827;
+}
+
+
+.logo-text h2 {
+    font-size: 25px;
+
+    color: #145dcc;
+}
+
+
+/* Welcome Section */
+
+.welcome-section {
+    text-align: center;
+
+    margin-bottom: 25px;
+}
+
+
+.welcome-section h3 {
+    font-size: 30px;
+
+    margin-bottom: 12px;
+}
+
+
+.welcome-section p {
+    font-size: 17px;
+
+    color: #6b7280;
+}
+
+
+/* Illustration */
+
+.illustration {
+    position: relative;
+
+    height: 220px;
+
+    width: 100%;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    margin-bottom: 20px;
+}
+
+
+.circle {
+    width: 190px;
+
+    height: 190px;
+
+    border-radius: 50%;
+
+    background: #eaf1ff;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+}
+
+
+.lock {
+    width: 125px;
+
+    height: 125px;
+
+    border-radius: 15px;
+
+    background: #1667d9;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    font-size: 65px;
+
+    box-shadow: 0 10px 25px rgba(20, 93, 204, 0.3);
+}
+
+
+.shopping-bag {
+    position: absolute;
+
+    right: 24%;
+
+    bottom: 15px;
+
+    font-size: 65px;
+}
+
+
+/* Authentication Card */
+
+.auth-card {
+    width: 100%;
+
+    max-width: 520px;
+
+    padding: 30px;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 16px;
+
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+
+    background: white;
+}
+
+
+/* Tabs */
+
+.tabs {
+    display: flex;
+
+    border-bottom: 1px solid #e5e7eb;
+
+    margin-bottom: 28px;
+}
+
+
+.tab {
+    width: 50%;
+
+    border: none;
+
+    background: none;
+
+    padding: 14px;
+
+    font-size: 18px;
+
+    color: #6b7280;
+
+    cursor: pointer;
+}
+
+
+.tab.active {
+    color: #123d7a;
+
+    font-weight: bold;
+
+    border-bottom: 3px solid #145dcc;
+}
+
+
+/* Input */
+
+.input-group {
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+
+    margin-bottom: 16px;
+}
+
+
+.input-group input {
+    width: 100%;
+
+    padding: 17px 45px;
+
+    border: 1px solid #d9dee8;
+
+    border-radius: 10px;
+
+    font-size: 16px;
+
+    outline: none;
+}
+
+
+.input-group input:focus {
+    border-color: #145dcc;
+}
+
+
+.input-icon {
+    position: absolute;
+
+    left: 15px;
+
+    font-size: 19px;
+
+    z-index: 1;
+}
+
+
+.eye-icon {
+    position: absolute;
+
+    right: 15px;
+
+    cursor: pointer;
+}
+
+
+/* Login Options */
+
+.login-options {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin: 20px 0;
+
+    font-size: 15px;
+}
+
+
+.login-options label {
+    display: flex;
+
+    gap: 8px;
+
+    align-items: center;
+}
+
+
+.login-options a {
+    color: #145dcc;
+
+    text-decoration: none;
+}
+
+
+/* Main Button */
+
+.login-button {
+    width: 100%;
+
+    padding: 16px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: #145dcc;
+
+    color: white;
+
+    font-size: 18px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+
+.login-button:hover {
+    background: #0d4ba7;
+}
+
+
+/* Divider */
+
+.divider {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    margin: 28px 0;
+
+    color: #6b7280;
+}
+
+
+.divider::before,
+.divider::after {
+    content: "";
+
+    height: 1px;
+
+    background: #e5e7eb;
+
+    flex: 1;
+}
+
+
+/* Social Buttons */
+
+.social-button {
+    width: 100%;
+
+    padding: 15px;
+
+    margin-bottom: 12px;
+
+    background: white;
+
+    border: 1px solid #d9dee8;
+
+    border-radius: 8px;
+
+    font-size: 16px;
+
+    cursor: pointer;
+}
+
+
+.social-button:hover {
+    background: #f5f7fb;
+}
+
+
+.google-icon {
+    color: #db4437;
+
+    font-weight: bold;
+
+    margin-right: 12px;
+}
+
+
+.facebook-icon {
+    color: #1877f2;
+
+    font-weight: bold;
+
+    font-size: 22px;
+
+    margin-right: 12px;
+}
+
+
+/* Bottom Text */
+
+.bottom-text {
+    text-align: center;
+
+    margin-top: 25px;
+
+    color: #6b7280;
+}
+
+
+.bottom-text a {
+    color: #145dcc;
+
+    font-weight: bold;
+
+    text-decoration: none;
+}
+
+
+/* Responsive */
+
+@media (max-width: 600px) {
+
+    .login-page {
+        padding: 35px 18px;
+    }
+
+
+    .welcome-section h3 {
+        font-size: 25px;
+    }
+
+
+    .welcome-section p {
+        font-size: 14px;
+    }
+
+
+    .auth-card {
+        padding: 22px 18px;
+    }
+
+
+    .shopping-bag {
+        right: 15%;
+    }
+
+}
