@@ -2,350 +2,336 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Shopix - Login</title>
+    <title>SHOPIX | Login</title>
 
-    <!-- CSS FILE -->
-    <link rel="stylesheet" href="login.css">
+    <meta name="description"
+        content="Login to your SHOPIX Smart Receipt and Shopping Assistant account.">
 
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Login CSS -->
+    <link rel="stylesheet" href="css\loginpg.css">
 </head>
 
 
 <body>
 
+    <!-- =========================
+         LOGIN PAGE
+    ========================== -->
+
     <main class="login-page">
 
+        <!-- LEFT SIDE -->
 
-        <!-- LOGO -->
+        <section class="login-left">
 
-        <div class="logo">
+            <div class="brand">
 
-            <div class="logo-icon">
-                🛍️
+                <div class="brand-icon">
+                    S
+                </div>
+
+                <span>
+                    SHOPIX
+                </span>
+
             </div>
 
 
-            <div class="logo-text">
+            <div class="left-content">
 
-                <h1>Shopix</h1>
+                <div class="ai-badge">
+                    <span></span>
+                    AI-Powered Smart Shopping
+                </div>
 
+                <h1>
+                    Welcome back to
+                    <strong>SHOPIX.</strong>
+                </h1>
+
+                <p>
+                    Manage your receipts, track expenses,
+                    monitor warranties and understand your
+                    spending — all in one smart place.
+                </p>
+
+
+                <!-- FEATURES -->
+
+                <div class="mini-features">
+
+                    <div class="mini-feature">
+
+                        <div class="mini-icon">
+                            ✨
+                        </div>
+
+                        <div>
+                            <h3>AI Receipt Scanner</h3>
+
+                            <p>
+                                Automatically extract receipt details.
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="mini-feature">
+
+                        <div class="mini-icon">
+                            📊
+                        </div>
+
+                        <div>
+                            <h3>Smart Expense Tracking</h3>
+
+                            <p>
+                                Understand where your money goes.
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="mini-feature">
+
+                        <div class="mini-icon">
+                            🛡️
+                        </div>
+
+                        <div>
+                            <h3>Warranty Management</h3>
+
+                            <p>
+                                Never miss an important warranty.
+                            </p>
+                        </div>
+
+                    </div>
+
+                </div>
 
             </div>
 
-        </div>
 
-
-        <!-- WELCOME SECTION -->
-
-        <section class="welcome-section">
-
-            <h3 id="pageTitle">
-                Welcome Back!
-            </h3>
-
-
-            <p id="pageSubtitle">
-                Login to continue or create a new account
-            </p>
+            <div class="left-footer">
+                © 2026 SHOPIX · Smart Receipt & Shopping Assistant
+            </div>
 
         </section>
 
 
-        <!-- ILLUSTRATION -->
 
-        <div class="illustration">
+        <!-- RIGHT SIDE -->
 
-            <div class="circle">
+        <section class="login-right">
 
-                <div class="lock">
-                    🔒
+            <div class="login-card">
+
+                <!-- MOBILE BRAND -->
+
+                <div class="mobile-brand">
+
+                    <div class="brand-icon">
+                        S
+                    </div>
+
+                    <span>
+                        SHOPIX
+                    </span>
+
+                </div>
+
+
+                <!-- HEADING -->
+
+                <div class="login-heading">
+
+                    <h2>
+                        Welcome Back
+                    </h2>
+
+                    <p>
+                        Login to continue to your SHOPIX account.
+                    </p>
+
+                </div>
+
+
+                <!-- LOGIN FORM -->
+
+                <form id="loginForm">
+
+
+                    <!-- EMAIL -->
+
+                    <div class="form-group">
+
+                        <label for="email">
+                            Email Address
+                        </label>
+
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="Enter your email"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- PASSWORD -->
+
+                    <div class="form-group">
+
+                        <div class="password-label">
+
+                            <label for="password">
+                                Password
+                            </label>
+
+                            <a href="#">
+                                Forgot Password?
+                            </a>
+
+                        </div>
+
+
+                        <div class="password-input">
+
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                placeholder="Enter your password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="show-password"
+                                id="togglePassword"
+                            >
+                                Show
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- REMEMBER -->
+
+                    <div class="remember-row">
+
+                        <label class="remember">
+
+                            <input
+                                type="checkbox"
+                                id="remember"
+                            >
+
+                            <span>
+                                Remember me
+                            </span>
+
+                        </label>
+
+                    </div>
+
+
+                    <!-- LOGIN BUTTON -->
+
+                    <button
+                        type="submit"
+                        class="login-button"
+                    >
+                        Login to SHOPIX
+                        <span>→</span>
+                    </button>
+
+
+                    <!-- DIVIDER -->
+
+                    <div class="divider">
+
+                        <span></span>
+
+                        <p>
+                            OR
+                        </p>
+
+                        <span></span>
+
+                    </div>
+
+
+                    <!-- GOOGLE BUTTON -->
+
+                    <button
+                        type="button"
+                        class="google-button"
+                    >
+
+                        <span class="google-icon">
+                            G
+                        </span>
+
+                        Continue with Google
+
+                    </button>
+
+
+                    <!-- SIGN UP -->
+
+                    <p class="signup-text">
+
+                        Don't have an account?
+
+                        <a href="#">
+                            Create Account
+                        </a>
+
+                    </p>
+
+                </form>
+
+
+                <!-- SECURITY NOTE -->
+
+                <div class="security-note">
+
+                    <span>🔒</span>
+
+                    Your information is securely protected.
+
                 </div>
 
             </div>
-
-
-            <div class="shopping-bag">
-                🛍️
-            </div>
-
-        </div>
-
-
-        <!-- AUTHENTICATION CARD -->
-
-        <section class="auth-card">
-
-
-            <!-- LOGIN AND SIGN UP TABS -->
-
-            <div class="tabs">
-
-
-                <button
-                    class="tab active"
-                    id="loginTab"
-                    onclick="showLogin()">
-
-                    Login
-
-                </button>
-
-
-                <button
-                    class="tab"
-                    id="signupTab"
-                    onclick="showSignup()">
-
-                    Sign Up
-
-                </button>
-
-
-            </div>
-
-
-            <!-- LOGIN FORM -->
-
-            <form id="loginForm">
-
-
-                <!-- EMAIL -->
-
-                <div class="input-group">
-
-                    <span class="input-icon">
-                        ✉️
-                    </span>
-
-
-                    <input
-                        type="email"
-                        placeholder="Email Address"
-                        required>
-
-                </div>
-
-
-                <!-- PASSWORD -->
-
-                <div class="input-group">
-
-                    <span class="input-icon">
-                        🔒
-                    </span>
-
-
-                    <input
-                        type="password"
-                        placeholder="Password"
-                        required>
-
-
-                    <span class="eye-icon">
-                        👁️
-                    </span>
-
-                </div>
-
-
-                <!-- REMEMBER AND FORGOT PASSWORD -->
-
-                <div class="login-options">
-
-
-                    <label>
-
-                        <input type="checkbox">
-
-                        Remember me
-
-                    </label>
-
-
-                    <a href="#">
-                        Forgot Password?
-                    </a>
-
-
-                </div>
-
-
-                <!-- LOGIN BUTTON -->
-
-                <button
-                    type="submit"
-                    class="login-button">
-
-                    Login
-
-                </button>
-
-
-            </form>
-
-
-            <!-- SIGN UP FORM -->
-
-            <form
-                id="signupForm"
-                style="display: none;">
-
-
-                <!-- FULL NAME -->
-
-                <div class="input-group">
-
-                    <span class="input-icon">
-                        👤
-                    </span>
-
-
-                    <input
-                        type="text"
-                        placeholder="Full Name"
-                        required>
-
-                </div>
-
-
-                <!-- EMAIL -->
-
-                <div class="input-group">
-
-                    <span class="input-icon">
-                        ✉️
-                    </span>
-
-
-                    <input
-                        type="email"
-                        placeholder="Email Address"
-                        required>
-
-                </div>
-
-
-                <!-- PASSWORD -->
-
-                <div class="input-group">
-
-                    <span class="input-icon">
-                        🔒
-                    </span>
-
-
-                    <input
-                        type="password"
-                        placeholder="Password"
-                        required>
-
-                </div>
-
-
-                <!-- CONFIRM PASSWORD -->
-
-                <div class="input-group">
-
-                    <span class="input-icon">
-                        🔒
-                    </span>
-
-
-                    <input
-                        type="password"
-                        placeholder="Confirm Password"
-                        required>
-
-                </div>
-
-
-                <!-- CREATE ACCOUNT BUTTON -->
-
-                <button
-                    type="submit"
-                    class="login-button">
-
-                    Create Account
-
-                </button>
-
-
-            </form>
-
-
-            <!-- DIVIDER -->
-
-            <div class="divider">
-
-                <span>
-                    or continue with
-                </span>
-
-            </div>
-
-
-            <!-- GOOGLE BUTTON -->
-
-            <button class="social-button">
-
-                <span class="google-icon">
-                    G
-                </span>
-
-
-                Continue with Google
-
-            </button>
-
-
-            <!-- FACEBOOK BUTTON -->
-
-            <button class="social-button">
-
-                <span class="facebook-icon">
-                    f
-                </span>
-
-
-                Continue with Facebook
-
-            </button>
-
-
-            <!-- BOTTOM SIGN UP LINK -->
-
-            <p class="bottom-text">
-
-                <span>
-                    Don't have an account?
-                </span>
-
-
-                <a
-                    href="#"
-                    onclick="showSignup(); return false;">
-
-                    Sign Up
-
-                </a>
-
-            </p>
-
 
         </section>
-
 
     </main>
 
 
-    <!-- JAVASCRIPT FILE -->
-
+    <!-- Login JavaScript -->
     <script src="login.js"></script>
-
 
 </body>
 
