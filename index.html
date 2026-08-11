@@ -4,134 +4,487 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shopix</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+    <title>SHOPIX | Smart Receipt & Shopping Assistant</title>
+
+    <meta name="description"
+        content="SHOPIX - AI-powered smart receipt and expense management assistant.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
 
-    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="css/index.css">
 </head>
 
 <body>
 
-    <!-- ================= NAVBAR ================= -->
+    <!-- NAVBAR -->
 
     <header class="navbar">
 
-        <div class="logo">
-            <img src="images/logo.png" alt="Logo">
-            <h2>Shopix</h2>
-        </div>
+        <a href="#home" class="logo">
+            <span class="logo-icon">S</span>
+            SHOPIX
+        </a>
 
-        <nav>
-            <ul class="nav-links">
-                <li><a href="#">Home</a></li>
-                <li><a href="#">Features</a></li>
-                <li><a href="#">About</a></li>
-                <li><a href="#">Contact</a></li>
-            </ul>
+        <nav class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#features">Features</a>
+            <a href="#how-it-works">How It Works</a>
+            <a href="#about">About</a>
         </nav>
 
         <div class="nav-buttons">
-            <a href="loginpg.html" class="login-btn">Login</a>
+            <button class="login-btn">Login</button>
+            <button class="start-btn">Get Started</button>
         </div>
+
+        <button class="menu-btn">☰</button>
 
     </header>
 
-    <!-- ================= HERO SECTION ================= -->
 
-    <section class="hero">
+    <!-- HERO SECTION -->
 
-        <!-- LEFT SIDE -->
+    <main>
 
-        <div class="hero-content">
+        <section class="hero" id="home">
 
-            <span class="badge">
-                AI POWERED RECEIPT MANAGER
-            </span>
+            <div class="hero-content">
 
-            <h1>
-                Smart Receipts,<br>
-                <span>Better Expenses</span>
-            </h1>
-
-            <p>
-                Upload your shopping receipts and let AI extract the details.
-                Track expenses, manage warranties and get smart insights.
-            </p>
-
-            <div class="hero-buttons">
-
-                <button class="btn-primary">
-                    Get Started
-                </button>
-
-                <button class="btn-secondary">
-                    Learn More
-                </button>
-
-            </div>
-
-        </div>
-
-        <!-- RIGHT SIDE -->
-
-            <div class="phone">
-
-                <div class="phone-header">
-                    <h4>SHOP MART</h4>
+                <div class="hero-badge">
+                    <span class="badge-dot"></span>
+                    AI-Powered Smart Receipt Management
                 </div>
 
-                <div class="Bill">
+                <h1>
+                    Smart Receipts.<br>
+                    <span>Smarter Spending.</span>
+                </h1>
 
-                    <div class="item">
-                        <span>Invoice #2135</span>
-                        <span></span>
-                    </div>
+                <p class="hero-description">
+                    SHOPIX helps you manage receipts, track expenses,
+                    monitor warranties and understand your spending —
+                    powered by AI and designed for everyday shopping.
+                </p>
 
-                    <div class="item">
-                        <span>Date</span>
-                        <span>15 Jul 2026</span>
-                    </div>
+                <div class="hero-actions">
 
-                    <hr><br>
+                    <button class="primary-btn" onclick="getStarted()">
+                        Get Started →
+                    </button>
 
-                    <div class="item">
-                        <span>Milk</span>
-                        <span>₹50</span>
-                    </div>
-
-                    <div class="item">
-                        <span>Bread</span>
-                        <span>₹40</span>
-                    </div>
-
-                    <div class="item">
-                        <span>Egg</span>
-                        <span>₹90</span>
-                    </div>
-
-                    <div class="item">
-                        <span>Rice 1kg</span>
-                        <span>₹80</span>
-                    </div>
-
-                    <hr><br>
-
-                    <div class="item total">
-                        <span>Total</span>
-                        <span>₹260</span>
-                    </div>
-
-                    <p class="thanks">Thank You!</p>
+                    <a href="#how-it-works" class="secondary-btn">
+                        See How It Works
+                    </a>
 
                 </div>
 
             </div>
 
+
+            <!-- HERO DASHBOARD -->
+
+            <div class="hero-visual">
+
+                <div class="dashboard-card">
+
+                    <div class="dashboard-header">
+
+                        <div class="dashboard-title">
+                            Expense Overview
+                        </div>
+
+                        <div class="dashboard-status">
+                            ● Active
+                        </div>
+
+                    </div>
+
+
+                    <div class="amount-card">
+
+                        <div class="amount-label">
+                            Total Expenses
+                        </div>
+
+                        <div class="amount">
+                            ₹54,280
+                        </div>
+
+                    </div>
+
+
+                    <div class="chart-area">
+
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+
+                    </div>
+
+
+                    <div class="receipt-mini">
+
+                        <div class="receipt-info">
+
+                            <div class="receipt-icon">
+                                🧾
+                            </div>
+
+                            <div>
+                                <div class="receipt-name">
+                                    Electronics Store
+                                </div>
+
+                                <div class="receipt-date">
+                                    Today
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="receipt-price">
+                            ₹45,000
+                        </div>
+
+                    </div>
+
+
+                    <div class="receipt-mini">
+
+                        <div class="receipt-info">
+
+                            <div class="receipt-icon">
+                                🛒
+                            </div>
+
+                            <div>
+                                <div class="receipt-name">
+                                    Grocery Store
+                                </div>
+
+                                <div class="receipt-date">
+                                    Yesterday
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="receipt-price">
+                            ₹2,500
+                        </div>
+
+                    </div>
+
+                </div>
+
+        </section>
+
+
+        <!-- TRUST BAR -->
+
+        <section class="trust-bar">
+
+            <div class="trust-item">
+                <span class="check">✓</span>
+                AI Receipt Scanning
+            </div>
+
+            <div class="trust-item">
+                <span class="check">✓</span>
+                Expense Tracking
+            </div>
+
+            <div class="trust-item">
+                <span class="check">✓</span>
+                Warranty Reminders
+            </div>
+
+            <div class="trust-item">
+                <span class="check">✓</span>
+                Offline PWA
+            </div>
+
+            <div class="trust-item">
+                <span class="check">✓</span>
+                Cloud Sync
+            </div>
+
+        </section>
+
+
+        <!-- FEATURES -->
+
+        <section class="features" id="features">
+
+            <div class="section-heading">
+
+                <div class="section-label">
+                    Why SHOPIX
+                </div>
+
+                <h2>
+                    Everything you need to
+                    manage your purchases.
+                </h2>
+
+                <p>
+                    Keep your receipts organized, understand
+                    your expenses and never miss a warranty again.
+                </p>
+
+            </div>
+
+
+            <div class="feature-grid">
+
+                <div class="feature-card">
+
+                    <div class="feature-icon">
+                        ✨
+                    </div>
+
+                    <h3>
+                        AI Receipt Scanner
+                    </h3>
+
+                    <p>
+                        Upload a receipt and let AI extract
+                        important information automatically.
+                    </p>
+
+                </div>
+
+
+                <div class="feature-card">
+
+                    <div class="feature-icon">
+                        📊
+                    </div>
+
+                    <h3>
+                        Expense Tracking
+                    </h3>
+
+                    <p>
+                        Categorize purchases and understand
+                        your spending through simple analytics.
+                    </p>
+
+                </div>
+
+
+                <div class="feature-card">
+
+                    <div class="feature-icon">
+                        🛡️
+                    </div>
+
+                    <h3>
+                        Warranty Manager
+                    </h3>
+
+                    <p>
+                        Store warranty information and get
+                        reminders before expiry.
+                    </p>
+
+                </div>
+
+
+                <div class="feature-card">
+
+                    <div class="feature-icon">
+                        ☁
+                    </div>
+
+                    <h3>
+                        Cloud + Offline
+                    </h3>
+
+                    <p>
+                        Access saved information offline and
+                        synchronize data when internet returns.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- HOW IT WORKS -->
+
+        <section class="how-it-works" id="how-it-works">
+
+            <div class="section-heading">
+
+                <div class="section-label">
+                    Simple Process
+                </div>
+
+                <h2>
+                    How SHOPIX works
+                </h2>
+
+                <p>
+                    From receipt upload to smart insights
+                    in just a few simple steps.
+                </p>
+
+            </div>
+
+
+            <div class="steps">
+
+                <div class="step">
+
+                    <div class="step-number">
+                        1
+                    </div>
+
+                    <h3>
+                        Upload
+                    </h3>
+
+                    <p>
+                        Upload an image or PDF receipt
+                        from phone or laptop.
+                    </p>
+
+                </div>
+
+
+                <div class="step">
+
+                    <div class="step-number">
+                        2
+                    </div>
+
+                    <h3>
+                        AI Scan
+                    </h3>
+
+                    <p>
+                        Gemini AI extracts important
+                        receipt information.
+                    </p>
+
+                </div>
+
+
+                <div class="step">
+
+                    <div class="step-number">
+                        3
+                    </div>
+
+                    <h3>
+                        Verify
+                    </h3>
+
+                    <p>
+                        Check and edit the extracted
+                        information.
+                    </p>
+
+                </div>
+
+
+                <div class="step">
+
+                    <div class="step-number">
+                        4
+                    </div>
+
+                    <h3>
+                        Save
+                    </h3>
+
+                    <p>
+                        Securely save receipt and
+                        expense information.
+                    </p>
+
+                </div>
+
+
+                <div class="step">
+
+                    <div class="step-number">
+                        5
+                    </div>
+
+                    <h3>
+                        Track
+                    </h3>
+
+                    <p>
+                        View expenses, analytics
+                        and warranty alerts.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- CTA -->
+
+        <section class="cta-section">
+
+            <div class="cta">
+
+                <h2>
+                    Ready to shop smarter?
+                </h2>
+
+                <p>
+                    Start organizing your receipts and
+                    understanding your expenses with SHOPIX.
+                </p>
+
+                <button class="primary-btn" onclick="getStarted()">
+                    Get Started →
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- FOOTER -->
+
+    <footer id="about">
+
+        <div class="footer-logo">
+            SHOPIX
         </div>
 
-    </section>
+        <div>
+            AI Powered Smart Receipt & Shopping Assistant
+        </div>
+
+        <div>
+            © 2026 SHOPIX
+        </div>
+
+    </footer>
+
+
+    <script src="js/script.js"></script>
 
 </body>
 
