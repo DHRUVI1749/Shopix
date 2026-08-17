@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Upload Receipt | SHOPIX</title>
+
+    <meta name="description"
+        content="Upload your receipt to SHOPIX for AI-powered receipt scanning and expense management.">
+
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/upload.css">
+</head>
+
+<body>
+
+    <!-- ================= NAVBAR ================= -->
+
+    <header class="navbar">
+
+        <a href="dashboard.html" class="logo">
+            <span class="logo-icon">S</span>
+            SHOPIX
+        </a>
+
+        <nav class="nav-links">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="dashboard.html">Receipts</a>
+            <a href="dashboard.html">Expenses</a>
+            <a href="dashboard.html">Warranty</a>
+        </nav>
+
+        <a href="dashboard.html" class="back-btn">
+            ← Dashboard
+        </a>
+
+    </header>
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main class="upload-page">
+
+        <!-- Heading -->
+
+        <section class="page-heading">
+
+            <span class="small-label">
+                AI-POWERED RECEIPT MANAGEMENT
+            </span>
+
+            <h1>
+                Upload Your Receipt
+            </h1>
+
+            <p>
+                Upload an image or PDF of your receipt and let SHOPIX
+                extract the important information automatically.
+            </p>
+
+        </section>
+
+
+        <!-- ================= UPLOAD CARD ================= -->
+
+        <section class="upload-card">
+
+            <div class="upload-icon">
+                ↑
+            </div>
+
+            <h2>
+                Upload Receipt
+            </h2>
+
+            <p class="upload-description">
+                Drag & drop your receipt here or choose a file
+                from your device.
+            </p>
+
+
+            <!-- File Input -->
+
+            <label for="receiptFile" class="choose-file-btn">
+                Choose Receipt
+            </label>
+
+            <input
+                type="file"
+                id="receiptFile"
+                accept="image/*,.pdf"
+                hidden
+            >
+
+
+            <p class="file-info">
+                Supported formats: JPG, JPEG, PNG, WEBP, PDF
+            </p>
+
+            <p class="size-info">
+                Maximum file size: 10 MB
+            </p>
+
+
+            <!-- Selected File -->
+
+            <div id="filePreview" class="file-preview">
+
+                <div class="file-preview-icon">
+                    📄
+                </div>
+
+                <div class="file-details">
+
+                    <strong id="fileName">
+                        No file selected
+                    </strong>
+
+                    <span id="fileSize">
+                        Choose a receipt to continue
+                    </span>
+
+                </div>
+
+                <button id="removeFile" class="remove-btn">
+                    ×
+                </button>
+
+            </div>
+
+
+            <!-- Scan Button -->
+
+            <button id="scanBtn" class="scan-btn" disabled>
+                ✨ Scan Receipt with AI
+            </button>
+
+
+            <p class="internet-note">
+                🌐 Internet connection is required for AI receipt scanning.
+            </p>
+
+        </section>
+
+
+        <!-- ================= HOW IT WORKS ================= -->
+
+        <section class="how-section">
+
+            <h2>
+                How SHOPIX Works
+            </h2>
+
+            <p class="section-subtitle">
+                Your receipt goes through a simple AI-powered process.
+            </p>
+
+
+            <div class="steps">
+
+                <!-- Step 1 -->
+
+                <div class="step-card">
+
+                    <div class="step-number">
+                        01
+                    </div>
+
+                    <div class="step-icon">
+                        ↑
+                    </div>
+
+                    <h3>
+                        Upload
+                    </h3>
+
+                    <p>
+                        Select an image or PDF receipt
+                        from your phone or laptop.
+                    </p>
+
+                </div>
+
+
+                <!-- Step 2 -->
+
+                <div class="step-card">
+
+                    <div class="step-number">
+                        02
+                    </div>
+
+                    <div class="step-icon">
+                        ✨
+                    </div>
+
+                    <h3>
+                        AI Scan
+                    </h3>
+
+                    <p>
+                        Gemini AI reads the receipt and
+                        extracts useful information.
+                    </p>
+
+                </div>
+
+
+                <!-- Step 3 -->
+
+                <div class="step-card">
+
+                    <div class="step-number">
+                        03
+                    </div>
+
+                    <div class="step-icon">
+                        ✓
+                    </div>
+
+                    <h3>
+                        Verify
+                    </h3>
+
+                    <p>
+                        Review and edit the extracted
+                        receipt information.
+                    </p>
+
+                </div>
+
+
+                <!-- Step 4 -->
+
+                <div class="step-card">
+
+                    <div class="step-number">
+                        04
+                    </div>
+
+                    <div class="step-icon">
+                        ✓
+                    </div>
+
+                    <h3>
+                        Save
+                    </h3>
+
+                    <p>
+                        Securely save your receipt,
+                        expenses and warranty details.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer class="footer">
+
+        <div class="footer-logo">
+            SHOPIX
+        </div>
+
+        <p>
+            AI Powered Smart Receipt & Shopping Assistant
+        </p>
+
+        <span>
+            © 2026 SHOPIX
+        </span>
+
+    </footer>
+
+
+    <!-- ================= BASIC FILE LOGIC ================= -->
+
+    <script>
+
+        const receiptFile = document.getElementById("receiptFile");
+        const filePreview = document.getElementById("filePreview");
+        const fileName = document.getElementById("fileName");
+        const fileSize = document.getElementById("fileSize");
+        const removeFile = document.getElementById("removeFile");
+        const scanBtn = document.getElementById("scanBtn");
+
+
+        // File selected
+
+        receiptFile.addEventListener("change", function () {
+
+            const file = this.files[0];
+
+            if (!file) {
+                return;
+            }
+
+            // Maximum size = 10 MB
+
+            if (file.size > 10 * 1024 * 1024) {
+
+                alert("File size must be less than 10 MB.");
+
+                receiptFile.value = "";
+                return;
+            }
+
+
+            // Show file details
+
+            fileName.textContent = file.name;
+
+            fileSize.textContent =
+                (file.size / (1024 * 1024)).toFixed(2) + " MB";
+
+
+            filePreview.classList.add("active");
+
+            scanBtn.disabled = false;
+
+        });
+
+
+        // Remove selected file
+
+        removeFile.addEventListener("click", function () {
+
+            receiptFile.value = "";
+
+            fileName.textContent = "No file selected";
+
+            fileSize.textContent =
+                "Choose a receipt to continue";
+
+            filePreview.classList.remove("active");
+
+            scanBtn.disabled = true;
+
+        });
+
+
+        // AI Scan button
+
+        scanBtn.addEventListener("click", function () {
+
+            if (!receiptFile.files.length) {
+                return;
+            }
+
+            alert(
+                "Receipt selected successfully! AI scanning will be connected with Gemini AI in the next step."
+            );
+
+        });
+
+    </script>
+
+</body>
+
+</html>

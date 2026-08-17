@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SHOPIX | Dashboard</title>
+
+    <meta name="description"
+        content="SHOPIX Smart Receipt and Shopping Assistant Dashboard">
+
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Dashboard CSS -->
+    <link rel="stylesheet" href="css/dashboard.css">
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         DASHBOARD LAYOUT
+    ========================== -->
+
+    <div class="dashboard-layout">
+
+
+        <!-- =========================
+             SIDEBAR
+        ========================== -->
+
+        <aside class="sidebar">
+
+
+            <!-- LOGO -->
+
+            <a href="index.html" class="sidebar-logo">
+
+                <span class="logo-icon">
+                    S
+                </span>
+
+                <span>
+                    SHOPIX
+                </span>
+
+            </a>
+
+
+            <!-- NAVIGATION -->
+
+            <nav class="sidebar-nav">
+
+
+                <p class="nav-title">
+                    MAIN MENU
+                </p>
+
+
+                <a href="#" class="nav-item active">
+
+                    <span class="nav-icon">
+                        ▦
+                    </span>
+
+                    Dashboard
+
+                </a>
+
+
+                <a href="#" class="nav-item">
+
+                    <span class="nav-icon">
+                        ▤
+                    </span>
+
+                    Receipts
+
+                </a>
+
+
+                <a href="#" class="nav-item">
+
+                    <span class="nav-icon">
+                        ↑
+                    </span>
+
+                    Upload Receipt
+
+                </a>
+
+
+                <a href="#" class="nav-item">
+
+                    <span class="nav-icon">
+                        ◫
+                    </span>
+
+                    Expenses
+
+                </a>
+
+
+                <a href="#" class="nav-item">
+
+                    <span class="nav-icon">
+                        ♢
+                    </span>
+
+                    Warranties
+
+                </a>
+
+
+                <a href="#" class="nav-item">
+
+                    <span class="nav-icon">
+                        ✦
+                    </span>
+
+                    AI Assistant
+
+                </a>
+
+
+                <p class="nav-title settings-title">
+                    ACCOUNT
+                </p>
+
+
+                <a href="#" class="nav-item">
+
+                    <span class="nav-icon">
+                        ⚙
+                    </span>
+
+                    Settings
+
+                </a>
+
+
+            </nav>
+
+
+            <!-- SIDEBAR BOTTOM -->
+
+            <div class="sidebar-bottom">
+
+
+                <div class="user-mini">
+
+                    <div class="user-avatar">
+                        U
+                    </div>
+
+                    <div class="user-info">
+
+                        <strong>
+                            User
+                        </strong>
+
+                        <span>
+                            user@email.com
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <a href="index.html" class="logout-btn">
+
+                    <span>
+                        ↪
+                    </span>
+
+                    Logout
+
+                </a>
+
+
+            </div>
+
+
+        </aside>
+
+
+
+        <!-- =========================
+             MAIN CONTENT
+        ========================== -->
+
+        <main class="main-content">
+
+
+            <!-- TOP BAR -->
+
+            <header class="topbar">
+
+
+                <div class="mobile-logo">
+
+                    <span class="logo-icon">
+                        S
+                    </span>
+
+                    SHOPIX
+
+                </div>
+
+
+                <div class="topbar-right">
+
+                    <button class="notification-btn">
+                        ♧
+                        <span></span>
+                    </button>
+
+
+                    <div class="top-user">
+
+                        <div class="top-avatar">
+                            U
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                User
+                            </strong>
+
+                            <small>
+                                Account
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+
+
+            <!-- PAGE CONTENT -->
+
+            <section class="dashboard-content">
+
+
+                <!-- WELCOME -->
+
+                <div class="welcome-section">
+
+
+                    <div>
+
+                        <p class="welcome-small">
+                            Welcome back 👋
+                        </p>
+
+                        <h1>
+                            Your Shopping Overview
+                        </h1>
+
+                        <p class="welcome-description">
+                            Manage your receipts, expenses and warranties
+                            from one smart dashboard.
+                        </p>
+
+                    </div>
+
+
+                    <a
+                        href="#"
+                        class="upload-main-btn">
+
+                        <span>
+                            ↑
+                        </span>
+
+                        Upload Receipt
+
+                    </a>
+
+
+                </div>
+
+
+
+                <!-- =========================
+                     STAT CARDS
+                ========================== -->
+
+                <div class="stats-grid">
+
+
+                    <!-- TOTAL EXPENSE -->
+
+                    <div class="stat-card">
+
+                        <div class="stat-top">
+
+                            <div class="stat-icon blue">
+                                ₹
+                            </div>
+
+                            <span class="stat-label">
+                                TOTAL EXPENSE
+                            </span>
+
+                        </div>
+
+                        <h2>
+                            ₹54,280
+                        </h2>
+
+                        <p class="stat-change positive">
+                            ↑ 8.4%
+                            <span>
+                                vs last month
+                            </span>
+                        </p>
+
+                    </div>
+
+
+
+                    <!-- RECEIPTS -->
+
+                    <div class="stat-card">
+
+                        <div class="stat-top">
+
+                            <div class="stat-icon purple">
+                                ▤
+                            </div>
+
+                            <span class="stat-label">
+                                RECEIPTS
+                            </span>
+
+                        </div>
+
+                        <h2>
+                            24
+                        </h2>
+
+                        <p class="stat-change">
+                            5 added this month
+                        </p>
+
+                    </div>
+
+
+
+                    <!-- WARRANTIES -->
+
+                    <div class="stat-card">
+
+                        <div class="stat-top">
+
+                            <div class="stat-icon green">
+                                ♢
+                            </div>
+
+                            <span class="stat-label">
+                                WARRANTIES
+                            </span>
+
+                        </div>
+
+                        <h2>
+                            5
+                        </h2>
+
+                        <p class="stat-change warning">
+                            2 expiring soon
+                        </p>
+
+                    </div>
+
+
+
+                    <!-- THIS MONTH -->
+
+                    <div class="stat-card">
+
+                        <div class="stat-top">
+
+                            <div class="stat-icon orange">
+                                ↗
+                            </div>
+
+                            <span class="stat-label">
+                                THIS MONTH
+                            </span>
+
+                        </div>
+
+                        <h2>
+                            ₹12,450
+                        </h2>
+
+                        <p class="stat-change positive">
+                            ↓ 4.2%
+                            <span>
+                                vs last month
+                            </span>
+                        </p>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- =========================
+                     CHART + AI CARD
+                ========================== -->
+
+                <div class="middle-grid">
+
+
+                    <!-- SPENDING CHART -->
+
+                    <div class="dashboard-card spending-card">
+
+
+                        <div class="card-header">
+
+                            <div>
+
+                                <h3>
+                                    Spending Overview
+                                </h3>
+
+                                <p>
+                                    Your monthly spending activity
+                                </p>
+
+                            </div>
+
+
+                            <select>
+
+                                <option>
+                                    Last 6 months
+                                </option>
+
+                                <option>
+                                    This year
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- SIMPLE CHART -->
+
+                        <div class="chart">
+
+                            <div class="chart-values">
+
+                                <span>
+                                    ₹15k
+                                </span>
+
+                                <span>
+                                    ₹10k
+                                </span>
+
+                                <span>
+                                    ₹5k
+                                </span>
+
+                                <span>
+                                    ₹0
+                                </span>
+
+                            </div>
+
+
+                            <div class="chart-area">
+
+
+                                <div class="chart-grid-line"></div>
+                                <div class="chart-grid-line"></div>
+                                <div class="chart-grid-line"></div>
+                                <div class="chart-grid-line"></div>
+
+
+                                <div class="bars">
+
+                                    <div class="bar-wrapper">
+                                        <div
+                                            class="bar"
+                                            style="height:45%;">
+                                        </div>
+                                        <span>Mar</span>
+                                    </div>
+
+
+                                    <div class="bar-wrapper">
+                                        <div
+                                            class="bar"
+                                            style="height:65%;">
+                                        </div>
+                                        <span>Apr</span>
+                                    </div>
+
+
+                                    <div class="bar-wrapper">
+                                        <div
+                                            class="bar"
+                                            style="height:52%;">
+                                        </div>
+                                        <span>May</span>
+                                    </div>
+
+
+                                    <div class="bar-wrapper">
+                                        <div
+                                            class="bar"
+                                            style="height:78%;">
+                                        </div>
+                                        <span>Jun</span>
+                                    </div>
+
+
+                                    <div class="bar-wrapper">
+                                        <div
+                                            class="bar"
+                                            style="height:60%;">
+                                        </div>
+                                        <span>Jul</span>
+                                    </div>
+
+
+                                    <div class="bar-wrapper">
+                                        <div
+                                            class="bar active-bar"
+                                            style="height:88%;">
+                                        </div>
+                                        <span>Aug</span>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- AI INSIGHT -->
+
+                    <div class="dashboard-card ai-card">
+
+
+                        <div class="ai-card-top">
+
+                            <div class="ai-icon">
+                                ✦
+                            </div>
+
+                            <span>
+                                AI INSIGHT
+                            </span>
+
+                        </div>
+
+
+                        <h3>
+                            Smart Spending Insight
+                        </h3>
+
+
+                        <p>
+                            Your spending on Electronics is higher
+                            this month. Consider reviewing your recent
+                            purchases before your next shopping trip.
+                        </p>
+
+
+                        <a href="#" class="ai-link">
+                            View AI Insights →
+                        </a>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- =========================
+                     RECENT RECEIPTS
+                ========================== -->
+
+                <div class="dashboard-card receipts-card">
+
+
+                    <div class="card-header">
+
+
+                        <div>
+
+                            <h3>
+                                Recent Receipts
+                            </h3>
+
+                            <p>
+                                Your latest uploaded receipts
+                            </p>
+
+                        </div>
+
+
+                        <a href="#">
+                            View All →
+                        </a>
+
+                    </div>
+
+
+
+                    <div class="receipt-list">
+
+
+                        <!-- RECEIPT 1 -->
+
+                        <div class="receipt-row">
+
+
+                            <div class="receipt-store-icon">
+                                ▣
+                            </div>
+
+
+                            <div class="receipt-info">
+
+                                <strong>
+                                    Electronics Store
+                                </strong>
+
+                                <span>
+                                    Electronics · Today
+                                </span>
+
+                            </div>
+
+
+                            <div class="receipt-amount">
+                                ₹45,000
+                            </div>
+
+
+                            <span class="receipt-status">
+                                Saved
+                            </span>
+
+
+                        </div>
+
+
+
+                        <!-- RECEIPT 2 -->
+
+                        <div class="receipt-row">
+
+
+                            <div class="receipt-store-icon">
+                                ▦
+                            </div>
+
+
+                            <div class="receipt-info">
+
+                                <strong>
+                                    Grocery Store
+                                </strong>
+
+                                <span>
+                                    Grocery · Yesterday
+                                </span>
+
+                            </div>
+
+
+                            <div class="receipt-amount">
+                                ₹2,500
+                            </div>
+
+
+                            <span class="receipt-status">
+                                Saved
+                            </span>
+
+
+                        </div>
+
+
+
+                        <!-- RECEIPT 3 -->
+
+                        <div class="receipt-row">
+
+
+                            <div class="receipt-store-icon">
+                                ◈
+                            </div>
+
+
+                            <div class="receipt-info">
+
+                                <strong>
+                                    Clothing Store
+                                </strong>
+
+                                <span>
+                                    Fashion · 3 days ago
+                                </span>
+
+                            </div>
+
+
+                            <div class="receipt-amount">
+                                ₹3,200
+                            </div>
+
+
+                            <span class="receipt-status">
+                                Saved
+                            </span>
+
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =========================
+                     WARRANTY ALERT
+                ========================== -->
+
+                <div class="warranty-alert">
+
+
+                    <div class="alert-icon">
+                        !
+                    </div>
+
+
+                    <div>
+
+                        <strong>
+                            Warranty Reminder
+                        </strong>
+
+                        <p>
+                            2 products have warranties expiring soon.
+                            Check your warranty details to avoid missing
+                            important dates.
+                        </p>
+
+                    </div>
+
+
+                    <a href="#">
+                        View Warranties →
+                    </a>
+
+
+                </div>
+
+
+            </section>
+
+
+        </main>
+
+
+    </div>
+
+
+</body>
+
+</html>
