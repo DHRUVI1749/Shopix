@@ -9,17 +9,24 @@
 
     <title>SHOPIX | Create Account</title>
 
-    <meta name="description"
-        content="Create your SHOPIX Smart Receipt and Shopping Assistant account.">
+    <meta
+        name="description"
+        content="Create your SHOPIX Smart Receipt and Shopping Assistant account."
+    >
 
     <!-- Google Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
 
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
 
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet">
+        rel="stylesheet"
+    >
 
     <!-- Signup CSS -->
     <link rel="stylesheet" href="css/signuppg.css">
@@ -28,6 +35,7 @@
 
 
 <body>
+
 
     <main class="signup-page">
 
@@ -38,9 +46,8 @@
 
         <section class="signup-left">
 
-            <!-- BRAND -->
 
-            <a href="index.html" class="brand">
+            <div class="brand">
 
                 <div class="brand-icon">
                     S
@@ -50,12 +57,11 @@
                     SHOPIX
                 </span>
 
-            </a>
+            </div>
 
-
-            <!-- CONTENT -->
 
             <div class="left-content">
+
 
                 <div class="ai-badge">
 
@@ -69,7 +75,10 @@
                 <h1>
 
                     Your purchases.
-                    <strong>Smarter.</strong>
+
+                    <strong>
+                        Smarter.
+                    </strong>
 
                 </h1>
 
@@ -83,14 +92,14 @@
                 </p>
 
 
-                <!-- BENEFITS -->
+                <!-- FEATURES -->
 
-                <div class="benefits">
+                <div class="mini-features">
 
 
-                    <div class="benefit">
+                    <div class="mini-feature">
 
-                        <div class="benefit-icon">
+                        <div class="mini-icon">
                             🧾
                         </div>
 
@@ -109,9 +118,9 @@
                     </div>
 
 
-                    <div class="benefit">
+                    <div class="mini-feature">
 
-                        <div class="benefit-icon">
+                        <div class="mini-icon">
                             ✨
                         </div>
 
@@ -130,9 +139,9 @@
                     </div>
 
 
-                    <div class="benefit">
+                    <div class="mini-feature">
 
-                        <div class="benefit-icon">
+                        <div class="mini-icon">
                             🛡️
                         </div>
 
@@ -208,12 +217,14 @@
 
 
 
-                <!-- FORM -->
+                <!-- =========================
+                     SIGNUP FORM
+                ========================== -->
 
                 <form id="signupForm">
 
 
-                    <!-- FULL NAME -->
+                    <!-- NAME -->
 
                     <div class="form-group">
 
@@ -226,6 +237,7 @@
                             id="fullname"
                             name="fullname"
                             placeholder="Enter your full name"
+                            autocomplete="name"
                             required
                         >
 
@@ -246,6 +258,7 @@
                             id="email"
                             name="email"
                             placeholder="Enter your email"
+                            autocomplete="email"
                             required
                         >
 
@@ -270,6 +283,7 @@
                                 name="password"
                                 placeholder="Create a password"
                                 minlength="6"
+                                autocomplete="new-password"
                                 required
                             >
 
@@ -282,6 +296,7 @@
                             </button>
 
                         </div>
+
 
                         <small>
                             Use at least 6 characters.
@@ -307,6 +322,7 @@
                                 id="confirmPassword"
                                 name="confirmPassword"
                                 placeholder="Confirm your password"
+                                autocomplete="new-password"
                                 required
                             >
 
@@ -337,17 +353,7 @@
                             >
 
                             <span>
-
-                                I agree to the
-                                <a href="#">
-                                    Terms & Conditions
-                                </a>
-
-                                and
-                                <a href="#">
-                                    Privacy Policy
-                                </a>
-
+                                I agree to the Terms & Conditions
                             </span>
 
                         </label>
@@ -356,14 +362,26 @@
 
 
 
-                    <!-- CREATE ACCOUNT -->
+                    <!-- MESSAGE -->
+
+                    <div
+                        id="signupMessage"
+                        class="signup-message"
+                    ></div>
+
+
+
+                    <!-- SIGNUP BUTTON -->
 
                     <button
                         type="submit"
                         class="signup-button"
+                        id="signupButton"
                     >
 
-                        Create Account
+                        <span id="signupButtonText">
+                            Create Account
+                        </span>
 
                         <span>
                             →
@@ -394,6 +412,7 @@
                     <button
                         type="button"
                         class="google-button"
+                        id="googleButton"
                     >
 
                         <span class="google-icon">
@@ -441,6 +460,464 @@
         </section>
 
     </main>
+
+
+
+    <!-- =================================================
+         FIREBASE SIGNUP SCRIPT
+    ================================================== -->
+
+    <script type="module">
+
+
+        // ==========================================
+        // FIREBASE
+        // ==========================================
+
+        import {
+            auth,
+            db
+        } from "./js/firebase.js";
+
+
+        import {
+            createUserWithEmailAndPassword,
+            updateProfile
+        } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+
+        import {
+            doc,
+            setDoc,
+            serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+
+        // ==========================================
+        // ELEMENTS
+        // ==========================================
+
+        const signupForm =
+            document.getElementById("signupForm");
+
+
+        const fullnameInput =
+            document.getElementById("fullname");
+
+
+        const emailInput =
+            document.getElementById("email");
+
+
+        const passwordInput =
+            document.getElementById("password");
+
+
+        const confirmPasswordInput =
+            document.getElementById("confirmPassword");
+
+
+        const togglePassword =
+            document.getElementById("togglePassword");
+
+
+        const toggleConfirmPassword =
+            document.getElementById("toggleConfirmPassword");
+
+
+        const signupButton =
+            document.getElementById("signupButton");
+
+
+        const signupButtonText =
+            document.getElementById("signupButtonText");
+
+
+        const signupMessage =
+            document.getElementById("signupMessage");
+
+
+        const googleButton =
+            document.getElementById("googleButton");
+
+
+
+        // ==========================================
+        // SHOW / HIDE PASSWORD
+        // ==========================================
+
+        togglePassword.addEventListener(
+            "click",
+            function () {
+
+                if (
+                    passwordInput.type === "password"
+                ) {
+
+                    passwordInput.type = "text";
+
+                    togglePassword.textContent =
+                        "Hide";
+
+                } else {
+
+                    passwordInput.type = "password";
+
+                    togglePassword.textContent =
+                        "Show";
+
+                }
+
+            }
+        );
+
+
+
+        // ==========================================
+        // SHOW / HIDE CONFIRM PASSWORD
+        // ==========================================
+
+        toggleConfirmPassword.addEventListener(
+            "click",
+            function () {
+
+                if (
+                    confirmPasswordInput.type === "password"
+                ) {
+
+                    confirmPasswordInput.type = "text";
+
+                    toggleConfirmPassword.textContent =
+                        "Hide";
+
+                } else {
+
+                    confirmPasswordInput.type = "password";
+
+                    toggleConfirmPassword.textContent =
+                        "Show";
+
+                }
+
+            }
+        );
+
+
+
+        // ==========================================
+        // MESSAGE
+        // ==========================================
+
+        function showMessage(
+            message,
+            type
+        ) {
+
+            signupMessage.textContent =
+                message;
+
+            signupMessage.className =
+                "signup-message " + type;
+
+        }
+
+
+
+        // ==========================================
+        // SIGNUP
+        // ==========================================
+
+        signupForm.addEventListener(
+            "submit",
+            async function (event) {
+
+
+                event.preventDefault();
+
+
+
+                const fullname =
+                    fullnameInput.value.trim();
+
+
+                const email =
+                    emailInput.value.trim();
+
+
+                const password =
+                    passwordInput.value;
+
+
+                const confirmPassword =
+                    confirmPasswordInput.value;
+
+
+
+                // ==================================
+                // PASSWORD MATCH
+                // ==================================
+
+                if (
+                    password !== confirmPassword
+                ) {
+
+                    showMessage(
+                        "❌ Passwords do not match.",
+                        "error"
+                    );
+
+                    return;
+
+                }
+
+
+
+                // ==================================
+                // PASSWORD LENGTH
+                // ==================================
+
+                if (
+                    password.length < 6
+                ) {
+
+                    showMessage(
+                        "❌ Password must be at least 6 characters.",
+                        "error"
+                    );
+
+                    return;
+
+                }
+
+
+
+                // ==================================
+                // BUTTON DISABLE
+                // ==================================
+
+                signupButton.disabled = true;
+
+                signupButtonText.textContent =
+                    "Creating Account...";
+
+
+                showMessage(
+                    "Creating your account...",
+                    "loading"
+                );
+
+
+
+                try {
+
+
+                    // ==================================
+                    // CREATE FIREBASE ACCOUNT
+                    // ==================================
+
+                    const userCredential =
+                        await createUserWithEmailAndPassword(
+                            auth,
+                            email,
+                            password
+                        );
+
+
+                    const user =
+                        userCredential.user;
+
+
+
+                    // ==================================
+                    // SAVE NAME IN AUTH PROFILE
+                    // ==================================
+
+                    await updateProfile(
+                        user,
+                        {
+                            displayName: fullname
+                        }
+                    );
+
+
+
+                    // ==================================
+                    // SAVE USER DATA IN FIRESTORE
+                    // ==================================
+
+                    await setDoc(
+                        doc(
+                            db,
+                            "users",
+                            user.uid
+                        ),
+                        {
+
+                            uid: user.uid,
+
+                            name: fullname,
+
+                            email: email,
+
+                            createdAt:
+                                serverTimestamp()
+
+                        }
+                    );
+
+
+
+                    // ==================================
+                    // SUCCESS
+                    // ==================================
+
+                    showMessage(
+                        "✅ Account created successfully!",
+                        "success"
+                    );
+
+
+                    signupButtonText.textContent =
+                        "Account Created ✓";
+
+
+
+                    // ==================================
+                    // GO TO LOGIN
+                    // ==================================
+
+                    setTimeout(
+                        function () {
+
+                            window.location.href =
+                                "loginpg.html";
+
+                        },
+                        1200
+                    );
+
+
+                }
+
+
+                catch (error) {
+
+
+                    console.error(
+                        "Signup Error:",
+                        error
+                    );
+
+
+                    let errorMessage =
+                        "Something went wrong. Please try again.";
+
+
+
+                    // ==================================
+                    // EMAIL ALREADY EXISTS
+                    // ==================================
+
+                    if (
+                        error.code ===
+                        "auth/email-already-in-use"
+                    ) {
+
+                        errorMessage =
+                            "❌ This email is already registered. Please login.";
+
+                    }
+
+
+                    // ==================================
+                    // INVALID EMAIL
+                    // ==================================
+
+                    else if (
+                        error.code ===
+                        "auth/invalid-email"
+                    ) {
+
+                        errorMessage =
+                            "❌ Please enter a valid email address.";
+
+                    }
+
+
+                    // ==================================
+                    // WEAK PASSWORD
+                    // ==================================
+
+                    else if (
+                        error.code ===
+                        "auth/weak-password"
+                    ) {
+
+                        errorMessage =
+                            "❌ Password must be at least 6 characters.";
+
+                    }
+
+
+                    // ==================================
+                    // NETWORK ERROR
+                    // ==================================
+
+                    else if (
+                        error.code ===
+                        "auth/network-request-failed"
+                    ) {
+
+                        errorMessage =
+                            "❌ Network error. Check your internet connection.";
+
+                    }
+
+
+
+                    // Show error
+
+                    showMessage(
+                        errorMessage,
+                        "error"
+                    );
+
+
+                    // Enable button
+
+                    signupButton.disabled =
+                        false;
+
+
+                    signupButtonText.textContent =
+                        "Create Account";
+
+                }
+
+            }
+        );
+
+
+
+        // ==========================================
+        // GOOGLE BUTTON
+        // ==========================================
+
+        googleButton.addEventListener(
+            "click",
+            function () {
+
+                showMessage(
+                    "Google login will be added later.",
+                    "loading"
+                );
+
+            }
+        );
+
+
+    </script>
 
 
 </body>

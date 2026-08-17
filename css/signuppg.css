@@ -701,3 +701,29 @@ a {
     }
 
 }
+
+/* Firebase Signup Messages */
+
+.signup-message {
+    min-height: 20px;
+    margin: 10px 0 14px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.signup-message.error {
+    color: #dc2626;
+}
+
+.signup-message.success {
+    color: #16a34a;
+}
+
+.signup-message.loading {
+    color: #64748b;
+}
+
+.signup-button:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}

@@ -360,12 +360,10 @@
         scanBtn.addEventListener("click", function () {
 
             if (!receiptFile.files.length) {
-                return;
-            }
+            return;
+        }
 
-            alert(
-                "Receipt selected successfully! AI scanning will be connected with Gemini AI in the next step."
-            );
+            window.location.href = "ai-scan.html";
 
         });
 

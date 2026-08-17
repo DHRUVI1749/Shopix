@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Receipt Scan | SHOPIX</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="css/ai-scan.css">
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         NAVBAR
+    ========================== -->
+
+    <header class="navbar">
+
+        <a href="dashboard.html" class="logo">
+
+            <span class="logo-icon">
+                S
+            </span>
+
+            SHOPIX
+
+        </a>
+
+
+        <div class="nav-right">
+
+            <span class="secure-text">
+                🔒 Secure Receipt Processing
+            </span>
+
+            <a href="dashboard.html" class="back-btn">
+                ← Dashboard
+            </a>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =========================
+         MAIN
+    ========================== -->
+
+    <main class="page-container">
+
+
+        <!-- PAGE HEADING -->
+
+        <section class="page-heading">
+
+            <span class="label">
+                ✨ AI RECEIPT SCANNER
+            </span>
+
+            <h1>
+                Let's Understand Your Receipt
+            </h1>
+
+            <p>
+                SHOPIX uses AI to extract important information
+                from your receipt automatically.
+            </p>
+
+        </section>
+
+
+
+        <!-- =========================
+             PROCESSING SECTION
+        ========================== -->
+
+        <section class="processing-card" id="processingCard">
+
+
+            <!-- LEFT: RECEIPT -->
+
+            <div class="receipt-section">
+
+                <div class="section-title">
+
+                    <span>
+                        RECEIPT
+                    </span>
+
+                    <span class="status-badge">
+                        Uploaded
+                    </span>
+
+                </div>
+
+
+                <div class="receipt-preview">
+
+                    <div class="receipt-paper">
+
+                        <div class="receipt-logo">
+                            SHOP
+                        </div>
+
+                        <p>
+                            Sample Electronics Store
+                        </p>
+
+                        <div class="receipt-line"></div>
+
+                        <div class="receipt-item">
+                            <span>Laptop</span>
+                            <span>₹42,000</span>
+                        </div>
+
+                        <div class="receipt-item">
+                            <span>Mouse</span>
+                            <span>₹1,500</span>
+                        </div>
+
+                        <div class="receipt-item">
+                            <span>Keyboard</span>
+                            <span>₹1,500</span>
+                        </div>
+
+                        <div class="receipt-line"></div>
+
+                        <div class="receipt-total">
+                            <span>TOTAL</span>
+                            <span>₹45,000</span>
+                        </div>
+
+                        <p class="receipt-thanks">
+                            Thank you for shopping!
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    class="change-btn"
+                    onclick="window.location.href='upload.html'">
+
+                    ← Choose Different Receipt
+
+                </button>
+
+            </div>
+
+
+
+            <!-- RIGHT: AI PROCESS -->
+
+            <div class="ai-section">
+
+
+                <div class="ai-header">
+
+                    <div class="ai-symbol">
+                        ✦
+                    </div>
+
+                    <div>
+
+                        <span>
+                            SHOPIX AI
+                        </span>
+
+                        <h2 id="processTitle">
+                            Scanning Receipt
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- PROCESSING -->
+
+                <div class="scan-area" id="scanArea">
+
+
+                    <div class="ai-loader">
+
+                        <div class="loader-ring"></div>
+
+                        <div class="loader-star">
+                            ✦
+                        </div>
+
+                    </div>
+
+
+                    <h3>
+                        AI is reading your receipt
+                    </h3>
+
+                    <p id="processText">
+                        Detecting store information...
+                    </p>
+
+
+                    <div class="progress-container">
+
+                        <div
+                            class="progress-bar"
+                            id="progressBar">
+                        </div>
+
+                    </div>
+
+
+                    <div class="progress-info">
+
+                        <span>
+                            Processing
+                        </span>
+
+                        <strong id="progressText">
+                            0%
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- RESULTS -->
+
+                <div
+                    class="result-area"
+                    id="resultArea">
+
+
+                    <div class="success-message">
+
+                        <div class="success-icon">
+                            ✓
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Receipt scanned successfully
+                            </strong>
+
+                            <span>
+                                Please verify the information below.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- FORM -->
+
+                    <div class="form-grid">
+
+
+                        <div class="input-group">
+
+                            <label>
+                                Store Name
+                            </label>
+
+                            <input
+                                type="text"
+                                value="Sample Electronics Store">
+
+                        </div>
+
+
+                        <div class="input-group">
+
+                            <label>
+                                Receipt Date
+                            </label>
+
+                            <input
+                                type="date"
+                                value="2026-08-17">
+
+                        </div>
+
+
+                        <div class="input-group">
+
+                            <label>
+                                Total Amount
+                            </label>
+
+                            <input
+                                type="number"
+                                value="45000">
+
+                        </div>
+
+
+                        <div class="input-group">
+
+                            <label>
+                                Category
+                            </label>
+
+                            <select>
+
+                                <option>
+                                    Electronics
+                                </option>
+
+                                <option>
+                                    Grocery
+                                </option>
+
+                                <option>
+                                    Clothing
+                                </option>
+
+                                <option>
+                                    Travel
+                                </option>
+
+                                <option>
+                                    Other
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                    </div>
+
+
+
+                    <!-- WARRANTY -->
+
+                    <div class="warranty-box">
+
+                        <div class="warranty-icon">
+                            🛡
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Warranty Detected
+                            </strong>
+
+                            <p>
+                                AI detected that this purchase
+                                may have a warranty.
+                            </p>
+
+                        </div>
+
+                        <span class="detected">
+                            Detected
+                        </span>
+
+                    </div>
+
+
+
+                    <!-- ACTIONS -->
+
+                    <div class="result-actions">
+
+                        <button
+                            class="secondary-btn"
+                            onclick="window.location.href='upload.html'">
+
+                            Scan Again
+
+                        </button>
+
+
+                        <button
+                            class="save-btn"
+                            onclick="saveReceipt()">
+
+                            ✓ Save Receipt
+
+                        </button>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================== -->
+
+    <script>
+
+        let progress = 0;
+
+
+        const progressBar =
+            document.getElementById("progressBar");
+
+        const progressText =
+            document.getElementById("progressText");
+
+        const processText =
+            document.getElementById("processText");
+
+        const processTitle =
+            document.getElementById("processTitle");
+
+        const scanArea =
+            document.getElementById("scanArea");
+
+        const resultArea =
+            document.getElementById("resultArea");
+
+
+        const messages = [
+
+            "Detecting store information...",
+
+            "Reading receipt date...",
+
+            "Identifying purchased items...",
+
+            "Calculating total amount...",
+
+            "Checking warranty information...",
+
+            "Finalizing receipt data..."
+
+        ];
+
+
+        const interval = setInterval(() => {
+
+            progress += 2;
+
+
+            progressBar.style.width =
+                progress + "%";
+
+
+            progressText.textContent =
+                progress + "%";
+
+
+            const messageIndex =
+                Math.min(
+                    Math.floor(progress / 17),
+                    messages.length - 1
+                );
+
+
+            processText.textContent =
+                messages[messageIndex];
+
+
+            if (progress >= 100) {
+
+                clearInterval(interval);
+
+                showResults();
+
+            }
+
+        }, 100);
+
+
+        function showResults() {
+
+            processTitle.textContent =
+                "Receipt Analysis Complete";
+
+            scanArea.style.display =
+                "none";
+
+            resultArea.classList.add("show");
+
+        }
+
+
+        function saveReceipt() {
+
+            alert(
+                "Receipt verified successfully! Database integration will be added next."
+            );
+
+        }
+
+    </script>
+
+
+</body>
+
+</html>

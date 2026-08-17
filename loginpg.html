@@ -2,30 +2,40 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>SHOPIX | Login</title>
 
-    <meta name="description"
-        content="Login to your SHOPIX Smart Receipt and Shopping Assistant account.">
+    <meta
+        name="description"
+        content="Login to your SHOPIX Smart Receipt and Shopping Assistant account."
+    >
 
     <!-- Google Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
 
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
 
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet">
+        rel="stylesheet"
+    >
 
     <!-- Login CSS -->
-    <link rel="stylesheet" href="css\loginpg.css">
+    <link rel="stylesheet" href="css/loginpg.css">
+
 </head>
 
 
 <body>
+
 
     <!-- =========================
          LOGIN PAGE
@@ -33,9 +43,15 @@
 
     <main class="login-page">
 
-        <!-- LEFT SIDE -->
+
+        <!-- =========================
+             LEFT SIDE
+        ========================== -->
 
         <section class="login-left">
+
+
+            <!-- BRAND -->
 
             <div class="brand">
 
@@ -50,28 +66,47 @@
             </div>
 
 
+            <!-- LEFT CONTENT -->
+
             <div class="left-content">
 
+
                 <div class="ai-badge">
+
                     <span></span>
+
                     AI-Powered Smart Shopping
+
                 </div>
 
+
                 <h1>
+
                     Welcome back to
-                    <strong>SHOPIX.</strong>
+
+                    <strong>
+                        SHOPIX.
+                    </strong>
+
                 </h1>
 
+
                 <p>
+
                     Manage your receipts, track expenses,
                     monitor warranties and understand your
                     spending — all in one smart place.
+
                 </p>
+
 
 
                 <!-- FEATURES -->
 
                 <div class="mini-features">
+
+
+                    <!-- FEATURE 1 -->
 
                     <div class="mini-feature">
 
@@ -80,15 +115,22 @@
                         </div>
 
                         <div>
-                            <h3>AI Receipt Scanner</h3>
+
+                            <h3>
+                                AI Receipt Scanner
+                            </h3>
 
                             <p>
                                 Automatically extract receipt details.
                             </p>
+
                         </div>
 
                     </div>
 
+
+
+                    <!-- FEATURE 2 -->
 
                     <div class="mini-feature">
 
@@ -97,15 +139,22 @@
                         </div>
 
                         <div>
-                            <h3>Smart Expense Tracking</h3>
+
+                            <h3>
+                                Smart Expense Tracking
+                            </h3>
 
                             <p>
                                 Understand where your money goes.
                             </p>
+
                         </div>
 
                     </div>
 
+
+
+                    <!-- FEATURE 3 -->
 
                     <div class="mini-feature">
 
@@ -114,33 +163,47 @@
                         </div>
 
                         <div>
-                            <h3>Warranty Management</h3>
+
+                            <h3>
+                                Warranty Management
+                            </h3>
 
                             <p>
                                 Never miss an important warranty.
                             </p>
+
                         </div>
 
                     </div>
+
 
                 </div>
 
             </div>
 
 
+            <!-- FOOTER -->
+
             <div class="left-footer">
+
                 © 2026 SHOPIX · Smart Receipt & Shopping Assistant
+
             </div>
+
 
         </section>
 
 
 
-        <!-- RIGHT SIDE -->
+        <!-- =========================
+             RIGHT SIDE
+        ========================== -->
 
         <section class="login-right">
 
+
             <div class="login-card">
+
 
                 <!-- MOBILE BRAND -->
 
@@ -155,6 +218,7 @@
                     </span>
 
                 </div>
+
 
 
                 <!-- HEADING -->
@@ -172,7 +236,10 @@
                 </div>
 
 
-                <!-- LOGIN FORM -->
+
+                <!-- =========================
+                     LOGIN FORM
+                ========================== -->
 
                 <form id="loginForm">
 
@@ -190,15 +257,18 @@
                             id="email"
                             name="email"
                             placeholder="Enter your email"
+                            autocomplete="email"
                             required
                         >
 
                     </div>
 
 
+
                     <!-- PASSWORD -->
 
                     <div class="form-group">
+
 
                         <div class="password-label">
 
@@ -206,11 +276,16 @@
                                 Password
                             </label>
 
-                            <a href="#">
+
+                            <a
+                                href="#"
+                                id="forgotPassword"
+                            >
                                 Forgot Password?
                             </a>
 
                         </div>
+
 
 
                         <div class="password-input">
@@ -220,8 +295,10 @@
                                 id="password"
                                 name="password"
                                 placeholder="Enter your password"
+                                autocomplete="current-password"
                                 required
                             >
+
 
                             <button
                                 type="button"
@@ -236,7 +313,8 @@
                     </div>
 
 
-                    <!-- REMEMBER -->
+
+                    <!-- REMEMBER ME -->
 
                     <div class="remember-row">
 
@@ -256,15 +334,35 @@
                     </div>
 
 
+
+                    <!-- LOGIN MESSAGE -->
+
+                    <div
+                        id="loginMessage"
+                        class="login-message"
+                        aria-live="polite"
+                    ></div>
+
+
+
                     <!-- LOGIN BUTTON -->
 
                     <button
                         type="submit"
                         class="login-button"
+                        id="loginButton"
                     >
-                        Login to SHOPIX
-                        <span>→</span>
+
+                        <span id="loginButtonText">
+                            Login to SHOPIX
+                        </span>
+
+                        <span>
+                            →
+                        </span>
+
                     </button>
+
 
 
                     <!-- DIVIDER -->
@@ -282,11 +380,13 @@
                     </div>
 
 
+
                     <!-- GOOGLE BUTTON -->
 
                     <button
                         type="button"
                         class="google-button"
+                        id="googleButton"
                     >
 
                         <span class="google-icon">
@@ -298,30 +398,36 @@
                     </button>
 
 
+
                     <!-- SIGN UP -->
 
                     <p class="signup-text">
 
                         Don't have an account?
 
-                    <a href="signuppg.html">
-                        Create Account
-                    </a>
+                        <a href="signuppg.html">
+                            Create Account
+                        </a>
 
-</p>
+                    </p>
+
 
                 </form>
+
 
 
                 <!-- SECURITY NOTE -->
 
                 <div class="security-note">
 
-                    <span>🔒</span>
+                    <span>
+                        🔒
+                    </span>
 
                     Your information is securely protected.
 
                 </div>
+
 
             </div>
 
@@ -330,8 +436,509 @@
     </main>
 
 
-    <!-- Login JavaScript -->
-    <script src="login.js"></script>
+
+    <!-- =================================================
+         FIREBASE LOGIN SCRIPT
+    ================================================== -->
+
+    <script type="module">
+
+
+        // ==========================================
+        // FIREBASE IMPORT
+        // ==========================================
+
+        import { auth } from "./js/firebase.js";
+
+
+        import {
+            signInWithEmailAndPassword,
+            setPersistence,
+            browserLocalPersistence,
+            browserSessionPersistence,
+            sendPasswordResetEmail
+        } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+
+
+        // ==========================================
+        // GET HTML ELEMENTS
+        // ==========================================
+
+        const loginForm =
+            document.getElementById("loginForm");
+
+
+        const emailInput =
+            document.getElementById("email");
+
+
+        const passwordInput =
+            document.getElementById("password");
+
+
+        const togglePassword =
+            document.getElementById("togglePassword");
+
+
+        const rememberInput =
+            document.getElementById("remember");
+
+
+        const loginButton =
+            document.getElementById("loginButton");
+
+
+        const loginButtonText =
+            document.getElementById("loginButtonText");
+
+
+        const loginMessage =
+            document.getElementById("loginMessage");
+
+
+        const forgotPassword =
+            document.getElementById("forgotPassword");
+
+
+        const googleButton =
+            document.getElementById("googleButton");
+
+
+
+        // ==========================================
+        // SHOW / HIDE PASSWORD
+        // ==========================================
+
+        togglePassword.addEventListener(
+            "click",
+            function () {
+
+
+                if (
+                    passwordInput.type === "password"
+                ) {
+
+                    passwordInput.type = "text";
+
+                    togglePassword.textContent =
+                        "Hide";
+
+                }
+
+                else {
+
+                    passwordInput.type =
+                        "password";
+
+                    togglePassword.textContent =
+                        "Show";
+
+                }
+
+            }
+        );
+
+
+
+        // ==========================================
+        // SHOW MESSAGE
+        // ==========================================
+
+        function showMessage(
+            message,
+            type
+        ) {
+
+            loginMessage.textContent =
+                message;
+
+            loginMessage.className =
+                "login-message " + type;
+
+        }
+
+
+
+        // ==========================================
+        // LOGIN FORM
+        // ==========================================
+
+        loginForm.addEventListener(
+            "submit",
+            async function (event) {
+
+
+                event.preventDefault();
+
+
+
+                // Get values
+
+                const email =
+                    emailInput.value.trim();
+
+
+                const password =
+                    passwordInput.value;
+
+
+
+                // ==================================
+                // BASIC VALIDATION
+                // ==================================
+
+                if (!email) {
+
+                    showMessage(
+                        "Please enter your email address.",
+                        "error"
+                    );
+
+                    emailInput.focus();
+
+                    return;
+
+                }
+
+
+                if (!password) {
+
+                    showMessage(
+                        "Please enter your password.",
+                        "error"
+                    );
+
+                    passwordInput.focus();
+
+                    return;
+
+                }
+
+
+
+                // ==================================
+                // DISABLE BUTTON
+                // ==================================
+
+                loginButton.disabled =
+                    true;
+
+
+                loginButtonText.textContent =
+                    "Checking...";
+
+
+                showMessage(
+                    "Checking your login details...",
+                    "loading"
+                );
+
+
+
+                try {
+
+
+                    // ==================================
+                    // REMEMBER ME
+                    // ==================================
+
+                    if (
+                        rememberInput.checked
+                    ) {
+
+                        await setPersistence(
+                            auth,
+                            browserLocalPersistence
+                        );
+
+                    }
+
+                    else {
+
+                        await setPersistence(
+                            auth,
+                            browserSessionPersistence
+                        );
+
+                    }
+
+
+
+                    // ==================================
+                    // FIREBASE LOGIN
+                    // ==================================
+
+                    const userCredential =
+                        await signInWithEmailAndPassword(
+                            auth,
+                            email,
+                            password
+                        );
+
+
+                    const user =
+                        userCredential.user;
+
+
+
+                    // ==================================
+                    // SUCCESS
+                    // ==================================
+
+                    console.log(
+                        "Login successful:",
+                        user
+                    );
+
+
+                    showMessage(
+                        "Login successful! Redirecting...",
+                        "success"
+                    );
+
+
+                    loginButtonText.textContent =
+                        "Login Successful ✓";
+
+
+
+                    // ==================================
+                    // REDIRECT
+                    // ==================================
+
+                    setTimeout(
+                        function () {
+
+                            window.location.href =
+                                "dashboard.html";
+
+                        },
+                        800
+                    );
+
+
+                }
+
+
+                catch (error) {
+
+
+                    console.error(
+                        "Firebase Login Error:",
+                        error
+                    );
+
+
+
+                    // ==================================
+                    // ERROR MESSAGES
+                    // ==================================
+
+                    let errorMessage =
+                        "Login failed. Please try again.";
+
+
+
+                    if (
+                        error.code ===
+                        "auth/invalid-credential"
+                    ) {
+
+                        errorMessage =
+                            "❌ Wrong email or password.";
+
+                    }
+
+
+                    else if (
+                        error.code ===
+                        "auth/user-not-found"
+                    ) {
+
+                        errorMessage =
+                            "❌ No account found with this email.";
+
+                    }
+
+
+                    else if (
+                        error.code ===
+                        "auth/wrong-password"
+                    ) {
+
+                        errorMessage =
+                            "❌ Incorrect password.";
+
+                    }
+
+
+                    else if (
+                        error.code ===
+                        "auth/invalid-email"
+                    ) {
+
+                        errorMessage =
+                            "❌ Please enter a valid email address.";
+
+                    }
+
+
+                    else if (
+                        error.code ===
+                        "auth/too-many-requests"
+                    ) {
+
+                        errorMessage =
+                            "❌ Too many attempts. Please try again later.";
+
+                    }
+
+
+                    else if (
+                        error.code ===
+                        "auth/network-request-failed"
+                    ) {
+
+                        errorMessage =
+                            "❌ Network error. Please check your internet.";
+
+                    }
+
+
+
+                    // Show error
+
+                    showMessage(
+                        errorMessage,
+                        "error"
+                    );
+
+
+
+                    // Enable button again
+
+                    loginButton.disabled =
+                        false;
+
+
+                    loginButtonText.textContent =
+                        "Login to SHOPIX";
+
+                }
+
+            }
+        );
+
+
+
+        // ==========================================
+        // FORGOT PASSWORD
+        // ==========================================
+
+        forgotPassword.addEventListener(
+            "click",
+            async function (event) {
+
+
+                event.preventDefault();
+
+
+                const email =
+                    emailInput.value.trim();
+
+
+
+                if (!email) {
+
+                    showMessage(
+                        "Enter your email first.",
+                        "error"
+                    );
+
+                    emailInput.focus();
+
+                    return;
+
+                }
+
+
+
+                try {
+
+
+                    await sendPasswordResetEmail(
+                        auth,
+                        email
+                    );
+
+
+                    showMessage(
+                        "Password reset email sent. Check your inbox.",
+                        "success"
+                    );
+
+
+                }
+
+
+                catch (error) {
+
+
+                    console.error(
+                        error
+                    );
+
+
+                    if (
+                        error.code ===
+                        "auth/user-not-found"
+                    ) {
+
+                        showMessage(
+                            "No account found with this email.",
+                            "error"
+                        );
+
+                    }
+
+                    else {
+
+                        showMessage(
+                            "Unable to send password reset email.",
+                            "error"
+                        );
+
+                    }
+
+                }
+
+            }
+        );
+
+
+
+        // ==========================================
+        // GOOGLE LOGIN
+        // ==========================================
+
+        googleButton.addEventListener(
+            "click",
+            function () {
+
+
+                showMessage(
+                    "Google login will be added later.",
+                    "loading"
+                );
+
+
+            }
+        );
+
+
+    </script>
+
 
 </body>
 
