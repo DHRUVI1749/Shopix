@@ -1,88 +1,70 @@
-/* =========================
-   RESET
-========================= */
-
 * {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
 }
 
-
-/* =========================
-   BODY
-========================= */
 
 body {
+
     font-family: "Inter", sans-serif;
 
-    background: #f7f9ff;
+    background: #f8fbff;
 
-    color: #111827;
+    color: #10233f;
 
     min-height: 100vh;
+
 }
 
-
-/* =========================
-   NAVBAR
-========================= */
 
 .navbar {
 
-    height: 82px;
+    height: 72px;
 
-    background: #ffffff;
+    background: white;
 
-    border-bottom: 1px solid #e5e9f2;
+    border-bottom: 1px solid #e5ebf3;
 
     display: flex;
 
     align-items: center;
 
-    justify-content: space-between;
+    padding: 0 6%;
 
-    padding: 0 7%;
+    gap: 35px;
 
-    position: sticky;
-
-    top: 0;
-
-    z-index: 100;
 }
 
 
-/* Logo */
-
 .logo {
+
+    text-decoration: none;
+
+    color: #1565c0;
+
+    font-size: 21px;
+
+    font-weight: 800;
 
     display: flex;
 
     align-items: center;
 
-    gap: 10px;
+    gap: 9px;
 
-    text-decoration: none;
-
-    color: #17347e;
-
-    font-size: 25px;
-
-    font-weight: 800;
-
-    letter-spacing: -0.5px;
 }
 
 
 .logo-icon {
 
-    width: 38px;
+    width: 34px;
 
-    height: 38px;
+    height: 34px;
 
-    border-radius: 10px;
+    border-radius: 9px;
 
-    background: #17347e;
+    background: #1565c0;
 
     color: white;
 
@@ -92,192 +74,131 @@ body {
 
     justify-content: center;
 
-    font-size: 20px;
-
-    font-weight: 800;
 }
 
 
-/* Navigation */
-
-.nav-links {
+nav {
 
     display: flex;
 
-    align-items: center;
+    gap: 25px;
 
-    gap: 35px;
+    flex: 1;
+
 }
 
 
-.nav-links a {
+nav a {
 
     text-decoration: none;
 
-    color: #53627a;
+    color: #65748b;
 
     font-size: 14px;
 
     font-weight: 600;
 
-    transition: 0.2s;
 }
 
-
-.nav-links a:hover {
-
-    color: #17347e;
-}
-
-
-/* Back button */
 
 .back-btn {
 
     text-decoration: none;
 
-    color: #17347e;
-
-    border: 1px solid #d8deeb;
-
-    padding: 11px 18px;
-
-    border-radius: 10px;
-
-    font-size: 14px;
+    color: #1565c0;
 
     font-weight: 600;
 
-    background: white;
-
-    transition: 0.2s;
-}
-
-
-.back-btn:hover {
-
-    background: #f0f4ff;
+    font-size: 14px;
 
 }
 
-
-/* =========================
-   MAIN
-========================= */
 
 .upload-page {
-
-    width: 100%;
 
     max-width: 1100px;
 
     margin: auto;
 
-    padding: 70px 25px 90px;
+    padding: 65px 20px;
+
 }
 
-
-/* =========================
-   HEADING
-========================= */
 
 .page-heading {
 
     text-align: center;
 
-    max-width: 700px;
+    margin-bottom: 40px;
 
-    margin: 0 auto 45px;
 }
 
 
 .small-label {
 
-    display: inline-block;
-
-    background: #eaf0ff;
-
-    color: #2450a5;
-
-    padding: 8px 15px;
-
-    border-radius: 30px;
+    color: #1565c0;
 
     font-size: 12px;
 
-    font-weight: 700;
+    font-weight: 800;
 
-    letter-spacing: 0.5px;
+    letter-spacing: 1.5px;
 
-    margin-bottom: 18px;
 }
 
 
 .page-heading h1 {
 
-    font-size: clamp(36px, 5vw, 58px);
+    font-size: 42px;
 
-    line-height: 1.05;
+    margin: 12px 0;
 
-    letter-spacing: -2px;
-
-    color: #101827;
-
-    margin-bottom: 18px;
 }
 
 
 .page-heading p {
 
-    color: #66758c;
+    color: #66758b;
 
-    font-size: 16px;
+    max-width: 650px;
 
-    line-height: 1.8;
+    margin: auto;
+
+    line-height: 1.7;
+
 }
 
-
-/* =========================
-   UPLOAD CARD
-========================= */
 
 .upload-card {
 
-    max-width: 720px;
-
-    margin: auto;
-
     background: white;
 
-    border: 1px solid #dfe5f0;
+    border: 1px solid #e0e8f2;
 
-    border-radius: 24px;
+    border-radius: 22px;
 
-    padding: 45px;
+    padding: 55px 30px;
 
     text-align: center;
 
-    box-shadow: 0 20px 55px rgba(30, 55, 110, 0.08);
+    box-shadow: 0 15px 45px rgba(30, 70, 110, 0.08);
+
 }
 
 
-/* Upload icon */
-
 .upload-icon {
 
-    width: 72px;
+    width: 70px;
 
-    height: 72px;
-
-    margin: auto;
-
-    margin-bottom: 20px;
+    height: 70px;
 
     border-radius: 18px;
 
-    background: #eaf0ff;
+    background: #eaf3ff;
 
-    color: #2450a5;
+    color: #1565c0;
+
+    font-size: 35px;
 
     display: flex;
 
@@ -285,137 +206,104 @@ body {
 
     justify-content: center;
 
-    font-size: 34px;
+    margin: auto;
 
-    font-weight: 700;
 }
 
 
 .upload-card h2 {
 
-    font-size: 25px;
+    margin-top: 22px;
 
-    margin-bottom: 10px;
+    font-size: 24px;
+
 }
 
 
 .upload-description {
 
-    color: #68768c;
+    color: #66758b;
 
-    font-size: 15px;
+    margin: 10px 0 25px;
 
-    line-height: 1.6;
-
-    margin-bottom: 25px;
 }
 
-
-/* Choose button */
 
 .choose-file-btn {
 
     display: inline-block;
 
-    cursor: pointer;
-
-    background: #17347e;
+    background: #1565c0;
 
     color: white;
 
-    padding: 14px 25px;
+    padding: 13px 28px;
 
     border-radius: 10px;
 
-    font-size: 14px;
+    cursor: pointer;
 
     font-weight: 700;
 
-    transition: 0.2s;
 }
 
-
-.choose-file-btn:hover {
-
-    background: #244ba2;
-
-    transform: translateY(-1px);
-}
-
-
-/* File information */
 
 .file-info {
 
-    color: #6b7890;
+    margin-top: 18px;
 
-    font-size: 12px;
+    color: #68788e;
 
-    margin-top: 20px;
+    font-size: 13px;
+
 }
 
 
 .size-info {
 
-    color: #9aa4b5;
+    color: #98a5b5;
 
-    font-size: 11px;
+    font-size: 12px;
 
-    margin-top: 6px;
+    margin-top: 5px;
+
 }
 
 
-/* =========================
-   FILE PREVIEW
-========================= */
-
 .file-preview {
+
+    max-width: 600px;
+
+    margin: 25px auto;
+
+    padding: 15px;
+
+    border: 1px solid #dce5ef;
+
+    border-radius: 12px;
 
     display: none;
 
     align-items: center;
 
-    gap: 15px;
-
     text-align: left;
 
-    margin-top: 28px;
+    gap: 15px;
 
-    padding: 15px;
-
-    border-radius: 13px;
-
-    background: #f5f7fc;
-
-    border: 1px solid #e1e6f0;
 }
 
 
 .file-preview.active {
 
     display: flex;
+
 }
 
 
 .file-preview-icon {
 
-    width: 45px;
+    font-size: 30px;
 
-    height: 45px;
-
-    border-radius: 10px;
-
-    background: #e5ecff;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    font-size: 21px;
-
-    flex-shrink: 0;
 }
 
 
@@ -429,63 +317,57 @@ body {
 
     gap: 5px;
 
-    min-width: 0;
 }
 
 
 .file-details strong {
-
-    font-size: 13px;
 
     overflow: hidden;
 
     text-overflow: ellipsis;
 
     white-space: nowrap;
+
 }
 
 
 .file-details span {
 
-    font-size: 11px;
+    color: #7b8999;
 
-    color: #78859a;
+    font-size: 13px;
+
 }
 
-
-/* Remove */
 
 .remove-btn {
 
     border: none;
 
-    background: transparent;
+    background: #f1f4f7;
 
-    color: #e05252;
+    width: 32px;
 
-    font-size: 25px;
+    height: 32px;
+
+    border-radius: 50%;
 
     cursor: pointer;
+
+    font-size: 20px;
+
 }
 
 
-/* =========================
-   SCAN BUTTON
-========================= */
-
 .scan-btn {
-
-    width: 100%;
-
-    margin-top: 25px;
-
-    padding: 15px;
 
     border: none;
 
-    border-radius: 11px;
+    border-radius: 10px;
 
-    background: #17347e;
+    padding: 14px 30px;
+
+    background: #1565c0;
 
     color: white;
 
@@ -495,23 +377,15 @@ body {
 
     cursor: pointer;
 
-    transition: 0.2s;
-}
-
-
-.scan-btn:hover:not(:disabled) {
-
-    background: #244ba2;
-
-    transform: translateY(-1px);
 }
 
 
 .scan-btn:disabled {
 
-    background: #c9d0df;
+    background: #b7c4d2;
 
     cursor: not-allowed;
+
 }
 
 
@@ -519,43 +393,37 @@ body {
 
     margin-top: 18px;
 
-    font-size: 11px;
+    font-size: 12px;
 
-    color: #7a8799;
+    color: #7c8999;
+
 }
 
 
-/* =========================
-   HOW IT WORKS
-========================= */
-
 .how-section {
 
-    margin-top: 90px;
+    margin-top: 70px;
 
     text-align: center;
+
 }
 
 
 .how-section h2 {
 
-    font-size: 30px;
+    font-size: 28px;
 
-    margin-bottom: 10px;
 }
 
 
 .section-subtitle {
 
-    color: #718097;
+    color: #728096;
 
-    font-size: 14px;
+    margin-top: 8px;
 
-    margin-bottom: 35px;
 }
 
-
-/* Steps */
 
 .steps {
 
@@ -564,198 +432,132 @@ body {
     grid-template-columns: repeat(4, 1fr);
 
     gap: 18px;
+
+    margin-top: 30px;
+
 }
 
 
 .step-card {
 
-    position: relative;
-
     background: white;
 
-    border: 1px solid #e1e6f0;
+    border: 1px solid #e1e8f0;
 
-    border-radius: 18px;
+    border-radius: 16px;
 
-    padding: 28px 20px;
+    padding: 25px;
 
     text-align: left;
 
-    transition: 0.25s;
 }
 
 
-.step-card:hover {
+.step-card > span {
 
-    transform: translateY(-5px);
-
-    box-shadow: 0 15px 35px rgba(30, 55, 110, 0.08);
-}
-
-
-.step-number {
-
-    color: #9aa7bc;
-
-    font-size: 12px;
+    color: #1565c0;
 
     font-weight: 800;
 
-    margin-bottom: 18px;
+    font-size: 12px;
+
 }
 
 
-.step-icon {
+.step-card > div {
 
-    width: 45px;
+    margin: 18px 0;
 
-    height: 45px;
+    font-size: 25px;
 
-    border-radius: 12px;
-
-    background: #edf2ff;
-
-    color: #2450a5;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    font-size: 20px;
-
-    font-weight: 700;
-
-    margin-bottom: 18px;
 }
 
 
 .step-card h3 {
 
-    font-size: 16px;
+    margin-bottom: 8px;
 
-    margin-bottom: 9px;
 }
 
 
 .step-card p {
 
-    color: #738097;
+    color: #738095;
+
+    font-size: 13px;
+
+    line-height: 1.6;
+
+}
+
+
+footer {
+
+    text-align: center;
+
+    padding: 35px;
+
+    border-top: 1px solid #e2e8ef;
+
+    background: white;
+
+    color: #728096;
+
+}
+
+
+footer strong {
+
+    color: #1565c0;
+
+}
+
+
+footer p {
+
+    margin: 7px 0;
+
+    font-size: 13px;
+
+}
+
+
+footer span {
 
     font-size: 12px;
 
-    line-height: 1.7;
 }
 
 
-/* =========================
-   FOOTER
-========================= */
+@media (max-width: 800px) {
 
-.footer {
-
-    min-height: 100px;
-
-    background: #f0f3f9;
-
-    border-top: 1px solid #e1e6ef;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    padding: 25px 7%;
-
-    color: #63728a;
-
-    font-size: 12px;
-}
-
-
-.footer-logo {
-
-    color: #17347e;
-
-    font-size: 18px;
-
-    font-weight: 800;
-}
-
-
-/* =========================
-   RESPONSIVE
-========================= */
-
-@media (max-width: 850px) {
-
-    .nav-links {
-
+    nav {
         display: none;
     }
 
-
     .navbar {
-
-        padding: 0 5%;
+        justify-content: space-between;
     }
 
+    .page-heading h1 {
+        font-size: 32px;
+    }
 
     .steps {
-
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: 1fr 1fr;
     }
 
 }
 
 
-@media (max-width: 600px) {
-
-    .upload-page {
-
-        padding: 45px 16px 60px;
-    }
-
-
-    .upload-card {
-
-        padding: 30px 20px;
-
-        border-radius: 18px;
-    }
-
-
-    .page-heading h1 {
-
-        letter-spacing: -1px;
-    }
-
+@media (max-width: 500px) {
 
     .steps {
-
         grid-template-columns: 1fr;
     }
 
-
-    .footer {
-
-        flex-direction: column;
-
-        gap: 12px;
-
-        text-align: center;
-
-        padding: 25px;
-    }
-
-
-    .back-btn {
-
-        padding: 9px 12px;
-
-        font-size: 12px;
+    .navbar {
+        padding: 0 20px;
     }
 
 }
