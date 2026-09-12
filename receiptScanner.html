@@ -1,42 +1,381 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SHOPIX - Receipt Scanner</title>
-  <link rel="stylesheet" href="css/receiptScanner.css" />
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SHOPIX - Receipt Scanner</title>
+
+    <link rel="stylesheet" href="css/receiptScanner.css">
+
 </head>
+
 <body>
-  <header>
-    <h1>Receipt Scanner</h1>
-    <nav>
-      <a href="dashboard.html">Back to Dashboard</a>
-    </nav>
-  </header>
 
-  <main>
-    <section class="upload-section">
-      <h2>Upload or Capture Receipt</h2>
-      <input type="file" id="receiptFileInput" accept="image/*" />
-      <button id="captureBtn">Capture from Camera (if supported)</button>
-    </section>
+    <!-- HEADER -->
 
-    <section class="preview-section">
-      <h2>Receipt Preview</h2>
-      <img id="receiptPreview" alt="Receipt Preview" />
-      <p id="noPreviewText">No image selected</p>
-    </section>
+    <header class="navbar">
 
-    <section class="scan-section">
-      <button id="scanBtn" disabled>Scan Receipt</button>
-    </section>
+        <div class="logo">
+            <span class="logo-icon">S</span>
+            SHOPIX
+        </div>
 
-    <!-- Future area: extracted info form will appear here -->
-    <section id="extractedDataSection" style="display:none;">
-      <!-- Will be created in next steps -->
-    </section>
-  </main>
+        <nav>
+            <a href="dashboard.html">Dashboard</a>
+        </nav>
 
-  <script src="js/receiptScanner.js"></script>
+    </header>
+
+
+    <!-- MAIN -->
+
+    <main class="scanner-page">
+
+
+        <!-- PAGE HEADING -->
+
+        <section class="page-heading">
+
+            <span class="small-label">
+                AI-POWERED RECEIPT MANAGEMENT
+            </span>
+
+            <h1>
+                Receipt Scanner
+            </h1>
+
+            <p>
+                Upload or capture your receipt and let SHOPIX
+                extract important information automatically.
+            </p>
+
+        </section>
+
+
+
+        <!-- UPLOAD + PREVIEW -->
+
+        <section class="scanner-card">
+
+
+            <!-- UPLOAD -->
+
+            <div class="upload-section">
+
+                <div class="section-icon">
+                    ↑
+                </div>
+
+                <h2>
+                    Upload or Capture Receipt
+                </h2>
+
+                <p>
+                    Choose a receipt image from your device
+                    or capture one using your camera.
+                </p>
+
+
+                <label
+                    for="receiptFileInput"
+                    class="primary-btn">
+
+                    Choose Receipt
+
+                </label>
+
+                <input
+                    type="file"
+                    id="receiptFileInput"
+                    accept="image/jpeg,image/png,image/webp"
+                    hidden>
+
+
+                <button
+                    type="button"
+                    id="captureBtn"
+                    class="camera-btn">
+
+                    📷 Capture from Camera
+
+                </button>
+
+
+                <p class="file-note">
+                    JPG, PNG or WEBP • Maximum 10 MB
+                </p>
+
+            </div>
+
+
+
+            <!-- PREVIEW -->
+
+            <div class="preview-section">
+
+                <div class="section-heading">
+
+                    <h2>
+                        Receipt Preview
+                    </h2>
+
+                    <span id="previewStatus">
+                        No receipt
+                    </span>
+
+                </div>
+
+
+                <div
+                    class="preview-box"
+                    id="previewBox">
+
+
+                    <div
+                        id="noPreviewText"
+                        class="empty-preview">
+
+                        <div class="empty-icon">
+                            🧾
+                        </div>
+
+                        <strong>
+                            No receipt selected
+                        </strong>
+
+                        <span>
+                            Your receipt preview will appear here.
+                        </span>
+
+                    </div>
+
+
+                    <img
+                        id="receiptPreview"
+                        alt="Receipt Preview">
+
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- SCAN -->
+
+        <section class="scan-section">
+
+            <div class="scan-info">
+
+                <div class="ai-icon">
+                    ✦
+                </div>
+
+                <div>
+
+                    <h2>
+                        Ready to Scan?
+                    </h2>
+
+                    <p>
+                        SHOPIX AI will read your receipt and
+                        extract store, date, amount, items and category.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <button
+                type="button"
+                id="scanBtn"
+                class="scan-btn"
+                disabled>
+
+                ✨ Scan Receipt with AI
+
+            </button>
+
+        </section>
+
+
+
+        <!-- EXTRACTED DATA -->
+
+        <section
+            id="extractedDataSection"
+            class="extracted-section"
+            style="display:none;">
+
+            <div class="section-heading">
+
+                <h2>
+                    Extracted Receipt Information
+                </h2>
+
+                <span>
+                    Review & Edit
+                </span>
+
+            </div>
+
+
+            <div class="form-grid">
+
+                <div class="input-group">
+
+                    <label for="storeName">
+                        Store Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="storeName"
+                        placeholder="Store name">
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label for="purchaseDate">
+                        Purchase Date
+                    </label>
+
+                    <input
+                        type="date"
+                        id="purchaseDate">
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label for="totalAmount">
+                        Total Amount
+                    </label>
+
+                    <input
+                        type="number"
+                        id="totalAmount"
+                        placeholder="0">
+
+                </div>
+
+
+                <div class="input-group">
+
+                    <label for="category">
+                        Category
+                    </label>
+
+                    <select id="category">
+
+                        <option value="">
+                            Select Category
+                        </option>
+
+                        <option value="Food">
+                            Food
+                        </option>
+
+                        <option value="Grocery">
+                            Grocery
+                        </option>
+
+                        <option value="Shopping">
+                            Shopping
+                        </option>
+
+                        <option value="Electronics">
+                            Electronics
+                        </option>
+
+                        <option value="Clothing">
+                            Clothing
+                        </option>
+
+                        <option value="Travel">
+                            Travel
+                        </option>
+
+                        <option value="Medical">
+                            Medical
+                        </option>
+
+                        <option value="Other">
+                            Other
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div class="items-section">
+
+                <h3>
+                    Purchased Items
+                </h3>
+
+                <div id="itemsList">
+                    <!-- AI extracted items will appear here -->
+                </div>
+
+            </div>
+
+
+            <div class="save-actions">
+
+                <button
+                    type="button"
+                    id="saveReceiptBtn"
+                    class="save-btn">
+
+                    ✓ Save Receipt
+
+                </button>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+
+    <footer>
+
+        <strong>
+            SHOPIX
+        </strong>
+
+        <p>
+            AI Powered Smart Receipt & Shopping Assistant
+        </p>
+
+        <span>
+            © 2026 SHOPIX
+        </span>
+
+    </footer>
+
+    <script>
+        self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+    </script>
+
+
+    <script type="module" src="js/receiptScanner.js"></script>
+
 </body>
+
 </html>
