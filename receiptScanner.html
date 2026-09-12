@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SHOPIX - Receipt Scanner</title>
+  <link rel="stylesheet" href="css/receiptScanner.css" />
+</head>
+<body>
+  <header>
+    <h1>Receipt Scanner</h1>
+    <nav>
+      <a href="dashboard.html">Back to Dashboard</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="upload-section">
+      <h2>Upload or Capture Receipt</h2>
+      <input type="file" id="receiptFileInput" accept="image/*" />
+      <button id="captureBtn">Capture from Camera (if supported)</button>
+    </section>
+
+    <section class="preview-section">
+      <h2>Receipt Preview</h2>
+      <img id="receiptPreview" alt="Receipt Preview" />
+      <p id="noPreviewText">No image selected</p>
+    </section>
+
+    <section class="scan-section">
+      <button id="scanBtn" disabled>Scan Receipt</button>
+    </section>
+
+    <!-- Future area: extracted info form will appear here -->
+    <section id="extractedDataSection" style="display:none;">
+      <!-- Will be created in next steps -->
+    </section>
+  </main>
+
+  <script src="js/receiptScanner.js"></script>
+</body>
+</html>
