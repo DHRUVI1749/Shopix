@@ -1,31 +1,23 @@
 // ==========================================
 // SHOPIX - RECEIPT SCANNER
-// STEP 1: UPLOAD + PREVIEW + CAMERA
+// UPLOAD + PREVIEW + CAMERA
 // ==========================================
 
 import { auth, db, storage } from "./firebase.js";
 
 console.log("Firebase connected successfully!");
 
-// Elements
 
-const fileInput =
-    document.getElementById("receiptFileInput");
+// ==========================================
+// ELEMENTS
+// ==========================================
 
-const previewImage =
-    document.getElementById("receiptPreview");
-
-const noPreviewText =
-    document.getElementById("noPreviewText");
-
-const previewStatus =
-    document.getElementById("previewStatus");
-
-const scanButton =
-    document.getElementById("scanBtn");
-
-const captureButton =
-    document.getElementById("captureBtn");
+const fileInput = document.getElementById("receiptFileInput");
+const previewImage = document.getElementById("receiptPreview");
+const noPreviewText = document.getElementById("noPreviewText");
+const previewStatus = document.getElementById("previewStatus");
+const scanButton = document.getElementById("scanBtn");
+const captureButton = document.getElementById("captureBtn");
 
 
 // ==========================================
@@ -41,9 +33,7 @@ fileInput.addEventListener("change", function () {
         return;
     }
 
-
-    // File size validation
-
+    // Maximum file size: 10 MB
     if (file.size > 10 * 1024 * 1024) {
 
         alert("Receipt image must be less than 10 MB.");
@@ -55,15 +45,12 @@ fileInput.addEventListener("change", function () {
         return;
     }
 
-
-    // File type validation
-
+    // Allowed image formats
     const allowedTypes = [
         "image/jpeg",
         "image/png",
         "image/webp"
     ];
-
 
     if (!allowedTypes.includes(file.type)) {
 
@@ -76,24 +63,19 @@ fileInput.addEventListener("change", function () {
         return;
     }
 
-
     showPreview(file);
-
 });
 
 
 // ==========================================
-// SHOW PREVIEW
+// SHOW RECEIPT PREVIEW
 // ==========================================
 
 function showPreview(file) {
 
-    const imageUrl =
-        URL.createObjectURL(file);
-
+    const imageUrl = URL.createObjectURL(file);
 
     previewImage.src = imageUrl;
-
     previewImage.style.display = "block";
 
     noPreviewText.style.display = "none";
@@ -102,9 +84,7 @@ function showPreview(file) {
 
     scanButton.disabled = false;
 
-
     console.log("Receipt selected:", file.name);
-
 }
 
 
@@ -115,7 +95,6 @@ function showPreview(file) {
 function resetPreview() {
 
     previewImage.src = "";
-
     previewImage.style.display = "none";
 
     noPreviewText.style.display = "flex";
@@ -123,18 +102,18 @@ function resetPreview() {
     previewStatus.textContent = "No receipt";
 
     scanButton.disabled = true;
-
 }
 
 
 // ==========================================
-// CAMERA
+// CAMERA CAPTURE
 // ==========================================
 
 captureButton.addEventListener(
     "click",
     async function () {
 
+        // Check camera support
         if (
             !navigator.mediaDevices ||
             !navigator.mediaDevices.getUserMedia
@@ -147,80 +126,81 @@ captureButton.addEventListener(
             return;
         }
 
-
         let stream;
-
 
         try {
 
-            stream =
-                await navigator.mediaDevices.getUserMedia({
-                    video: {
-                        facingMode: "environment"
-                    }
-                });
+            // Open camera
+            stream = await navigator.mediaDevices.getUserMedia({
+                video: {
+                    facingMode: "environment"
+                }
+            });
 
 
-            // Camera overlay
+            // ==================================
+            // CAMERA OVERLAY
+            // ==================================
 
-            const overlay =
-                document.createElement("div");
+            const overlay = document.createElement("div");
 
-            overlay.className =
-                "camera-overlay";
+            overlay.className = "camera-overlay";
 
 
-            // Video
+            // ==================================
+            // VIDEO
+            // ==================================
 
-            const video =
-                document.createElement("video");
+            const video = document.createElement("video");
 
             video.autoplay = true;
-
             video.playsInline = true;
-
             video.srcObject = stream;
 
 
-            // Capture button
+            // ==================================
+            // CAPTURE BUTTON
+            // ==================================
 
             const capturePhoto =
                 document.createElement("button");
 
-            capturePhoto.textContent =
-                "📸 Capture Photo";
+            capturePhoto.textContent = "📸 Capture Photo";
 
             capturePhoto.className =
                 "camera-capture-btn";
 
 
-            // Close button
+            // ==================================
+            // CLOSE BUTTON
+            // ==================================
 
             const closeCamera =
                 document.createElement("button");
 
-            closeCamera.textContent =
-                "✕ Close";
+            closeCamera.textContent = "✕ Close";
 
             closeCamera.className =
                 "camera-close-btn";
 
 
+            // Add elements
             overlay.appendChild(video);
-
             overlay.appendChild(capturePhoto);
-
             overlay.appendChild(closeCamera);
 
             document.body.appendChild(overlay);
 
 
-            // Capture photo
+            // ==================================
+            // CAPTURE PHOTO
+            // ==================================
 
             capturePhoto.addEventListener(
                 "click",
                 function () {
 
+                    // Check camera readiness
                     if (
                         video.videoWidth === 0 ||
                         video.videoHeight === 0
@@ -234,9 +214,9 @@ captureButton.addEventListener(
                     }
 
 
+                    // Create canvas
                     const canvas =
                         document.createElement("canvas");
-
 
                     canvas.width =
                         video.videoWidth;
@@ -245,9 +225,9 @@ captureButton.addEventListener(
                         video.videoHeight;
 
 
+                    // Draw camera frame
                     const context =
                         canvas.getContext("2d");
-
 
                     context.drawImage(
                         video,
@@ -258,8 +238,19 @@ captureButton.addEventListener(
                     );
 
 
+                    // Convert image to file
                     canvas.toBlob(
                         function (blob) {
+
+                            if (!blob) {
+
+                                alert(
+                                    "Unable to capture receipt image."
+                                );
+
+                                return;
+                            }
+
 
                             const capturedFile =
                                 new File(
@@ -271,31 +262,40 @@ captureButton.addEventListener(
                                 );
 
 
+                            // Put captured image
+                            // into file input
                             const dataTransfer =
                                 new DataTransfer();
-
 
                             dataTransfer.items.add(
                                 capturedFile
                             );
 
-
                             fileInput.files =
                                 dataTransfer.files;
 
 
+                            // Stop camera
                             stream
                                 .getTracks()
                                 .forEach(
-                                    track => track.stop()
+                                    track =>
+                                        track.stop()
                                 );
 
 
+                            // Remove camera overlay
                             overlay.remove();
 
 
+                            // Show captured receipt
                             showPreview(
                                 capturedFile
+                            );
+
+
+                            console.log(
+                                "Receipt captured successfully."
                             );
 
                         },
@@ -307,7 +307,9 @@ captureButton.addEventListener(
             );
 
 
-            // Close camera
+            // ==================================
+            // CLOSE CAMERA
+            // ==================================
 
             closeCamera.addEventListener(
                 "click",
@@ -316,11 +318,15 @@ captureButton.addEventListener(
                     stream
                         .getTracks()
                         .forEach(
-                            track => track.stop()
+                            track =>
+                                track.stop()
                         );
 
                     overlay.remove();
 
+                    console.log(
+                        "Camera closed."
+                    );
                 }
             );
 
@@ -335,7 +341,6 @@ captureButton.addEventListener(
             alert(
                 "Unable to access camera. Please allow camera permission."
             );
-
         }
 
     }
@@ -350,9 +355,7 @@ scanButton.addEventListener(
     "click",
     function () {
 
-        const file =
-            fileInput.files[0];
-
+        const file = fileInput.files[0];
 
         if (!file) {
 
@@ -363,17 +366,14 @@ scanButton.addEventListener(
             return;
         }
 
-
         alert(
             "Receipt is ready for AI scanning. AI/OCR will be connected in the next step."
         );
-
 
         console.log(
             "Ready for AI scan:",
             file.name
         );
-
     }
 );
 
