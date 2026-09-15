@@ -1,830 +1,960 @@
-// ==========================================
-// SHOPIX - RECEIPT SCANNER
-// UPLOAD + PREVIEW + CAMERA + AI SCANNING
-// ==========================================
+<!DOCTYPE html>
+<html lang="en">
 
-import { auth, db, storage, app } from "./firebase.js";
+<head>
 
-console.log("Firebase connected successfully!");
+    <meta charset="UTF-8">
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-// ==========================================
-// ELEMENTS
-// ==========================================
+    <title>SHOPIX | Dashboard</title>
 
-const fileInput =
-    document.getElementById("receiptFileInput");
+    <meta name="description"
+        content="SHOPIX Smart Receipt and Shopping Assistant Dashboard">
 
-const previewImage =
-    document.getElementById("receiptPreview");
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
 
-const noPreviewText =
-    document.getElementById("noPreviewText");
+    <link rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin>
 
-const previewStatus =
-    document.getElementById("previewStatus");
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
 
-const scanButton =
-    document.getElementById("scanBtn");
+    <!-- Dashboard CSS -->
+    <link rel="stylesheet" href="css/dashboard.css">
 
-const captureButton =
-    document.getElementById("captureBtn");
+</head>
 
 
-// Extracted data fields
+<body>
 
-const storeNameInput =
-    document.getElementById("storeName");
 
-const purchaseDateInput =
-    document.getElementById("purchaseDate");
+    <!-- =========================
+         DASHBOARD LAYOUT
+    ========================== -->
 
-const totalAmountInput =
-    document.getElementById("totalAmount");
+    <div class="dashboard-layout">
 
-const categoryInput =
-    document.getElementById("category");
 
-const itemsListInput =
-    document.getElementById("itemsList");
+        <!-- =========================
+             SIDEBAR
+        ========================== -->
 
+        <aside class="sidebar">
 
-// ==========================================
-// CHECK ELEMENTS
-// ==========================================
 
-console.log("Receipt Scanner elements loaded:", {
+            <!-- LOGO -->
 
-    fileInput: !!fileInput,
+            <a href="index.html" class="sidebar-logo">
 
-    previewImage: !!previewImage,
+                <span class="logo-icon">
+                    S
+                </span>
 
-    scanButton: !!scanButton,
+                <span>
+                    SHOPIX
+                </span>
 
-    captureButton: !!captureButton
+            </a>
 
-});
 
+            <!-- NAVIGATION -->
 
-// ==========================================
-// FILE UPLOAD
-// ==========================================
+            <nav class="sidebar-nav">
 
-fileInput.addEventListener(
-    "change",
-    function () {
 
-        const file =
-            fileInput.files[0];
+                <p class="nav-title">
+                    MAIN MENU
+                </p>
 
 
-        if (!file) {
+                <!-- Dashboard -->
 
-            resetPreview();
+                <a href="dashboard.html" class="nav-item active">
 
-            return;
-        }
+                    <span class="nav-icon">
+                        ▦
+                    </span>
 
+                    Dashboard
 
-        // File size validation
+                </a>
 
-        if (
-            file.size >
-            10 * 1024 * 1024
-        ) {
 
-            alert(
-                "Receipt image must be less than 10 MB."
-            );
+                <!-- Receipts -->
 
-            fileInput.value = "";
+                <a href="receiptScanner.html" class="nav-item">
 
-            resetPreview();
+                    <span class="nav-icon">
+                        ▤
+                    </span>
 
-            return;
-        }
+                    Receipts
 
+                </a>
 
-        // Allowed file types
 
-        const allowedTypes = [
+                <!-- Upload Receipt -->
 
-            "image/jpeg",
+                <a href="receiptScanner.html" class="nav-item">
 
-            "image/png",
+                    <span class="nav-icon">
+                        ↑
+                    </span>
 
-            "image/webp"
+                    Upload Receipt
 
-        ];
+                </a>
 
 
-        if (
-            !allowedTypes.includes(file.type)
-        ) {
+                <!-- Expenses -->
 
-            alert(
-                "Please select a JPG, PNG or WEBP image."
-            );
+                <a href="#" class="nav-item">
 
-            fileInput.value = "";
+                    <span class="nav-icon">
+                        ◫
+                    </span>
 
-            resetPreview();
+                    Expenses
 
-            return;
-        }
+                </a>
 
 
-        showPreview(file);
+                <!-- Warranties -->
 
-    }
-);
+                <a href="#" class="nav-item">
 
+                    <span class="nav-icon">
+                        ♢
+                    </span>
 
-// ==========================================
-// SHOW PREVIEW
-// ==========================================
+                    Warranties
 
-function showPreview(file) {
+                </a>
 
-    const imageUrl =
-        URL.createObjectURL(file);
 
+                <!-- Settings -->
 
-    previewImage.src =
-        imageUrl;
+                <a href="#" class="nav-item">
 
+                    <span class="nav-icon">
+                        ⚙
+                    </span>
 
-    previewImage.style.display =
-        "block";
+                    Settings
 
+                </a>
 
-    noPreviewText.style.display =
-        "none";
 
+            </nav>
 
-    previewStatus.textContent =
-        "Receipt selected";
 
+            <!-- SIDEBAR BOTTOM -->
 
-    scanButton.disabled =
-        false;
+            <div class="sidebar-bottom">
 
 
-    console.log(
-        "Receipt selected:",
-        file.name
-    );
+                <div class="help-box">
 
-}
+                    <div class="help-icon">
+                        ?
+                    </div>
 
+                    <div>
 
-// ==========================================
-// RESET PREVIEW
-// ==========================================
+                        <strong>
+                            Need Help?
+                        </strong>
 
-function resetPreview() {
+                        <span>
+                            We're here for you
+                        </span>
 
-    previewImage.src =
-        "";
+                    </div>
 
+                </div>
 
-    previewImage.style.display =
-        "none";
 
+                <a href="index.html" class="logout-btn">
 
-    noPreviewText.style.display =
-        "flex";
+                    <span>
+                        ↪
+                    </span>
 
+                    Logout
 
-    previewStatus.textContent =
-        "No receipt";
+                </a>
 
 
-    scanButton.disabled =
-        true;
+            </div>
 
-}
 
+        </aside>
 
-// ==========================================
-// CAMERA
-// ==========================================
 
-captureButton.addEventListener(
-    "click",
-    async function () {
 
-        if (
-            !navigator.mediaDevices ||
-            !navigator.mediaDevices.getUserMedia
-        ) {
+        <!-- =========================
+             MAIN AREA
+        ========================== -->
 
-            alert(
-                "Camera capture is not supported by this browser."
-            );
+        <main class="main-content">
 
-            return;
-        }
 
+            <!-- =========================
+                 TOP HEADER
+            ========================== -->
 
-        let stream;
+            <header class="top-header">
 
 
-        try {
+                <div class="header-left">
 
-            stream =
-                await navigator.mediaDevices.getUserMedia({
+                    <button
+                        class="mobile-menu-btn"
+                        type="button">
 
-                    video: {
+                        ☰
 
-                        facingMode:
-                            "environment"
+                    </button>
 
-                    }
+                    <div>
 
-                });
+                        <span class="header-label">
+                            SHOPIX DASHBOARD
+                        </span>
 
+                        <h2>
+                            Overview
+                        </h2>
 
-            // ==================================
-            // CAMERA OVERLAY
-            // ==================================
+                    </div>
 
-            const overlay =
-                document.createElement("div");
+                </div>
 
-            overlay.className =
-                "camera-overlay";
 
+                <div class="header-right">
 
-            // ==================================
-            // VIDEO
-            // ==================================
 
-            const video =
-                document.createElement("video");
+                    <button
+                        class="notification-btn"
+                        type="button">
 
+                        ♧
 
-            video.autoplay =
-                true;
+                        <span></span>
 
+                    </button>
 
-            video.playsInline =
-                true;
 
+                    <div class="top-user">
 
-            video.srcObject =
-                stream;
+                        <div class="top-avatar">
+                            U
+                        </div>
 
+                        <div>
 
-            // ==================================
-            // CAPTURE BUTTON
-            // ==================================
+                            <strong>
+                                User
+                            </strong>
 
-            const capturePhoto =
-                document.createElement("button");
+                            <small>
+                                Account
+                            </small>
 
+                        </div>
 
-            capturePhoto.textContent =
-                "📸 Capture Photo";
+                    </div>
 
+                </div>
 
-            capturePhoto.className =
-                "camera-capture-btn";
+            </header>
 
 
-            // ==================================
-            // CLOSE BUTTON
-            // ==================================
 
-            const closeCamera =
-                document.createElement("button");
+            <!-- =========================
+                 PAGE CONTENT
+            ========================== -->
 
+            <section class="dashboard-content">
 
-            closeCamera.textContent =
-                "✕ Close";
 
+                <!-- =========================
+                     WELCOME
+                ========================== -->
 
-            closeCamera.className =
-                "camera-close-btn";
+                <div class="welcome-section">
 
 
-            // ==================================
-            // ADD ELEMENTS
-            // ==================================
+                    <div>
 
-            overlay.appendChild(video);
+                        <p class="welcome-small">
+                            Welcome back 👋
+                        </p>
 
-            overlay.appendChild(
-                capturePhoto
-            );
+                        <h1>
+                            Your Shopping Overview
+                        </h1>
 
-            overlay.appendChild(
-                closeCamera
-            );
+                        <p class="welcome-description">
+                            Manage your receipts, expenses and warranties
+                            from one smart dashboard.
+                        </p>
 
+                    </div>
 
-            document.body.appendChild(
-                overlay
-            );
 
+                    <!-- UPLOAD RECEIPT -->
 
-            // ==================================
-            // CAPTURE PHOTO
-            // ==================================
+                    <a
+                        href="receiptScanner.html"
+                        class="upload-main-btn">
 
-            capturePhoto.addEventListener(
-                "click",
-                function () {
+                        <span>
+                            ↑
+                        </span>
 
-                    if (
-                        video.videoWidth === 0 ||
-                        video.videoHeight === 0
-                    ) {
+                        Upload Receipt
 
-                        alert(
-                            "Camera is not ready yet. Please try again."
-                        );
+                    </a>
 
-                        return;
-                    }
 
+                </div>
 
-                    const canvas =
-                        document.createElement(
-                            "canvas"
-                        );
 
 
-                    canvas.width =
-                        video.videoWidth;
+                <!-- =========================
+                     STAT CARDS
+                ========================== -->
 
+                <div class="stats-grid">
 
-                    canvas.height =
-                        video.videoHeight;
 
+                    <!-- TOTAL EXPENSE -->
 
-                    const context =
-                        canvas.getContext(
-                            "2d"
-                        );
+                    <div class="stat-card">
 
+                        <div class="stat-top">
 
-                    context.drawImage(
+                            <div class="stat-icon blue">
+                                ₹
+                            </div>
 
-                        video,
+                            <span class="stat-label">
+                                TOTAL EXPENSE
+                            </span>
 
-                        0,
+                        </div>
 
-                        0,
+                        <h2>
+                            ₹45,000
+                        </h2>
 
-                        canvas.width,
+                        <p class="stat-change positive">
+                            ↑ 8.2%
+                            <span>
+                                vs last month
+                            </span>
+                        </p>
 
-                        canvas.height
+                    </div>
 
-                    );
 
 
-                    canvas.toBlob(
+                    <!-- BUDGET -->
 
-                        function (blob) {
+                    <div class="stat-card">
 
-                            if (!blob) {
+                        <div class="stat-top">
 
-                                alert(
-                                    "Unable to capture photo."
-                                );
+                            <div class="stat-icon purple">
+                                ◫
+                            </div>
 
-                                return;
-                            }
+                            <span class="stat-label">
+                                MONTHLY BUDGET
+                            </span>
 
+                        </div>
 
-                            const capturedFile =
-                                new File(
+                        <h2>
+                            ₹50,000
+                        </h2>
 
-                                    [blob],
+                        <p class="stat-change">
+                            ₹5,000 remaining
+                        </p>
 
-                                    "captured-receipt.jpg",
+                    </div>
 
-                                    {
 
-                                        type:
-                                            "image/jpeg"
 
-                                    }
+                    <!-- WARRANTY -->
 
-                                );
+                    <div class="stat-card">
 
+                        <div class="stat-top">
 
-                            // Put captured image
-                            // inside file input
+                            <div class="stat-icon green">
+                                ♢
+                            </div>
 
-                            const dataTransfer =
-                                new DataTransfer();
+                            <span class="stat-label">
+                                WARRANTIES
+                            </span>
 
+                        </div>
 
-                            dataTransfer.items.add(
-                                capturedFile
-                            );
+                        <h2>
+                            5
+                        </h2>
 
+                        <p class="stat-change warning">
+                            2 expiring soon
+                        </p>
 
-                            fileInput.files =
-                                dataTransfer.files;
+                    </div>
 
 
-                            // Stop camera
 
-                            stream
-                                .getTracks()
-                                .forEach(
-                                    track =>
-                                        track.stop()
-                                );
+                    <!-- THIS MONTH -->
 
+                    <div class="stat-card">
 
-                            // Remove overlay
+                        <div class="stat-top">
 
-                            overlay.remove();
+                            <div class="stat-icon orange">
+                                ↗
+                            </div>
 
+                            <span class="stat-label">
+                                THIS MONTH
+                            </span>
 
-                            // Show preview
+                        </div>
 
-                            showPreview(
-                                capturedFile
-                            );
+                        <h2>
+                            ₹12,450
+                        </h2>
 
+                        <p class="stat-change positive">
 
-                            console.log(
-                                "Receipt captured:",
-                                capturedFile.name
-                            );
+                            ↓ 4.2%
 
-                        },
+                            <span>
+                                vs last month
+                            </span>
 
-                        "image/jpeg",
+                        </p>
 
-                        0.95
+                    </div>
 
-                    );
 
-                }
-            );
+                </div>
 
 
-            // ==================================
-            // CLOSE CAMERA
-            // ==================================
 
-            closeCamera.addEventListener(
-                "click",
-                function () {
+                <!-- =========================
+                     CHART + AI CARD
+                ========================== -->
 
-                    stream
-                        .getTracks()
-                        .forEach(
-                            track =>
-                                track.stop()
-                        );
+                <div class="middle-grid">
 
 
-                    overlay.remove();
+                    <!-- SPENDING CHART -->
 
-                }
-            );
+                    <div class="dashboard-card spending-card">
 
 
-        } catch (error) {
+                        <div class="card-header">
 
-            console.error(
-                "Camera error:",
-                error
-            );
+                            <div>
 
+                                <h3>
+                                    Spending Overview
+                                </h3>
 
-            alert(
-                "Unable to access camera. Please allow camera permission."
-            );
+                                <p>
+                                    Your monthly spending activity
+                                </p>
 
-        }
+                            </div>
 
-    }
-);
 
+                            <select>
 
-// ==========================================
-// CONVERT IMAGE TO BASE64
-// ==========================================
+                                <option>
+                                    Last 6 months
+                                </option>
 
-function fileToBase64(file) {
+                                <option>
+                                    This year
+                                </option>
 
-    return new Promise(
-        (resolve, reject) => {
+                            </select>
 
-            const reader =
-                new FileReader();
+                        </div>
 
 
-            reader.onload =
-                function () {
 
-                    const base64 =
-                        reader.result.split(",")[1];
+                        <!-- SIMPLE CHART -->
 
-                    resolve(base64);
+                        <div class="chart">
 
-                };
+                            <div class="chart-values">
 
+                                <span>
+                                    ₹15k
+                                </span>
 
-            reader.onerror =
-                function () {
+                                <span>
+                                    ₹10k
+                                </span>
 
-                    reject(
-                        new Error(
-                            "Unable to read receipt image."
-                        )
-                    );
+                                <span>
+                                    ₹5k
+                                </span>
 
-                };
+                                <span>
+                                    ₹0
+                                </span>
 
+                            </div>
 
-            reader.readAsDataURL(file);
 
-        }
-    );
+                            <div class="chart-area">
 
-}
 
+                                <div class="chart-grid-line"></div>
 
-// ==========================================
-// AI RECEIPT SCAN
-// ==========================================
+                                <div class="chart-grid-line"></div>
 
-async function scanReceiptWithAI(file) {
+                                <div class="chart-grid-line"></div>
 
-    console.log(
-        "Starting AI receipt scan..."
-    );
+                                <div class="chart-grid-line"></div>
 
 
-    /*
-        AI integration will process:
+                                <div class="bars">
 
-        Store Name
-        Purchase Date
-        Total Amount
-        Category
-        Items
-    */
 
+                                    <div class="bar-wrapper">
 
-    const base64Image =
-        await fileToBase64(file);
+                                        <div
+                                            class="bar"
+                                            style="height:45%;">
 
+                                        </div>
 
-    console.log(
-        "Receipt image converted successfully."
-    );
+                                        <span>
+                                            Mar
+                                        </span>
 
+                                    </div>
 
-    /*
-        This object is prepared for the
-        Gemini/Firebase AI processing step.
-    */
 
-    const receiptImageData = {
+                                    <div class="bar-wrapper">
 
-        inlineData: {
+                                        <div
+                                            class="bar"
+                                            style="height:60%;">
 
-            data:
-                base64Image,
+                                        </div>
 
-            mimeType:
-                file.type
+                                        <span>
+                                            Apr
+                                        </span>
 
-        }
+                                    </div>
 
-    };
 
+                                    <div class="bar-wrapper">
 
-    console.log(
-        "Receipt ready for AI:",
-        receiptImageData.mimeType
-    );
+                                        <div
+                                            class="bar"
+                                            style="height:40%;">
 
+                                        </div>
 
-    return receiptImageData;
+                                        <span>
+                                            May
+                                        </span>
 
-}
+                                    </div>
 
 
-// ==========================================
-// DISPLAY EXTRACTED DATA
-// ==========================================
+                                    <div class="bar-wrapper">
 
-function displayExtractedData(data) {
+                                        <div
+                                            class="bar"
+                                            style="height:70%;">
 
-    console.log(
-        "Extracted receipt data:",
-        data
-    );
+                                        </div>
 
+                                        <span>
+                                            Jun
+                                        </span>
 
-    if (storeNameInput) {
+                                    </div>
 
-        storeNameInput.value =
-            data.storeName || "";
 
-    }
+                                    <div class="bar-wrapper">
 
+                                        <div
+                                            class="bar"
+                                            style="height:55%;">
 
-    if (purchaseDateInput) {
+                                        </div>
 
-        purchaseDateInput.value =
-            data.purchaseDate || "";
+                                        <span>
+                                            Jul
+                                        </span>
 
-    }
+                                    </div>
 
 
-    if (totalAmountInput) {
+                                    <div class="bar-wrapper">
 
-        totalAmountInput.value =
-            data.totalAmount || "";
+                                        <div
+                                            class="bar"
+                                            style="height:82%;">
 
-    }
+                                        </div>
 
+                                        <span>
+                                            Aug
+                                        </span>
 
-    if (categoryInput) {
+                                    </div>
 
-        categoryInput.value =
-            data.category || "";
 
-    }
+                                </div>
 
+                            </div>
 
-    if (itemsListInput) {
+                        </div>
 
-        if (
-            Array.isArray(data.items)
-        ) {
 
-            itemsListInput.value =
-                data.items.join(", ");
+                    </div>
 
-        } else {
 
-            itemsListInput.value =
-                data.items || "";
 
-        }
+                    <!-- AI INSIGHT -->
 
-    }
+                    <div class="dashboard-card ai-card">
 
-}
 
+                        <div class="ai-card-top">
 
-// ==========================================
-// SCAN BUTTON
-// ==========================================
+                            <div class="ai-icon">
+                                ✦
+                            </div>
 
-scanButton.addEventListener(
-    "click",
-    async function () {
+                            <span>
+                                AI INSIGHT
+                            </span>
 
-        const file =
-            fileInput.files[0];
+                        </div>
 
 
-        if (!file) {
+                        <h3>
+                            Smart Spending Insight
+                        </h3>
 
-            alert(
-                "Please upload or capture a receipt first."
-            );
 
-            return;
-        }
+                        <p>
+                            Your spending on Electronics is higher
+                            this month. Consider reviewing your recent
+                            purchases before your next shopping trip.
+                        </p>
 
 
-        try {
+                        <a
+                            href="#"
+                            class="ai-link">
 
-            // Disable button
+                            View AI Insights →
 
-            scanButton.disabled =
-                true;
+                        </a>
 
 
-            scanButton.textContent =
-                "⏳ Scanning Receipt...";
+                    </div>
 
 
-            previewStatus.textContent =
-                "AI is reading receipt...";
+                </div>
 
 
-            console.log(
-                "AI scan started:",
-                file.name
-            );
 
+                <!-- =========================
+                     RECENT RECEIPTS
+                ========================== -->
 
-            const imageData =
-                await scanReceiptWithAI(
-                    file
-                );
+                <div class="dashboard-card receipts-card">
 
 
-            console.log(
-                "AI image data prepared:",
-                imageData
-            );
+                    <div class="card-header">
 
 
-            /*
-                TEMPORARY TEST RESULT
+                        <div>
 
-                This confirms that the receipt
-                reached the AI scanning function.
+                            <h3>
+                                Recent Receipts
+                            </h3>
 
-                Real Gemini extraction will be
-                connected after Firebase AI setup.
-            */
+                            <p>
+                                Your latest uploaded receipts
+                            </p>
 
-            const testData = {
+                        </div>
 
-                storeName:
-                    "AI Scan Ready",
 
-                purchaseDate:
-                    "",
+                        <a href="#">
+                            View All →
+                        </a>
 
-                totalAmount:
-                    "",
 
-                category:
-                    "",
+                    </div>
 
-                items:
-                    []
 
-            };
 
+                    <div class="receipt-list">
 
-            displayExtractedData(
-                testData
-            );
 
+                        <!-- RECEIPT 1 -->
 
-            previewStatus.textContent =
-                "Receipt ready for AI processing";
+                        <div class="receipt-row">
 
 
-            console.log(
-                "Receipt successfully reached AI scanning step."
-            );
+                            <div class="receipt-store-icon">
+                                ▣
+                            </div>
 
 
-            alert(
-                "Receipt image successfully prepared for AI scanning."
-            );
+                            <div class="receipt-info">
 
+                                <strong>
+                                    Electronics Store
+                                </strong>
 
-        } catch (error) {
+                                <span>
+                                    Electronics · Today
+                                </span>
 
-            console.error(
-                "AI Scan Error:",
-                error
-            );
+                            </div>
 
 
-            previewStatus.textContent =
-                "AI scan failed";
+                            <div class="receipt-price">
+                                ₹45,000
+                            </div>
 
 
-            alert(
-                "Unable to process receipt. Check Console for details."
-            );
+                        </div>
 
 
-        } finally {
 
-            scanButton.disabled =
-                false;
+                        <!-- RECEIPT 2 -->
 
+                        <div class="receipt-row">
 
-            scanButton.textContent =
-                "✨ Scan Receipt with AI";
 
-        }
+                            <div class="receipt-store-icon">
+                                ▣
+                            </div>
 
-    }
-);
 
+                            <div class="receipt-info">
 
-// ==========================================
-// INITIAL STATE
-// ==========================================
+                                <strong>
+                                    Grocery Store
+                                </strong>
 
-resetPreview();
+                                <span>
+                                    Grocery · Yesterday
+                                </span>
 
+                            </div>
 
-console.log(
-    "SHOPIX Receipt Scanner ready!"
-);
+
+                            <div class="receipt-price">
+                                ₹2,350
+                            </div>
+
+
+                        </div>
+
+
+
+                        <!-- RECEIPT 3 -->
+
+                        <div class="receipt-row">
+
+
+                            <div class="receipt-store-icon">
+                                ▣
+                            </div>
+
+
+                            <div class="receipt-info">
+
+                                <strong>
+                                    Fashion Store
+                                </strong>
+
+                                <span>
+                                    Clothing · 3 days ago
+                                </span>
+
+                            </div>
+
+
+                            <div class="receipt-price">
+                                ₹3,200
+                            </div>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- =========================
+                     WARRANTY ALERT
+                ========================== -->
+
+                <div class="dashboard-card warranty-card">
+
+
+                    <div class="card-header">
+
+
+                        <div>
+
+                            <h3>
+                                Warranty Alerts
+                            </h3>
+
+                            <p>
+                                Keep track of your upcoming warranty expirations
+                            </p>
+
+                        </div>
+
+
+                        <a href="#">
+                            View All →
+                        </a>
+
+                    </div>
+
+
+
+                    <div class="warranty-list">
+
+
+                        <div class="warranty-row">
+
+
+                            <div class="warranty-icon">
+                                ♢
+                            </div>
+
+
+                            <div class="warranty-info">
+
+                                <strong>
+                                    Laptop
+                                </strong>
+
+                                <span>
+                                    Warranty expires in 12 days
+                                </span>
+
+                            </div>
+
+
+                            <span class="warranty-status">
+                                Expiring Soon
+                            </span>
+
+                        </div>
+
+
+
+                        <div class="warranty-row">
+
+
+                            <div class="warranty-icon">
+                                ♢
+                            </div>
+
+
+                            <div class="warranty-info">
+
+                                <strong>
+                                    Wireless Headphones
+                                </strong>
+
+                                <span>
+                                    Warranty expires in 28 days
+                                </span>
+
+                            </div>
+
+
+                            <span class="warranty-status">
+                                Active
+                            </span>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </section>
+
+
+
+            <!-- =========================
+                 FOOTER
+            ========================== -->
+
+            <footer class="dashboard-footer">
+
+                <span>
+                    © 2026 SHOPIX
+                </span>
+
+                <span>
+                    AI Powered Smart Receipt & Shopping Assistant
+                </span>
+
+            </footer>
+
+
+        </main>
+
+
+    </div>
+
+
+    <!-- =========================
+         SCRIPT
+    ========================== -->
+
+    <script src="js/dashboard.js"></script>
+
+
+</body>
+
+</html>

@@ -1075,3 +1075,260 @@ button {
     }
 
 }
+
+/* =========================
+   CURRENT DASHBOARD HEADER
+========================= */
+
+.top-header {
+    min-height: 72px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 16px 35px;
+
+    background: white;
+
+    border-bottom: 1px solid #eaecf0;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.header-left h2 {
+    margin-top: 3px;
+
+    color: #101828;
+
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.header-label {
+    display: block;
+
+    color: #667085;
+
+    font-size: 9px;
+    font-weight: 700;
+
+    letter-spacing: 0.7px;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+
+    gap: 22px;
+}
+
+.mobile-menu-btn {
+    display: none;
+
+    width: 35px;
+    height: 35px;
+
+    border: 1px solid #eaecf0;
+    border-radius: 7px;
+
+    background: white;
+
+    color: #344054;
+
+    font-size: 17px;
+}
+
+
+/* =========================
+   CURRENT RECEIPT AMOUNT
+========================= */
+
+.receipt-price {
+    color: #101828;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    margin-left: auto;
+}
+
+
+/* =========================
+   WARRANTY CARD
+========================= */
+
+.warranty-card {
+    margin-bottom: 18px;
+
+    overflow: hidden;
+}
+
+.warranty-list {
+    padding: 5px 20px;
+}
+
+.warranty-row {
+    min-height: 65px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 13px;
+
+    border-bottom: 1px solid #f2f4f7;
+}
+
+.warranty-row:last-child {
+    border-bottom: none;
+}
+
+.warranty-icon {
+    width: 36px;
+    height: 36px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 8px;
+
+    background: #fff4e5;
+
+    color: #c86c09;
+
+    font-size: 15px;
+}
+
+.warranty-info {
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.warranty-info strong {
+    color: #101828;
+
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.warranty-info span {
+    margin-top: 4px;
+
+    color: #98a2b3;
+
+    font-size: 8px;
+}
+
+.warranty-status {
+    padding: 5px 9px;
+
+    border-radius: 20px;
+
+    background: #eaf7ef;
+
+    color: #16834b;
+
+    font-size: 7px;
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+
+/* =========================
+   DASHBOARD FOOTER
+========================= */
+
+.dashboard-footer {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 20px 35px;
+
+    margin-top: 5px;
+
+    border-top: 1px solid #eaecf0;
+
+    color: #98a2b3;
+
+    font-size: 9px;
+}
+
+
+/* =========================
+   CURRENT DASHBOARD LINKS
+========================= */
+
+.ai-link:hover,
+.card-header > a:hover {
+    text-decoration: underline;
+}
+
+
+/* =========================
+   RESPONSIVE FIX
+========================= */
+
+@media (max-width: 650px) {
+
+    .top-header {
+        padding: 14px 18px;
+    }
+
+    .mobile-menu-btn {
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+    }
+
+    .header-left h2 {
+        font-size: 18px;
+    }
+
+    .header-label {
+        font-size: 8px;
+    }
+
+    .header-right {
+        gap: 10px;
+    }
+
+    .top-user div:last-child {
+        display: none;
+    }
+
+    .dashboard-footer {
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 6px;
+
+        padding: 18px;
+    }
+
+    .warranty-row {
+        min-height: 70px;
+    }
+
+    .warranty-status {
+        display: none;
+    }
+
+    .receipt-price {
+        font-size: 11px;
+    }
+
+}

@@ -4,9 +4,8 @@
 // ==========================================
 
 import { auth, db, storage } from "./firebase.js";
-
+import { model } from "./ai.js";
 console.log("Firebase connected successfully!");
-
 
 // ==========================================
 // ELEMENTS
@@ -348,12 +347,12 @@ captureButton.addEventListener(
 
 
 // ==========================================
-// SCAN BUTTON
+// AI RECEIPT SCANNING
 // ==========================================
 
 scanButton.addEventListener(
     "click",
-    function () {
+    async function () {
 
         const file = fileInput.files[0];
 
@@ -366,16 +365,524 @@ scanButton.addEventListener(
             return;
         }
 
-        alert(
-            "Receipt is ready for AI scanning. AI/OCR will be connected in the next step."
-        );
+        // Disable button while AI is working
+        scanButton.disabled = true;
 
-        console.log(
-            "Ready for AI scan:",
-            file.name
-        );
+        const originalText = scanButton.textContent;
+
+        scanButton.textContent =
+            "✨ Scanning Receipt...";
+
+        try {
+
+            console.log(
+                "Starting AI receipt scan:",
+                file.name
+            );
+
+
+            // ==================================
+            // CONVERT IMAGE TO BASE64
+            // ==================================
+
+            const base64Image =
+                await fileToBase64(file);
+
+
+            console.log(
+                "Receipt image converted successfully."
+            );
+
+
+            // ==================================
+            // AI PROMPT
+            // ==================================
+
+            const prompt = `
+You are SHOPIX, an AI receipt scanner.
+
+Analyze the attached receipt image carefully.
+
+Extract the following information:
+
+1. Store Name
+2. Purchase Date
+3. Total Amount
+4. Category
+5. Items purchased
+
+For Category, choose ONLY one of:
+Electronics
+Grocery
+Clothing
+Travel
+Other
+
+Return ONLY valid JSON.
+
+Use this exact format:
+
+{
+  "storeName": "",
+  "purchaseDate": "",
+  "totalAmount": 0,
+  "category": "",
+  "items": [
+    {
+      "name": "",
+      "quantity": 1,
+      "price": 0
+    }
+  ]
+}
+
+Rules:
+- Do not add explanations.
+- Do not use markdown.
+- totalAmount must be a number.
+- quantity must be a number.
+- price must be a number.
+- If a value cannot be identified, use an empty string or 0.
+- Read the receipt carefully and do not invent information.
+`;
+
+
+            // ==================================
+            // SEND IMAGE + PROMPT TO GEMINI
+            // ==================================
+
+            const imagePart = {
+
+                inlineData: {
+
+                    data: base64Image,
+
+                    mimeType: file.type
+
+                }
+
+            };
+
+
+            const result =
+                await model.generateContent([
+                    prompt,
+                    imagePart
+                ]);
+
+
+            const response =
+                result.response;
+
+            const text =
+                response.text();
+
+
+            console.log(
+                "Gemini raw response:",
+                text
+            );
+
+
+            // ==================================
+            // CLEAN AI RESPONSE
+            // ==================================
+
+            const cleanedText =
+                text
+                    .replace(/```json/gi, "")
+                    .replace(/```/g, "")
+                    .trim();
+
+
+            // ==================================
+            // CONVERT RESPONSE TO JSON
+            // ==================================
+
+            const data =
+                JSON.parse(cleanedText);
+
+
+            console.log(
+                "Extracted receipt data:",
+                data
+            );
+
+
+            // ==================================
+            // SHOW EXTRACTED DATA
+            // ==================================
+
+            showExtractedData(data);
+
+
+            alert(
+                "✅ Receipt scanned successfully!"
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "❌ AI receipt scanning failed:",
+                error
+            );
+
+            alert(
+                "Unable to scan the receipt. Please try again."
+            );
+
+
+        } finally {
+
+            // Enable button again
+            scanButton.disabled = false;
+
+            scanButton.textContent =
+                originalText;
+
+        }
+
     }
 );
+
+
+// ==========================================
+// FILE TO BASE64
+// ==========================================
+
+function fileToBase64(file) {
+
+    return new Promise(
+        function (resolve, reject) {
+
+            const reader =
+                new FileReader();
+
+
+            reader.onload =
+                function () {
+
+                    const result =
+                        reader.result;
+
+                    const base64 =
+                        result.split(",")[1];
+
+                    resolve(base64);
+
+                };
+
+
+            reader.onerror =
+                function () {
+
+                    reject(
+                        new Error(
+                            "Unable to read receipt image."
+                        )
+                    );
+
+                };
+
+
+            reader.readAsDataURL(file);
+
+        }
+    );
+
+}
+
+
+// ==========================================
+// SHOW EXTRACTED RECEIPT DATA
+// ==========================================
+
+function showExtractedData(data) {
+
+
+    console.log(
+        "Showing extracted receipt data:",
+        data
+    );
+
+
+    // ==========================================
+    // GET FORM ELEMENTS
+    // ==========================================
+
+    const storeNameInput =
+        document.getElementById("storeName");
+
+
+    const purchaseDateInput =
+        document.getElementById("purchaseDate");
+
+
+    const totalAmountInput =
+        document.getElementById("totalAmount");
+
+
+    const categoryInput =
+        document.getElementById("category");
+
+
+    const itemsList =
+        document.getElementById("itemsList");
+
+
+    // ==========================================
+    // STORE NAME
+    // ==========================================
+
+    if (storeNameInput) {
+
+        storeNameInput.value =
+            data.storeName || "";
+
+    }
+
+
+    // ==========================================
+    // PURCHASE DATE
+    // ==========================================
+
+    if (purchaseDateInput) {
+
+
+        let date =
+            data.purchaseDate || "";
+
+
+        // Convert DD-MM-YYYY
+        // to YYYY-MM-DD
+
+        if (
+            /^\d{2}-\d{2}-\d{4}$/.test(date)
+        ) {
+
+            const parts =
+                date.split("-");
+
+
+            date =
+                parts[2] +
+                "-" +
+                parts[1] +
+                "-" +
+                parts[0];
+
+        }
+
+
+        // Convert DD/MM/YYYY
+        // to YYYY-MM-DD
+
+        if (
+            /^\d{2}\/\d{2}\/\d{4}$/.test(date)
+        ) {
+
+            const parts =
+                date.split("/");
+
+
+            date =
+                parts[2] +
+                "-" +
+                parts[1] +
+                "-" +
+                parts[0];
+
+        }
+
+
+        purchaseDateInput.value =
+            date;
+
+    }
+
+
+    // ==========================================
+    // TOTAL AMOUNT
+    // ==========================================
+
+    if (totalAmountInput) {
+
+        totalAmountInput.value =
+            data.totalAmount || 0;
+
+    }
+
+
+    // ==========================================
+    // CATEGORY
+    // ==========================================
+
+    if (categoryInput) {
+
+
+        const allowedCategories = [
+
+            "Food",
+            "Grocery",
+            "Shopping",
+            "Electronics",
+            "Clothing",
+            "Travel",
+            "Medical",
+            "Other"
+
+        ];
+
+
+        if (
+            allowedCategories.includes(
+                data.category
+            )
+        ) {
+
+            categoryInput.value =
+                data.category;
+
+        } else {
+
+            categoryInput.value =
+                "Other";
+
+        }
+
+    }
+
+
+    // ==========================================
+    // PURCHASED ITEMS
+    // ==========================================
+
+    if (itemsList) {
+
+
+        // Clear old items
+
+        itemsList.innerHTML =
+            "";
+
+
+        if (
+            Array.isArray(data.items) &&
+            data.items.length > 0
+        ) {
+
+
+            data.items.forEach(
+                function (item) {
+
+
+                    const itemRow =
+                        document.createElement("div");
+
+
+                    itemRow.className =
+                        "extracted-item";
+
+
+                    const itemName =
+                        document.createElement("span");
+
+
+                    itemName.className =
+                        "item-name";
+
+
+                    itemName.textContent =
+                        item.name ||
+                        "Unknown item";
+
+
+                    const itemDetails =
+                        document.createElement("span");
+
+
+                    itemDetails.className =
+                        "item-details";
+
+
+                    itemDetails.textContent =
+                        "Qty: " +
+                        (item.quantity || 1) +
+                        " • ₹" +
+                        (item.price || 0);
+
+
+                    itemRow.appendChild(
+                        itemName
+                    );
+
+
+                    itemRow.appendChild(
+                        itemDetails
+                    );
+
+
+                    itemsList.appendChild(
+                        itemRow
+                    );
+
+                }
+            );
+
+
+        } else {
+
+
+            itemsList.textContent =
+                "No items detected.";
+
+        }
+
+    }
+
+
+    // ==========================================
+    // SHOW EXTRACTED DATA SECTION
+    // ==========================================
+
+    const extractedSection =
+        document.getElementById(
+            "extractedDataSection"
+        );
+
+
+    if (extractedSection) {
+
+
+        extractedSection.style.display =
+            "block";
+
+
+        extractedSection.scrollIntoView({
+
+            behavior: "smooth",
+
+            block: "start"
+
+        });
+
+
+    } else {
+
+
+        console.error(
+            "❌ extractedDataSection not found in HTML."
+        );
+
+    }
+
+
+    console.log(
+        "✅ Extracted data displayed successfully."
+    );
+
+}
 
 
 // ==========================================

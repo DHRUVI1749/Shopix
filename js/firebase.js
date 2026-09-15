@@ -1,12 +1,13 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
-import { getStorage } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-storage.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import { getStorage } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-storage.js";
 
 import {
     initializeAppCheck,
     ReCaptchaEnterpriseProvider
-} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app-check.js";
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app-check.js";
+
 
 // ==========================================
 // FIREBASE CONFIGURATION

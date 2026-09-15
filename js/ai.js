@@ -6,7 +6,7 @@ import {
     getAI,
     getGenerativeModel,
     GoogleAIBackend
-} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-ai.js";
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-ai.js";
 
 import { app } from "./firebase.js";
 
@@ -25,15 +25,17 @@ const ai = getAI(app, {
 // ==========================================
 
 const model = getGenerativeModel(ai, {
-    model: "gemini-3.7-flash"
+    model: "gemini-3.5-flash-lite"
 });
 
 
-console.log("Gemini AI module loaded successfully!");
-
-
 // ==========================================
-// EXPORT MODEL
+// EXPORT
 // ==========================================
 
-export { model };
+export {
+    model
+};
+
+
+console.log("Firebase AI Logic connected successfully!");
