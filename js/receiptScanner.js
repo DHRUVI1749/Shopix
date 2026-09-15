@@ -5,11 +5,27 @@
 
 import { auth, db, storage } from "./firebase.js";
 import { model } from "./ai.js";
+
+import {
+    collection,
+    doc,
+    setDoc,
+    serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+import {
+    ref,
+    uploadBytes,
+    getDownloadURL
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-storage.js";
+
 console.log("Firebase connected successfully!");
 
 // ==========================================
 // ELEMENTS
 // ==========================================
+
+let currentExtractedData = null;
 
 const fileInput = document.getElementById("receiptFileInput");
 const previewImage = document.getElementById("receiptPreview");
@@ -102,6 +118,86 @@ function resetPreview() {
 
     scanButton.disabled = true;
 }
+
+// ==========================================
+// SAVE RECEIPT
+// ==========================================
+
+const saveReceiptButton = document.getElementById("saveReceiptBtn");
+
+saveReceiptButton.addEventListener("click", async function () {
+
+    if (!currentExtractedData) {
+        alert("Please scan the receipt first.");
+        return;
+    }
+
+    const user = auth.currentUser;
+
+    if (!user) {
+        alert("Please login first.");
+        return;
+    }
+
+    const file = fileInput.files[0];
+
+    if (!file) {
+        alert("Receipt image not found.");
+        return;
+    }
+
+    saveReceiptButton.disabled = true;
+    saveReceiptButton.textContent = "Saving...";
+
+    try {
+
+        const receiptId = doc(
+            collection(db, "users", user.uid, "receipts")
+        ).id;
+
+        // Upload receipt image
+        const storageRef = ref(
+            storage,
+            `receipts/${user.uid}/${receiptId}_${file.name}`
+        );
+
+        await uploadBytes(storageRef, file);
+
+        const imageUrl = await getDownloadURL(storageRef);
+
+        // Save receipt data
+        await setDoc(
+            doc(db, "users", user.uid, "receipts", receiptId),
+            {
+                storeName: document.getElementById("storeName").value,
+                purchaseDate: document.getElementById("purchaseDate").value,
+                totalAmount: Number(
+                    document.getElementById("totalAmount").value
+                ),
+                category: document.getElementById("category").value,
+                items: currentExtractedData.items || [],
+                imageUrl: imageUrl,
+                createdAt: serverTimestamp()
+            }
+        );
+
+        alert("✅ Receipt saved successfully!");
+
+        console.log("Receipt saved:", receiptId);
+
+    } catch (error) {
+
+        console.error("❌ Error saving receipt:", error);
+
+        alert("Unable to save receipt. Please try again.");
+
+    } finally {
+
+        saveReceiptButton.disabled = false;
+        saveReceiptButton.textContent = "Save Receipt";
+
+    }
+});
 
 
 // ==========================================
@@ -502,6 +598,7 @@ Rules:
             const data =
                 JSON.parse(cleanedText);
 
+            currentExtractedData = data;
 
             console.log(
                 "Extracted receipt data:",
