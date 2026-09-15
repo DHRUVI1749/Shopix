@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Receipt History | SHOPIX</title>
+
+    <link rel="stylesheet" href="css/receiptHistory.css">
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="page-header">
+
+        <div class="header-left">
+            <a href="dashboard.html" class="back-btn">←</a>
+
+            <div>
+                <h1>Receipt History</h1>
+                <p>View your saved receipts</p>
+            </div>
+        </div>
+
+    </header>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="history-container">
+
+        <!-- PAGE TITLE -->
+        <section class="history-intro">
+            <h2>Your Receipts</h2>
+            <p>All your saved receipts will appear here.</p>
+        </section>
+
+
+        <!-- RECEIPT LIST -->
+        <section id="receiptList" class="receipt-list">
+
+            <!-- Loading -->
+            <div id="loadingMessage" class="message-box">
+                Loading receipts...
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyMessage" class="message-box" style="display: none;">
+                <div class="empty-icon">🧾</div>
+
+                <h3>No receipts yet</h3>
+
+                <p>
+                    Upload and save your first receipt
+                    to see it here.
+                </p>
+
+                <a href="receiptScanner.html" class="scan-btn">
+                    Scan Receipt
+                </a>
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- JAVASCRIPT -->
+    <script type="module" src="js/receiptHistory.js"></script>
+
+</body>
+
+</html>

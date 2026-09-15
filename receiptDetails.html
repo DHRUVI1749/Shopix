@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Receipt Details | SHOPIX</title>
+
+    <link rel="stylesheet" href="css/receiptDetails.css">
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="page-header">
+
+        <div class="header-left">
+
+            <a href="receiptHistory.html" class="back-btn">
+                ←
+            </a>
+
+            <div>
+                <h1>Receipt Details</h1>
+                <p>View your receipt information</p>
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- MAIN -->
+    <main class="details-container">
+
+        <div id="loadingMessage" class="message-box">
+            Loading receipt...
+        </div>
+
+
+        <!-- RECEIPT DETAILS -->
+        <section id="receiptDetails" class="details-card"
+                 style="display: none;">
+
+            <div class="receipt-image-container">
+
+                <img
+                    id="receiptImage"
+                    src=""
+                    alt="Receipt"
+                >
+
+            </div>
+
+
+            <div class="receipt-information">
+
+                <h2 id="storeName">
+                    —
+                </h2>
+
+
+                <div class="detail-row">
+
+                    <span>Purchase Date</span>
+
+                    <strong id="purchaseDate">
+                        —
+                    </strong>
+
+                </div>
+
+
+                <div class="detail-row">
+
+                    <span>Total Amount</span>
+
+                    <strong id="totalAmount">
+                        ₹0
+                    </strong>
+
+                </div>
+
+
+                <div class="detail-row">
+
+                    <span>Category</span>
+
+                    <strong id="category">
+                        —
+                    </strong>
+
+                </div>
+
+
+                <!-- ITEMS -->
+
+                <div class="items-section">
+
+                    <h3>Purchased Items</h3>
+
+                    <div id="itemsList">
+                        No items found.
+                    </div>
+
+                </div>
+
+                <div class="items-section">
+
+                    <h3>Purchased Items</h3>
+
+                    <div id="itemsList">
+                        No items found.
+                    </div>
+
+                </div>
+
+
+                <div class="delete-section">
+
+                    <button id="deleteReceiptBtn" class="delete-btn">
+                        Delete Receipt
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <div id="errorMessage"
+             class="message-box"
+             style="display: none;">
+
+            Unable to load receipt.
+
+        </div>
+
+    </main>
+
+
+    <script
+        type="module"
+        src="js/receiptDetails.js">
+    </script>
+
+</body>
+
+</html>

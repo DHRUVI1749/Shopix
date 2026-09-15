@@ -1,0 +1,249 @@
+/* ==========================================
+   SHOPIX - RECEIPT HISTORY
+   ========================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f8fbff;
+    color: #1f2937;
+    min-height: 100vh;
+}
+
+
+/* ==========================================
+   HEADER
+   ========================================== */
+
+.page-header {
+    background: #1565c0;
+    color: white;
+    padding: 20px 6%;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.back-btn {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: white;
+    text-decoration: none;
+    font-size: 25px;
+
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 10px;
+}
+
+.back-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.page-header h1 {
+    font-size: 25px;
+    margin-bottom: 4px;
+}
+
+.page-header p {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+
+/* ==========================================
+   MAIN CONTAINER
+   ========================================== */
+
+.history-container {
+    width: 88%;
+    max-width: 1100px;
+    margin: 35px auto;
+}
+
+
+/* ==========================================
+   INTRO
+   ========================================== */
+
+.history-intro {
+    margin-bottom: 25px;
+}
+
+.history-intro h2 {
+    font-size: 24px;
+    margin-bottom: 7px;
+}
+
+.history-intro p {
+    color: #6b7280;
+    font-size: 15px;
+}
+
+
+/* ==========================================
+   RECEIPT LIST
+   ========================================== */
+
+.receipt-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+
+/* ==========================================
+   MESSAGE BOX
+   ========================================== */
+
+.message-box {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 45px 20px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+}
+
+.message-box p {
+    color: #6b7280;
+    margin-top: 8px;
+    font-size: 14px;
+}
+
+.empty-icon {
+    font-size: 45px;
+    margin-bottom: 12px;
+}
+
+.message-box h3 {
+    font-size: 20px;
+}
+
+
+/* ==========================================
+   SCAN BUTTON
+   ========================================== */
+
+.scan-btn {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 11px 20px;
+
+    background: #1565c0;
+    color: white;
+
+    text-decoration: none;
+    border-radius: 8px;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.scan-btn:hover {
+    background: #0d47a1;
+}
+
+
+/* ==========================================
+   RECEIPT CARD
+   ========================================== */
+
+.receipt-card {
+    background: white;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+
+    padding: 18px 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+}
+
+.receipt-info {
+    flex: 1;
+}
+
+.receipt-store {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.receipt-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.receipt-amount {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1565c0;
+}
+
+.view-btn {
+    padding: 9px 15px;
+
+    background: #1565c0;
+    color: white;
+
+    border: none;
+    border-radius: 7px;
+
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.view-btn:hover {
+    background: #0d47a1;
+}
+
+
+/* ==========================================
+   MOBILE
+   ========================================== */
+
+@media (max-width: 600px) {
+
+    .page-header {
+        padding: 17px 5%;
+    }
+
+    .history-container {
+        width: 92%;
+        margin: 25px auto;
+    }
+
+    .receipt-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .view-btn {
+        width: 100%;
+    }
+
+    .receipt-amount {
+        margin-top: 5px;
+    }
+}

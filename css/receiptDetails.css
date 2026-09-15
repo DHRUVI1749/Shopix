@@ -1,0 +1,292 @@
+/* ==========================================
+   SHOPIX - RECEIPT DETAILS
+   ========================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f8fbff;
+    color: #222;
+}
+
+
+/* =========================
+   HEADER
+   ========================= */
+
+.page-header {
+    background: #1565c0;
+    color: white;
+    padding: 18px 30px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.back-btn {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: white;
+    text-decoration: none;
+    font-size: 26px;
+
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 10px;
+}
+
+.back-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.page-header h1 {
+    font-size: 24px;
+    margin-bottom: 4px;
+}
+
+.page-header p {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+
+/* =========================
+   MAIN CONTAINER
+   ========================= */
+
+.details-container {
+    width: 90%;
+    max-width: 850px;
+    margin: 35px auto;
+}
+
+
+/* =========================
+   MESSAGE BOX
+   ========================= */
+
+.message-box {
+    background: white;
+    padding: 25px;
+    text-align: center;
+
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+
+    color: #555;
+}
+
+
+/* =========================
+   DETAILS CARD
+   ========================= */
+
+.details-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.09);
+}
+
+
+/* =========================
+   RECEIPT IMAGE
+   ========================= */
+
+.receipt-image-container {
+    width: 100%;
+    padding: 25px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: #f1f6fb;
+}
+
+.receipt-image-container img {
+    max-width: 100%;
+    max-height: 500px;
+
+    object-fit: contain;
+
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+}
+
+
+/* =========================
+   RECEIPT INFORMATION
+   ========================= */
+
+.receipt-information {
+    padding: 30px;
+}
+
+.receipt-information h2 {
+    font-size: 25px;
+    color: #1565c0;
+    margin-bottom: 25px;
+}
+
+
+/* =========================
+   DETAIL ROW
+   ========================= */
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 15px 0;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.detail-row span {
+    color: #666;
+    font-size: 15px;
+}
+
+.detail-row strong {
+    color: #222;
+    font-size: 16px;
+}
+
+#totalAmount {
+    color: #1565c0;
+    font-size: 19px;
+}
+
+
+/* =========================
+   ITEMS SECTION
+   ========================= */
+
+.items-section {
+    margin-top: 30px;
+}
+
+.items-section h3 {
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+#itemsList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+
+/* =========================
+   ITEM ROW
+   ========================= */
+
+.item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 13px 15px;
+
+    background: #f8fbff;
+    border: 1px solid #e2ebf5;
+    border-radius: 9px;
+}
+
+.item-name {
+    font-size: 15px;
+    color: #333;
+}
+
+.item-price {
+    font-weight: bold;
+    color: #1565c0;
+}
+
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+
+@media (max-width: 600px) {
+
+    .page-header {
+        padding: 15px 18px;
+    }
+
+    .page-header h1 {
+        font-size: 20px;
+    }
+
+    .details-container {
+        width: 94%;
+        margin: 20px auto;
+    }
+
+    .receipt-information {
+        padding: 20px;
+    }
+
+    .receipt-information h2 {
+        font-size: 21px;
+    }
+
+    .detail-row {
+        gap: 15px;
+    }
+
+    .receipt-image-container {
+        padding: 15px;
+    }
+
+    .receipt-image-container img {
+        max-height: 400px;
+    }
+
+    .item-row {
+        padding: 12px;
+    }
+}
+
+.delete-section {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.delete-btn {
+    width: 100%;
+    padding: 13px 20px;
+
+    background: #ffffff;
+    color: #d32f2f;
+
+    border: 1px solid #d32f2f;
+    border-radius: 9px;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.delete-btn:hover {
+    background: #d32f2f;
+    color: white;
+}
