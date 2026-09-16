@@ -639,3 +639,125 @@
     }
 
 }
+/* ===== WARRANTY FORM LAYOUT FIX ===== */
+
+.warranty-page .main-content {
+    max-width: 1200px;
+}
+
+.warranty-welcome {
+    margin-bottom: 24px;
+}
+
+.receipt-product-card,
+.add-warranty-card {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.receipt-product-card {
+    margin-bottom: 24px;
+}
+
+.add-warranty-card {
+    margin-bottom: 24px;
+}
+
+.warranty-form {
+    padding: 4px 0 0;
+}
+
+.warranty-form .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    width: 100%;
+}
+
+.warranty-form .form-group {
+    width: 100%;
+    min-width: 0;
+    margin-bottom: 24px;
+}
+
+.warranty-form .form-group input {
+    width: 100%;
+    min-width: 0;
+    height: 46px;
+    box-sizing: border-box;
+}
+
+.duration-input {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 72px;
+    gap: 10px;
+    width: 100%;
+}
+
+.duration-input input {
+    width: 100%;
+    min-width: 0;
+}
+
+.duration-input span {
+    width: 72px;
+    height: 46px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #d0d5dd;
+    border-radius: 8px;
+    background: #f8fafc;
+    color: #667085;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.warranty-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    margin-top: 4px;
+    padding-top: 4px;
+}
+
+.btn-primary,
+.btn-secondary {
+    min-height: 44px;
+    padding: 10px 22px;
+}
+
+/* ===== TABLE SPACING ===== */
+
+.warranty-table th {
+    padding: 14px 18px;
+}
+
+.warranty-table td {
+    padding: 16px 18px;
+}
+
+/* ===== MOBILE ===== */
+
+@media (max-width: 800px) {
+    .warranty-form .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+}
+
+@media (max-width: 600px) {
+    .warranty-form-actions {
+        justify-content: stretch;
+    }
+
+    .warranty-form-actions button {
+        flex: 1;
+    }
+
+    .duration-input {
+        grid-template-columns: minmax(0, 1fr) 72px;
+    }
+}
