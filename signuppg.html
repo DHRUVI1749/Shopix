@@ -483,14 +483,17 @@
         import {
             createUserWithEmailAndPassword,
             updateProfile
-        } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+        } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
+
+        // ==========================================
+        // REALTIME DATABASE
+        // ==========================================
 
         import {
-            doc,
-            setDoc,
-            serverTimestamp
-        } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+            ref,
+            set
+        } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
 
 
@@ -743,14 +746,13 @@
 
 
                     // ==================================
-                    // SAVE USER DATA IN FIRESTORE
+                    // SAVE USER DATA IN REALTIME DATABASE
                     // ==================================
 
-                    await setDoc(
-                        doc(
+                    await set(
+                        ref(
                             db,
-                            "users",
-                            user.uid
+                            "users/" + user.uid
                         ),
                         {
 
@@ -760,8 +762,7 @@
 
                             email: email,
 
-                            createdAt:
-                                serverTimestamp()
+                            createdAt: Date.now()
 
                         }
                     );
