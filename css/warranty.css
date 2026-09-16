@@ -273,3 +273,137 @@
     }
 
 }
+
+/* ==========================================
+   ADD WARRANTY FORM
+   ========================================== */
+
+.add-warranty-card {
+    margin-top: 25px;
+}
+
+.add-warranty-card .card-header p {
+    margin-top: 5px;
+    color: #667085;
+    font-size: 14px;
+}
+
+.warranty-form {
+    margin-top: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #344054;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #d0d5dd;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    color: #101828;
+    background: #ffffff;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.form-group input:focus {
+    border-color: #2853b8;
+    box-shadow: 0 0 0 3px rgba(40, 83, 184, 0.1);
+}
+
+.form-group input[readonly] {
+    background: #f6f8fc;
+    cursor: not-allowed;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.duration-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.duration-input input {
+    flex: 1;
+}
+
+.duration-input span {
+    font-size: 14px;
+    color: #667085;
+    white-space: nowrap;
+}
+
+.warranty-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.btn-primary,
+.btn-secondary {
+    padding: 11px 20px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.btn-primary {
+    border: none;
+    background: #2853b8;
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    background: #102a72;
+}
+
+.btn-secondary {
+    border: 1px solid #d0d5dd;
+    background: #ffffff;
+    color: #344054;
+}
+
+.btn-secondary:hover {
+    background: #f6f8fc;
+}
+
+
+/* Mobile Responsive */
+@media (max-width: 650px) {
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .warranty-form-actions {
+        flex-direction: column-reverse;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        width: 100%;
+    }
+
+}
