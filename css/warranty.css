@@ -457,3 +457,185 @@
 .selected-receipt-info strong {
     color: #344054;
 }
+/* ==========================================
+   WARRANTY PAGE SPACING & FORM FIX
+   ========================================== */
+
+.receipt-product-card,
+.add-warranty-card {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.receipt-product-card {
+    margin-top: 28px;
+}
+
+.add-warranty-card {
+    margin-top: 28px;
+}
+
+
+/* Better spacing inside forms */
+.warranty-form {
+    margin-top: 24px;
+}
+
+
+/* Form rows */
+.form-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 24px;
+}
+
+
+/* Form groups */
+.form-group {
+    margin-bottom: 24px;
+}
+
+
+/* Inputs */
+.form-group input,
+.receipt-product-card select {
+    min-height: 46px;
+    padding: 12px 15px;
+    box-sizing: border-box;
+}
+
+
+/* Warranty duration */
+.duration-input {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+}
+
+.duration-input input {
+    width: 100%;
+    min-width: 0;
+}
+
+.duration-input span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 62px;
+    height: 46px;
+
+    padding: 0 10px;
+
+    border: 1px solid #d0d5dd;
+    border-radius: 8px;
+
+    background: #f8fafc;
+
+    color: #667085;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+
+/* Receipt product selection */
+.receipt-product-card .form-group {
+    margin-bottom: 0;
+}
+
+.receipt-product-card select {
+    margin-bottom: 22px;
+}
+
+
+/* Selected receipt information */
+.selected-receipt-info {
+    margin: 0 24px 24px;
+}
+
+
+/* Buttons */
+.warranty-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    gap: 14px;
+
+    margin-top: 8px;
+    padding-top: 8px;
+}
+
+
+/* Better button size */
+.btn-primary,
+.btn-secondary {
+    min-height: 44px;
+    padding: 11px 22px;
+}
+
+
+/* ==========================================
+   BETTER TABLE SPACING
+   ========================================== */
+
+.warranty-table th {
+    padding: 14px 22px;
+}
+
+.warranty-table td {
+    padding: 17px 22px;
+}
+
+
+/* ==========================================
+   MOBILE
+   ========================================== */
+
+@media (max-width: 800px) {
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .duration-input {
+        grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+}
+
+
+@media (max-width: 650px) {
+
+    .warranty-form {
+        margin-top: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .duration-input {
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 8px;
+    }
+
+    .duration-input span {
+        min-width: 58px;
+        padding: 0 8px;
+    }
+
+    .warranty-form-actions {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        width: 100%;
+    }
+
+}
