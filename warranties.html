@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SHOPIX | Warranties</title>
+
+    <meta name="description"
+        content="SHOPIX Warranty Management">
+
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Existing Dashboard CSS -->
+    <link rel="stylesheet" href="css/dashboard.css">
+
+    <!-- Warranty Page CSS -->
+    <link rel="stylesheet" href="css/warranty.css">
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         DASHBOARD LAYOUT
+    ========================== -->
+
+    <div class="dashboard-layout">
+
+
+        <!-- =========================
+             SIDEBAR
+        ========================== -->
+
+        <aside class="sidebar">
+
+
+            <!-- LOGO -->
+
+            <a href="index.html" class="sidebar-logo">
+
+                <span class="logo-icon">
+                    S
+                </span>
+
+                <span>
+                    SHOPIX
+                </span>
+
+            </a>
+
+
+            <!-- NAVIGATION -->
+
+            <nav class="sidebar-nav">
+
+
+                <p class="nav-title">
+                    MAIN MENU
+                </p>
+
+
+                <!-- Dashboard -->
+
+                <a href="dashboard.html" class="nav-item">
+
+                    <span class="nav-icon">
+                        ▦
+                    </span>
+
+                    Dashboard
+
+                </a>
+
+
+                <!-- Receipts -->
+
+                <a href="#" class="nav-item">
+
+                    <span class="nav-icon">
+                        ▤
+                    </span>
+
+                    Receipts
+
+                </a>
+
+
+                <!-- Upload Receipt -->
+
+                <a href="upload.html" class="nav-item">
+
+                    <span class="nav-icon">
+                        ↑
+                    </span>
+
+                    Upload Receipt
+
+                </a>
+
+
+                <!-- Expenses -->
+
+                <a href="#" class="nav-item">
+
+                    <span class="nav-icon">
+                        ◫
+                    </span>
+
+                    Expenses
+
+                </a>
+
+
+                <!-- Warranties -->
+
+                <a href="warranties.html" class="nav-item active">
+
+                    <span class="nav-icon">
+                        ♢
+                    </span>
+
+                    Warranties
+
+                </a>
+
+
+                <!-- AI Assistant -->
+
+                <a href="#" class="nav-item">
+
+                    <span class="nav-icon">
+                        ✦
+                    </span>
+
+                    AI Assistant
+
+                </a>
+
+
+                <p class="nav-title settings-title">
+                    ACCOUNT
+                </p>
+
+
+                <!-- Settings -->
+
+                <a href="#" class="nav-item">
+
+                    <span class="nav-icon">
+                        ⚙
+                    </span>
+
+                    Settings
+
+                </a>
+
+
+            </nav>
+
+
+            <!-- =========================
+                 SIDEBAR BOTTOM
+            ========================== -->
+
+            <div class="sidebar-bottom">
+
+
+                <div class="user-mini">
+
+                    <div class="user-avatar">
+                        U
+                    </div>
+
+                    <div class="user-info">
+
+                        <strong>
+                            User
+                        </strong>
+
+                        <span>
+                            user@email.com
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Logout -->
+
+                <a href="index.html" class="logout-btn">
+
+                    <span>
+                        ↪
+                    </span>
+
+                    Logout
+
+                </a>
+
+
+            </div>
+
+
+        </aside>
+
+
+
+        <!-- =========================
+             MAIN CONTENT
+        ========================== -->
+
+        <main class="main-content">
+
+
+            <!-- =========================
+                 TOP BAR
+            ========================== -->
+
+            <header class="topbar">
+
+
+                <div class="mobile-logo">
+
+                    <span class="logo-icon">
+                        S
+                    </span>
+
+                    SHOPIX
+
+                </div>
+
+
+                <div class="topbar-right">
+
+                    <button
+                        class="notification-btn"
+                        type="button">
+
+                        ♧
+
+                        <span></span>
+
+                    </button>
+
+
+                    <div class="top-user">
+
+                        <div class="top-avatar">
+                            U
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                User
+                            </strong>
+
+                            <small>
+                                Account
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+            </header>
+
+
+
+            <!-- =========================
+                 WARRANTY PAGE
+            ========================== -->
+
+            <section class="dashboard-content warranty-content">
+
+
+                <!-- PAGE HEADER -->
+
+                <div class="welcome-section warranty-welcome">
+
+
+                    <div>
+
+                        <p class="welcome-small">
+                            Product Protection 🛡️
+                        </p>
+
+                        <h1>
+                            Warranty Management
+                        </h1>
+
+                        <p class="welcome-description">
+
+                            Track your product warranties and never
+                            miss an important expiry date.
+
+                        </p>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- =========================
+                     WARRANTY STAT CARDS
+                ========================== -->
+
+                <div class="stats-grid warranty-stats">
+
+
+                    <!-- ACTIVE -->
+
+                    <div class="stat-card">
+
+                        <div class="stat-top">
+
+                            <div class="stat-icon green">
+                                ✓
+                            </div>
+
+                            <span class="stat-label">
+                                ACTIVE WARRANTIES
+                            </span>
+
+                        </div>
+
+                        <h2>
+                            5
+                        </h2>
+
+                        <p class="stat-change positive">
+                            Currently protected
+                        </p>
+
+                    </div>
+
+
+
+                    <!-- EXPIRING SOON -->
+
+                    <div class="stat-card">
+
+                        <div class="stat-top">
+
+                            <div class="stat-icon orange">
+                                !
+                            </div>
+
+                            <span class="stat-label">
+                                EXPIRING SOON
+                            </span>
+
+                        </div>
+
+                        <h2>
+                            2
+                        </h2>
+
+                        <p class="stat-change warning">
+                            Requires attention
+                        </p>
+
+                    </div>
+
+
+
+                    <!-- EXPIRED -->
+
+                    <div class="stat-card">
+
+                        <div class="stat-top">
+
+                            <div class="stat-icon purple">
+                                ◷
+                            </div>
+
+                            <span class="stat-label">
+                                EXPIRED
+                            </span>
+
+                        </div>
+
+                        <h2>
+                            1
+                        </h2>
+
+                        <p class="stat-change">
+                            Warranty ended
+                        </p>
+
+                    </div>
+
+
+
+                    <!-- TOTAL -->
+
+                    <div class="stat-card">
+
+                        <div class="stat-top">
+
+                            <div class="stat-icon blue">
+                                ♢
+                            </div>
+
+                            <span class="stat-label">
+                                TOTAL WARRANTIES
+                            </span>
+
+                        </div>
+
+                        <h2>
+                            8
+                        </h2>
+
+                        <p class="stat-change">
+                            All products
+                        </p>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- =========================
+                     UPCOMING EXPIRIES
+                ========================== -->
+
+                <div class="dashboard-card warranty-table-card">
+
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <h3>
+                                Upcoming Warranty Expiries
+                            </h3>
+
+                            <p>
+                                Products whose warranties need attention
+                            </p>
+
+                        </div>
+
+
+                        <span class="warranty-count">
+                            2 products
+                        </span>
+
+                    </div>
+
+
+
+                    <div class="warranty-table-wrapper">
+
+                        <table class="warranty-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        PRODUCT
+                                    </th>
+
+                                    <th>
+                                        STORE
+                                    </th>
+
+                                    <th>
+                                        PURCHASE DATE
+                                    </th>
+
+                                    <th>
+                                        EXPIRY DATE
+                                    </th>
+
+                                    <th>
+                                        STATUS
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+
+                                <!-- PRODUCT 1 -->
+
+                                <tr>
+
+                                    <td>
+
+                                        <div class="product-cell">
+
+                                            <div class="product-icon">
+                                                ▣
+                                            </div>
+
+                                            <div>
+
+                                                <strong>
+                                                    Wireless Headphones
+                                                </strong>
+
+                                                <span>
+                                                    Electronics
+                                                </span>
+
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <td>
+                                        Electronics Store
+                                    </td>
+
+
+                                    <td>
+                                        15 Feb 2026
+                                    </td>
+
+
+                                    <td>
+                                        15 Feb 2027
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="warranty-status active">
+                                            Active
+                                        </span>
+
+                                    </td>
+
+                                </tr>
+
+
+
+                                <!-- PRODUCT 2 -->
+
+                                <tr>
+
+                                    <td>
+
+                                        <div class="product-cell">
+
+                                            <div class="product-icon">
+                                                ▤
+                                            </div>
+
+                                            <div>
+
+                                                <strong>
+                                                    Smart Watch
+                                                </strong>
+
+                                                <span>
+                                                    Electronics
+                                                </span>
+
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <td>
+                                        Tech Store
+                                    </td>
+
+
+                                    <td>
+                                        10 Aug 2025
+                                    </td>
+
+
+                                    <td>
+                                        10 Sep 2026
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="warranty-status expiring">
+                                            Expiring Soon
+                                        </span>
+
+                                    </td>
+
+                                </tr>
+
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- =========================
+                     WARRANTY REMINDER
+                ========================== -->
+
+                <div class="warranty-alert">
+
+
+                    <div class="alert-icon">
+                        !
+                    </div>
+
+
+                    <div>
+
+                        <strong>
+                            Warranty Reminder
+                        </strong>
+
+                        <p>
+                            2 products have warranties expiring soon.
+                            Review your warranty details before the
+                            expiry dates.
+                        </p>
+
+                    </div>
+
+
+                    <span class="reminder-label">
+                        Check Soon →
+                    </span>
+
+
+                </div>
+
+
+
+                <!-- =========================
+                     WARRANTY HISTORY
+                ========================== -->
+
+                <div class="dashboard-card warranty-table-card">
+
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <h3>
+                                Warranty History
+                            </h3>
+
+                            <p>
+                                Your previously recorded product warranties
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="warranty-table-wrapper">
+
+                        <table class="warranty-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        PRODUCT
+                                    </th>
+
+                                    <th>
+                                        STORE
+                                    </th>
+
+                                    <th>
+                                        PURCHASE DATE
+                                    </th>
+
+                                    <th>
+                                        WARRANTY
+                                    </th>
+
+                                    <th>
+                                        STATUS
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+
+                                <!-- HISTORY 1 -->
+
+                                <tr>
+
+                                    <td>
+
+                                        <div class="product-cell">
+
+                                            <div class="product-icon">
+                                                ◈
+                                            </div>
+
+                                            <div>
+
+                                                <strong>
+                                                    Bluetooth Speaker
+                                                </strong>
+
+                                                <span>
+                                                    Electronics
+                                                </span>
+
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <td>
+                                        Audio Store
+                                    </td>
+
+
+                                    <td>
+                                        20 Mar 2025
+                                    </td>
+
+
+                                    <td>
+                                        12 Months
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="warranty-status expired">
+                                            Expired
+                                        </span>
+
+                                    </td>
+
+                                </tr>
+
+
+
+                                <!-- HISTORY 2 -->
+
+                                <tr>
+
+                                    <td>
+
+                                        <div class="product-cell">
+
+                                            <div class="product-icon">
+                                                ▣
+                                            </div>
+
+                                            <div>
+
+                                                <strong>
+                                                    Laptop
+                                                </strong>
+
+                                                <span>
+                                                    Electronics
+                                                </span>
+
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <td>
+                                        Computer Store
+                                    </td>
+
+
+                                    <td>
+                                        10 Jan 2026
+                                    </td>
+
+
+                                    <td>
+                                        12 Months
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="warranty-status active">
+                                            Active
+                                        </span>
+
+                                    </td>
+
+                                </tr>
+
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                </div>
+
+
+            </section>
+
+
+        </main>
+
+
+    </div>
+
+
+</body>
+
+</html>
