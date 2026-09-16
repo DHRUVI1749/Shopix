@@ -309,28 +309,20 @@
 
 
                             <div class="form-group">
+    <label for="warrantyDuration">Warranty Duration</label>
 
-                                <label for="warrantyDuration">
-                                    Warranty Duration
-                                </label>
-
-                                <div class="duration-input">
-
-                                    <input
-                                        type="number"
-                                        id="warrantyDuration"
-                                        min="1"
-                                        placeholder="e.g. 12"
-                                        required
-                                    >
-
-                                    <span>
-                                        Months
-                                    </span>
-
-                                </div>
-
-                            </div>
+    <div class="duration-input">
+        <select id="warrantyDuration" name="warrantyDuration">
+            <option value="">Select duration</option>
+            <option value="1">1 Month</option>
+            <option value="3">3 Months</option>
+            <option value="6">6 Months</option>
+            <option value="12">12 Months</option>
+            <option value="24">24 Months</option>
+            <option value="36">36 Months</option>
+        </select>
+    </div>
+</div>
 
                         </div>
 

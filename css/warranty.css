@@ -1,302 +1,154 @@
-/* =========================
+/* =========================================================
    WARRANTY PAGE
-========================= */
+========================================================= */
 
 .warranty-content {
     padding-bottom: 40px;
 }
 
 
-/* =========================
+/* =========================================================
    PAGE HEADER
-========================= */
+========================================================= */
 
 .warranty-welcome {
     margin-bottom: 28px;
 }
 
 
-/* =========================
+/* =========================================================
    WARRANTY STATISTICS
-========================= */
+========================================================= */
 
 .warranty-stats {
-    margin-bottom: 18px;
+    margin-bottom: 24px;
 }
 
 
-/* =========================
-   WARRANTY TABLE CARD
-========================= */
+/* =========================================================
+   RECEIPT PRODUCT SELECTION
+========================================================= */
 
-.warranty-table-card {
-    margin-bottom: 18px;
-    overflow: hidden;
-}
-
-
-/* NUMBER OF PRODUCTS */
-
-.warranty-count {
-    padding: 6px 9px;
-
-    border-radius: 20px;
-
-    background: #f1f4fa;
-
-    color: #667085;
-
-    font-size: 8px;
-    font-weight: 600;
-}
-
-
-/* =========================
-   TABLE
-========================= */
-
-.warranty-table-wrapper {
+.receipt-product-card {
     width: 100%;
-    overflow-x: auto;
+    margin-bottom: 24px;
+    box-sizing: border-box;
 }
 
-
-.warranty-table {
-    width: 100%;
-
-    border-collapse: collapse;
-
-    min-width: 750px;
+.receipt-product-card .card-header {
+    padding: 20px 24px 16px;
+    box-sizing: border-box;
 }
 
-
-.warranty-table th {
-    padding: 12px 20px;
-
-    background: #fafbfc;
-
-    border-bottom: 1px solid #eaecf0;
-
-    color: #98a2b3;
-
-    font-size: 8px;
-    font-weight: 700;
-
-    text-align: left;
-
-    letter-spacing: 0.5px;
+.receipt-product-card .card-header h2 {
+    margin: 0 0 8px 0;
+    line-height: 1.3;
 }
 
-
-.warranty-table td {
-    padding: 15px 20px;
-
-    border-bottom: 1px solid #f2f4f7;
-
+.receipt-product-card .card-header p {
+    margin: 0;
     color: #667085;
-
-    font-size: 9px;
-
-    white-space: nowrap;
-}
-
-
-.warranty-table tbody tr:last-child td {
-    border-bottom: none;
-}
-
-
-.warranty-table tbody tr:hover {
-    background: #fafcff;
-}
-
-
-/* =========================
-   PRODUCT CELL
-========================= */
-
-.product-cell {
-    display: flex;
-
-    align-items: center;
-
-    gap: 11px;
-}
-
-
-.product-icon {
-    width: 36px;
-    height: 36px;
-
-    flex-shrink: 0;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 8px;
-
-    background: #f1f4fa;
-
-    color: #2853b8;
-
     font-size: 14px;
+    line-height: 1.4;
 }
 
+.receipt-product-card > .form-group {
+    margin: 0;
+    padding: 0 24px 24px;
+    box-sizing: border-box;
+}
 
-.product-cell strong {
-    display: block;
-
+.receipt-product-card select {
+    width: 100%;
+    height: 46px;
+    padding: 0 14px;
+    border: 1px solid #d0d5dd;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
     color: #101828;
+    background: #ffffff;
+    box-sizing: border-box;
+    outline: none;
+    cursor: pointer;
+}
 
-    font-size: 10px;
+.receipt-product-card select:focus {
+    border-color: #2853b8;
+    box-shadow: 0 0 0 3px rgba(40, 83, 184, 0.1);
+}
+
+.selected-receipt-info {
+    display: none;
+    margin: 0 24px 24px;
+    padding: 14px 16px;
+    border-radius: 8px;
+    background: #f6f8fc;
+    border: 1px solid #eaecf0;
+    box-sizing: border-box;
+}
+
+.selected-receipt-info p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #475467;
+}
+
+.selected-receipt-info strong {
+    color: #344054;
 }
 
 
-.product-cell span {
-    display: block;
-
-    margin-top: 4px;
-
-    color: #98a2b3;
-
-    font-size: 8px;
-}
-
-
-/* =========================
-   WARRANTY STATUS
-========================= */
-
-.warranty-status {
-    display: inline-flex;
-
-    align-items: center;
-
-    padding: 5px 9px;
-
-    border-radius: 20px;
-
-    font-size: 7px;
-    font-weight: 600;
-}
-
-
-.warranty-status.active {
-    background: #eaf7ef;
-
-    color: #16834b;
-}
-
-
-.warranty-status.expiring {
-    background: #fff1df;
-
-    color: #c86c09;
-}
-
-
-.warranty-status.expired {
-    background: #fef3f2;
-
-    color: #d92d20;
-}
-
-
-/* =========================
-   REMINDER
-========================= */
-
-.reminder-label {
-    color: #a65b07;
-
-    font-size: 9px;
-
-    font-weight: 700;
-
-    white-space: nowrap;
-}
-
-
-/* =========================
-   RESPONSIVE
-========================= */
-
-@media (max-width: 800px) {
-
-    .warranty-table {
-        min-width: 700px;
-    }
-
-}
-
-
-@media (max-width: 650px) {
-
-    .warranty-content {
-        padding-top: 22px;
-    }
-
-
-    .warranty-welcome {
-        margin-bottom: 22px;
-    }
-
-
-    .warranty-table-card {
-        border-radius: 10px;
-    }
-
-
-    .warranty-table {
-        min-width: 680px;
-    }
-
-
-    .warranty-table th {
-        padding: 11px 15px;
-    }
-
-
-    .warranty-table td {
-        padding: 13px 15px;
-    }
-
-
-    .warranty-alert {
-        gap: 10px;
-    }
-
-
-    .reminder-label {
-        margin-left: 42px;
-    }
-
-}
-
-/* ==========================================
-   ADD WARRANTY FORM
-   ========================================== */
+/* =========================================================
+   ADD WARRANTY CARD
+========================================================= */
 
 .add-warranty-card {
-    margin-top: 25px;
+    width: 100%;
+    margin-bottom: 28px;
+    box-sizing: border-box;
+}
+
+.add-warranty-card .card-header {
+    padding: 20px 24px 0;
+    box-sizing: border-box;
 }
 
 .add-warranty-card .card-header p {
-    margin-top: 5px;
+    margin: 8px 0 0;
     color: #667085;
     font-size: 14px;
+    line-height: 1.4;
 }
 
+
+/* =========================================================
+   WARRANTY FORM
+========================================================= */
+
 .warranty-form {
-    margin-top: 20px;
+    width: 100%;
+    margin-top: 22px;
+    padding: 0 24px 28px;
+    box-sizing: border-box;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 24px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .form-group {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    margin-bottom: 20px;
+    width: 100%;
+    min-width: 0;
+    margin-bottom: 24px;
+    box-sizing: border-box;
 }
 
 .form-group label {
@@ -305,9 +157,15 @@
     color: #344054;
 }
 
+
+/* =========================================================
+   INPUTS
+========================================================= */
+
 .form-group input {
     width: 100%;
-    padding: 12px 14px;
+    height: 46px;
+    padding: 0 14px;
     border: 1px solid #d0d5dd;
     border-radius: 8px;
     font-family: inherit;
@@ -328,44 +186,61 @@
     cursor: not-allowed;
 }
 
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-}
 
+/* =========================================================
+   WARRANTY DURATION
+========================================================= */
 .duration-input {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-.duration-input input {
-    flex: 1;
-}
-
-.duration-input span {
+.duration-input select {
+    width: 100%;
+    height: 46px;
+    padding: 0 14px;
+    border: 1px solid #d0d5dd;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #101828;
+    font-family: inherit;
     font-size: 14px;
-    color: #667085;
-    white-space: nowrap;
+    box-sizing: border-box;
+    outline: none;
+    cursor: pointer;
 }
+
+.duration-input select:focus {
+    border-color: #2853b8;
+    box-shadow: 0 0 0 3px rgba(40, 83, 184, 0.1);
+}
+
+
+/* =========================================================
+   BUTTONS
+========================================================= */
 
 .warranty-form-actions {
     display: flex;
     justify-content: flex-end;
-    gap: 12px;
-    margin-top: 10px;
+    align-items: center;
+    gap: 18px;
+    margin-top: 4px;
+    padding-top: 4px;
+    box-sizing: border-box;
 }
 
 .btn-primary,
 .btn-secondary {
-    padding: 11px 20px;
+    min-height: 44px;
+    padding: 11px 22px;
     border-radius: 8px;
     font-family: inherit;
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
     transition: 0.2s ease;
+    box-sizing: border-box;
 }
 
 .btn-primary {
@@ -389,210 +264,149 @@
 }
 
 
-/* Mobile Responsive */
-@media (max-width: 650px) {
+/* =========================================================
+   WARRANTY TABLE CARD
+========================================================= */
 
-    .form-row {
-        grid-template-columns: 1fr;
-        gap: 0;
-    }
-
-    .warranty-form-actions {
-        flex-direction: column-reverse;
-    }
-
-    .btn-primary,
-    .btn-secondary {
-        width: 100%;
-    }
-
-}
-/* ==========================================
-   RECEIPT PRODUCT SELECTION
-   ========================================== */
-
-.receipt-product-card {
-    margin-top: 25px;
-}
-
-.receipt-product-card .card-header p {
-    margin-top: 5px;
-    color: #667085;
-    font-size: 14px;
-}
-
-.receipt-product-card select {
-    width: 100%;
-    padding: 12px 14px;
-    border: 1px solid #d0d5dd;
-    border-radius: 8px;
-    font-family: inherit;
-    font-size: 14px;
-    color: #101828;
-    background: #ffffff;
-    box-sizing: border-box;
-    outline: none;
-}
-
-.receipt-product-card select:focus {
-    border-color: #2853b8;
-    box-shadow: 0 0 0 3px rgba(40, 83, 184, 0.1);
-}
-
-.selected-receipt-info {
-    display: none;
-    margin-top: 15px;
-    padding: 14px 16px;
-    border-radius: 8px;
-    background: #f6f8fc;
-    border: 1px solid #eaecf0;
-}
-
-.selected-receipt-info p {
-    margin: 5px 0;
-    font-size: 14px;
-    color: #475467;
-}
-
-.selected-receipt-info strong {
-    color: #344054;
-}
-/* ==========================================
-   WARRANTY PAGE SPACING & FORM FIX
-   ========================================== */
-
-.receipt-product-card,
-.add-warranty-card {
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.receipt-product-card {
-    margin-top: 28px;
-}
-
-.add-warranty-card {
-    margin-top: 28px;
-}
-
-
-/* Better spacing inside forms */
-.warranty-form {
-    margin-top: 24px;
-}
-
-
-/* Form rows */
-.form-row {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 24px;
-}
-
-
-/* Form groups */
-.form-group {
+.warranty-table-card {
     margin-bottom: 24px;
+    overflow: hidden;
+}
+
+.warranty-count {
+    padding: 6px 9px;
+    border-radius: 20px;
+    background: #f1f4fa;
+    color: #667085;
+    font-size: 8px;
+    font-weight: 600;
 }
 
 
-/* Inputs */
-.form-group input,
-.receipt-product-card select {
-    min-height: 46px;
-    padding: 12px 15px;
-    box-sizing: border-box;
+/* =========================================================
+   TABLE
+========================================================= */
+
+.warranty-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.warranty-table {
+    width: 100%;
+    min-width: 750px;
+    border-collapse: collapse;
+}
+
+.warranty-table th {
+    padding: 14px 20px;
+    background: #fafbfc;
+    border-bottom: 1px solid #eaecf0;
+    color: #98a2b3;
+    font-size: 8px;
+    font-weight: 700;
+    text-align: left;
+    letter-spacing: 0.5px;
+}
+
+.warranty-table td {
+    padding: 16px 20px;
+    border-bottom: 1px solid #f2f4f7;
+    color: #667085;
+    font-size: 9px;
+    white-space: nowrap;
+}
+
+.warranty-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.warranty-table tbody tr:hover {
+    background: #fafcff;
 }
 
 
-/* Warranty duration */
-.duration-input {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+/* =========================================================
+   PRODUCT CELL
+========================================================= */
+
+.product-cell {
+    display: flex;
     align-items: center;
-    gap: 12px;
-    width: 100%;
+    gap: 11px;
 }
 
-.duration-input input {
-    width: 100%;
-    min-width: 0;
-}
-
-.duration-input span {
+.product-icon {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-
-    min-width: 62px;
-    height: 46px;
-
-    padding: 0 10px;
-
-    border: 1px solid #d0d5dd;
     border-radius: 8px;
-
-    background: #f8fafc;
-
-    color: #667085;
+    background: #f1f4fa;
+    color: #2853b8;
     font-size: 14px;
+}
+
+.product-cell strong {
+    display: block;
+    color: #101828;
+    font-size: 10px;
+}
+
+.product-cell span {
+    display: block;
+    margin-top: 4px;
+    color: #98a2b3;
+    font-size: 8px;
+}
+
+
+/* =========================================================
+   WARRANTY STATUS
+========================================================= */
+
+.warranty-status {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-size: 7px;
+    font-weight: 600;
+}
+
+.warranty-status.active {
+    background: #eaf7ef;
+    color: #16834b;
+}
+
+.warranty-status.expiring {
+    background: #fff1df;
+    color: #c86c09;
+}
+
+.warranty-status.expired {
+    background: #fef3f2;
+    color: #d92d20;
+}
+
+
+/* =========================================================
+   REMINDER
+========================================================= */
+
+.reminder-label {
+    color: #a65b07;
+    font-size: 9px;
+    font-weight: 700;
     white-space: nowrap;
 }
 
 
-/* Receipt product selection */
-.receipt-product-card .form-group {
-    margin-bottom: 0;
-}
-
-.receipt-product-card select {
-    margin-bottom: 22px;
-}
-
-
-/* Selected receipt information */
-.selected-receipt-info {
-    margin: 0 24px 24px;
-}
-
-
-/* Buttons */
-.warranty-form-actions {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-
-    gap: 14px;
-
-    margin-top: 8px;
-    padding-top: 8px;
-}
-
-
-/* Better button size */
-.btn-primary,
-.btn-secondary {
-    min-height: 44px;
-    padding: 11px 22px;
-}
-
-
-/* ==========================================
-   BETTER TABLE SPACING
-   ========================================== */
-
-.warranty-table th {
-    padding: 14px 22px;
-}
-
-.warranty-table td {
-    padding: 17px 22px;
-}
-
-
-/* ==========================================
-   MOBILE
-   ========================================== */
+/* =========================================================
+   RESPONSIVE
+========================================================= */
 
 @media (max-width: 800px) {
 
@@ -601,163 +415,69 @@
         gap: 0;
     }
 
-    .duration-input {
-        grid-template-columns: minmax(0, 1fr) auto;
+    .warranty-table {
+        min-width: 700px;
     }
-
 }
 
 
 @media (max-width: 650px) {
+
+    .warranty-content {
+        padding-top: 22px;
+    }
+
+    .warranty-welcome {
+        margin-bottom: 22px;
+    }
+
+    .receipt-product-card .card-header,
+    .add-warranty-card .card-header {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .receipt-product-card > .form-group {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .selected-receipt-info {
+        margin-left: 20px;
+        margin-right: 20px;
+    }
 
     .warranty-form {
-        margin-top: 20px;
+        padding-left: 20px;
+        padding-right: 20px;
+        padding-bottom: 24px;
     }
 
-    .form-group {
-        margin-bottom: 20px;
+    .warranty-table-card {
+        border-radius: 10px;
     }
 
-    .duration-input {
-        grid-template-columns: minmax(0, 1fr) auto;
-        gap: 8px;
+    .warranty-table {
+        min-width: 680px;
     }
 
-    .duration-input span {
-        min-width: 58px;
-        padding: 0 8px;
+    .warranty-table th {
+        padding: 11px 15px;
+    }
+
+    .warranty-table td {
+        padding: 13px 15px;
+    }
+
+    .warranty-alert {
+        gap: 10px;
+    }
+
+    .reminder-label {
+        margin-left: 42px;
     }
 
     .warranty-form-actions {
-        flex-direction: column-reverse;
-        align-items: stretch;
-    }
-
-    .btn-primary,
-    .btn-secondary {
-        width: 100%;
-    }
-
-}
-/* ===== WARRANTY FORM LAYOUT FIX ===== */
-
-.warranty-page .main-content {
-    max-width: 1200px;
-}
-
-.warranty-welcome {
-    margin-bottom: 24px;
-}
-
-.receipt-product-card,
-.add-warranty-card {
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.receipt-product-card {
-    margin-bottom: 24px;
-}
-
-.add-warranty-card {
-    margin-bottom: 24px;
-}
-
-.warranty-form {
-    padding: 4px 0 0;
-}
-
-.warranty-form .form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 28px;
-    width: 100%;
-}
-
-.warranty-form .form-group {
-    width: 100%;
-    min-width: 0;
-    margin-bottom: 24px;
-}
-
-.warranty-form .form-group input {
-    width: 100%;
-    min-width: 0;
-    height: 46px;
-    box-sizing: border-box;
-}
-
-.duration-input {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 72px;
-    gap: 10px;
-    width: 100%;
-}
-
-.duration-input input {
-    width: 100%;
-    min-width: 0;
-}
-
-.duration-input span {
-    width: 72px;
-    height: 46px;
-    box-sizing: border-box;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid #d0d5dd;
-    border-radius: 8px;
-    background: #f8fafc;
-    color: #667085;
-    font-size: 13px;
-    white-space: nowrap;
-}
-
-.warranty-form-actions {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 12px;
-    margin-top: 4px;
-    padding-top: 4px;
-}
-
-.btn-primary,
-.btn-secondary {
-    min-height: 44px;
-    padding: 10px 22px;
-}
-
-/* ===== TABLE SPACING ===== */
-
-.warranty-table th {
-    padding: 14px 18px;
-}
-
-.warranty-table td {
-    padding: 16px 18px;
-}
-
-/* ===== MOBILE ===== */
-
-@media (max-width: 800px) {
-    .warranty-form .form-row {
-        grid-template-columns: 1fr;
-        gap: 0;
-    }
-}
-
-@media (max-width: 600px) {
-    .warranty-form-actions {
-        justify-content: stretch;
-    }
-
-    .warranty-form-actions button {
-        flex: 1;
-    }
-
-    .duration-input {
-        grid-template-columns: minmax(0, 1fr) 72px;
+        gap: 12px;
     }
 }

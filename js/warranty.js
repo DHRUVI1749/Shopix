@@ -325,10 +325,7 @@ purchaseDate.addEventListener(
     calculateExpiryDate
 );
 
-warrantyDuration.addEventListener(
-    "input",
-    calculateExpiryDate
-);
+warrantyDuration.addEventListener("change", calculateExpiryDate);
 
 
 // ==========================================
