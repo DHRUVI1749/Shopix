@@ -1,0 +1,275 @@
+/* =========================
+   WARRANTY PAGE
+========================= */
+
+.warranty-content {
+    padding-bottom: 40px;
+}
+
+
+/* =========================
+   PAGE HEADER
+========================= */
+
+.warranty-welcome {
+    margin-bottom: 28px;
+}
+
+
+/* =========================
+   WARRANTY STATISTICS
+========================= */
+
+.warranty-stats {
+    margin-bottom: 18px;
+}
+
+
+/* =========================
+   WARRANTY TABLE CARD
+========================= */
+
+.warranty-table-card {
+    margin-bottom: 18px;
+    overflow: hidden;
+}
+
+
+/* NUMBER OF PRODUCTS */
+
+.warranty-count {
+    padding: 6px 9px;
+
+    border-radius: 20px;
+
+    background: #f1f4fa;
+
+    color: #667085;
+
+    font-size: 8px;
+    font-weight: 600;
+}
+
+
+/* =========================
+   TABLE
+========================= */
+
+.warranty-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+
+.warranty-table {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    min-width: 750px;
+}
+
+
+.warranty-table th {
+    padding: 12px 20px;
+
+    background: #fafbfc;
+
+    border-bottom: 1px solid #eaecf0;
+
+    color: #98a2b3;
+
+    font-size: 8px;
+    font-weight: 700;
+
+    text-align: left;
+
+    letter-spacing: 0.5px;
+}
+
+
+.warranty-table td {
+    padding: 15px 20px;
+
+    border-bottom: 1px solid #f2f4f7;
+
+    color: #667085;
+
+    font-size: 9px;
+
+    white-space: nowrap;
+}
+
+
+.warranty-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+
+.warranty-table tbody tr:hover {
+    background: #fafcff;
+}
+
+
+/* =========================
+   PRODUCT CELL
+========================= */
+
+.product-cell {
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+}
+
+
+.product-icon {
+    width: 36px;
+    height: 36px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 8px;
+
+    background: #f1f4fa;
+
+    color: #2853b8;
+
+    font-size: 14px;
+}
+
+
+.product-cell strong {
+    display: block;
+
+    color: #101828;
+
+    font-size: 10px;
+}
+
+
+.product-cell span {
+    display: block;
+
+    margin-top: 4px;
+
+    color: #98a2b3;
+
+    font-size: 8px;
+}
+
+
+/* =========================
+   WARRANTY STATUS
+========================= */
+
+.warranty-status {
+    display: inline-flex;
+
+    align-items: center;
+
+    padding: 5px 9px;
+
+    border-radius: 20px;
+
+    font-size: 7px;
+    font-weight: 600;
+}
+
+
+.warranty-status.active {
+    background: #eaf7ef;
+
+    color: #16834b;
+}
+
+
+.warranty-status.expiring {
+    background: #fff1df;
+
+    color: #c86c09;
+}
+
+
+.warranty-status.expired {
+    background: #fef3f2;
+
+    color: #d92d20;
+}
+
+
+/* =========================
+   REMINDER
+========================= */
+
+.reminder-label {
+    color: #a65b07;
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 800px) {
+
+    .warranty-table {
+        min-width: 700px;
+    }
+
+}
+
+
+@media (max-width: 650px) {
+
+    .warranty-content {
+        padding-top: 22px;
+    }
+
+
+    .warranty-welcome {
+        margin-bottom: 22px;
+    }
+
+
+    .warranty-table-card {
+        border-radius: 10px;
+    }
+
+
+    .warranty-table {
+        min-width: 680px;
+    }
+
+
+    .warranty-table th {
+        padding: 11px 15px;
+    }
+
+
+    .warranty-table td {
+        padding: 13px 15px;
+    }
+
+
+    .warranty-alert {
+        gap: 10px;
+    }
+
+
+    .reminder-label {
+        margin-left: 42px;
+    }
+
+}
