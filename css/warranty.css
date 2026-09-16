@@ -407,3 +407,53 @@
     }
 
 }
+/* ==========================================
+   RECEIPT PRODUCT SELECTION
+   ========================================== */
+
+.receipt-product-card {
+    margin-top: 25px;
+}
+
+.receipt-product-card .card-header p {
+    margin-top: 5px;
+    color: #667085;
+    font-size: 14px;
+}
+
+.receipt-product-card select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #d0d5dd;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    color: #101828;
+    background: #ffffff;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.receipt-product-card select:focus {
+    border-color: #2853b8;
+    box-shadow: 0 0 0 3px rgba(40, 83, 184, 0.1);
+}
+
+.selected-receipt-info {
+    display: none;
+    margin-top: 15px;
+    padding: 14px 16px;
+    border-radius: 8px;
+    background: #f6f8fc;
+    border: 1px solid #eaecf0;
+}
+
+.selected-receipt-info p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #475467;
+}
+
+.selected-receipt-info strong {
+    color: #344054;
+}
