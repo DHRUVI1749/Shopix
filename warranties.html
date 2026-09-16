@@ -314,6 +314,78 @@
                             miss an important expiry date.
 
                         </p>
+                        <!-- ==========================================
+     SELECT PRODUCT FROM RECEIPT
+     ========================================== -->
+
+<div class="dashboard-card receipt-product-card">
+
+    <div class="card-header">
+
+        <div>
+
+            <h2>
+                Select Purchased Product
+            </h2>
+
+            <p>
+                Choose a product from your saved receipts.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="form-group">
+
+        <label for="receiptProductSelect">
+            Purchased Product
+        </label>
+
+        <select id="receiptProductSelect">
+
+            <option value="">
+                Select a product
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <div
+        id="selectedReceiptInfo"
+        class="selected-receipt-info">
+
+        <p>
+
+            <strong>
+                Store:
+            </strong>
+
+            <span id="selectedStoreName">
+                -
+            </span>
+
+        </p>
+
+
+        <p>
+
+            <strong>
+                Purchase Date:
+            </strong>
+
+            <span id="selectedPurchaseDate">
+                -
+            </span>
+
+        </p>
+
+    </div>
+
+</div>
                         <!-- Add Warranty Section -->
 <div class="dashboard-card add-warranty-card">
 
