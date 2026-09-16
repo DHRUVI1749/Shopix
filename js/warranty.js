@@ -1,6 +1,6 @@
 // ==========================================
 // SHOPIX - WARRANTY MODULE
-// STEP 4: WARRANTY CALCULATION
+// STEP 5: SAVE WARRANTY TO FIRESTORE
 // ==========================================
 
 import { auth, db } from "./firebase.js";
@@ -9,14 +9,29 @@ import {
     onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
+import {
+    collection,
+    addDoc,
+    serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
-// Get form elements
+
+// ==========================================
+// GET FORM ELEMENTS
+// ==========================================
+
 const warrantyForm = document.getElementById("warrantyForm");
+const productName = document.getElementById("productName");
+const storeName = document.getElementById("storeName");
 const purchaseDate = document.getElementById("purchaseDate");
 const warrantyDuration = document.getElementById("warrantyDuration");
 const expiryDate = document.getElementById("expiryDate");
 const warrantyStatus = document.getElementById("warrantyStatus");
 const cancelWarrantyBtn = document.getElementById("cancelWarrantyBtn");
+
+
+// Store current logged-in user
+let currentUser = null;
 
 
 // ==========================================
@@ -110,14 +125,68 @@ cancelWarrantyBtn.addEventListener("click", () => {
 
 
 // ==========================================
-// FORM SUBMIT
+// SAVE WARRANTY TO FIRESTORE
 // ==========================================
 
-warrantyForm.addEventListener("submit", (event) => {
+warrantyForm.addEventListener("submit", async (event) => {
 
     event.preventDefault();
 
-    alert("Warranty details calculated successfully.");
+    // Check login
+    if (!currentUser) {
+        alert("Please log in to save warranty details.");
+        return;
+    }
+
+    // Check calculated values
+    if (!expiryDate.value || !warrantyStatus.value) {
+        alert("Please enter purchase date and warranty duration.");
+        return;
+    }
+
+    try {
+
+        const warrantiesRef = collection(
+            db,
+            "users",
+            currentUser.uid,
+            "warranties"
+        );
+
+        await addDoc(warrantiesRef, {
+
+            productName: productName.value.trim(),
+
+            storeName: storeName.value.trim(),
+
+            purchaseDate: purchaseDate.value,
+
+            warrantyDurationMonths: parseInt(
+                warrantyDuration.value
+            ),
+
+            warrantyExpiryDate: expiryDate.value,
+
+            status: warrantyStatus.value,
+
+            createdAt: serverTimestamp()
+
+        });
+
+        alert("Warranty saved successfully!");
+
+        warrantyForm.reset();
+
+        expiryDate.value = "";
+        warrantyStatus.value = "";
+
+    } catch (error) {
+
+        console.error("Error saving warranty:", error);
+
+        alert("Unable to save warranty. Please try again.");
+
+    }
 
 });
 
@@ -130,9 +199,13 @@ onAuthStateChanged(auth, (user) => {
 
     if (user) {
 
+        currentUser = user;
+
         console.log("Logged-in User UID:", user.uid);
 
     } else {
+
+        currentUser = null;
 
         console.log("No user is currently logged in.");
 
