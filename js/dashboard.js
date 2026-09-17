@@ -15,6 +15,13 @@ import {
 
 
 // ===============================
+// LOGOUT STATUS
+// ===============================
+
+let logoutStarted = false;
+
+
+// ===============================
 // RECENT RECEIPTS
 // ===============================
 
@@ -147,9 +154,22 @@ if (logoutButton) {
             event.preventDefault();
 
 
+            // Mark logout process as started
+            logoutStarted = true;
+
+
             try {
 
+                // Firebase logout
                 await signOut(auth);
+
+
+                // Save logout status
+                sessionStorage.setItem(
+                    "loggedOut",
+                    "true"
+                );
+
 
                 console.log(
                     "✅ User logged out successfully."
@@ -165,7 +185,7 @@ if (logoutButton) {
                     "✅ You have been logged out successfully.";
 
 
-                // Message position & design
+                // Message position
                 logoutMessage.style.position =
                     "fixed";
 
@@ -178,6 +198,8 @@ if (logoutButton) {
                 logoutMessage.style.transform =
                     "translateX(-50%)";
 
+
+                // Message design
                 logoutMessage.style.padding =
                     "14px 22px";
 
@@ -208,13 +230,18 @@ if (logoutButton) {
                 );
 
 
-                // Wait 3 seconds
+                // Show message for 3 seconds
                 setTimeout(() => {
 
                     logoutMessage.remove();
 
-                    window.location.href =
-                        "loginpg.html";
+                    // Use replace so dashboard
+                    // is not kept as a normal
+                    // history page after logout
+
+                    window.location.replace(
+                        "loginpg.html"
+                    );
 
                 }, 3000);
 
@@ -226,6 +253,8 @@ if (logoutButton) {
                     error
                 );
 
+                logoutStarted = false;
+
             }
 
         }
@@ -236,7 +265,7 @@ if (logoutButton) {
 
 
 // ===============================
-// AUTHENTICATION CHECK
+// AUTHENTICATION & DASHBOARD PROTECTION
 // ===============================
 
 onAuthStateChanged(
@@ -245,15 +274,31 @@ onAuthStateChanged(
 
         if (user) {
 
+            // User is logged in
             loadRecentReceipts(user);
 
         } else {
 
-            if (receiptList) {
+            // User is logged out
 
-                receiptList.innerHTML =
-                    "<p>Please login to view your receipts.</p>";
+            // If logout button was clicked,
+            // wait for the logout message
+            // and redirect after 3 seconds.
+
+            if (logoutStarted) {
+
+                return;
+
             }
+
+
+            // If user is not logged in and
+            // directly opens dashboard,
+            // send them to login page.
+
+            window.location.replace(
+                "loginpg.html"
+            );
 
         }
 
