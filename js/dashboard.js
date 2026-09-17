@@ -14,7 +14,8 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
 import {
-    onAuthStateChanged
+    onAuthStateChanged,
+    signOut
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
 
@@ -24,6 +25,9 @@ import {
 
 const receiptList =
     document.getElementById("dashboardReceiptList");
+
+const logoutButton =
+    document.querySelector(".logout-btn");
 
 
 // =========================
@@ -232,6 +236,44 @@ async function loadRecentReceipts(user) {
             </div>
         `;
     }
+}
+
+
+// =========================
+// LOGOUT
+// =========================
+
+if (logoutButton) {
+
+    logoutButton.addEventListener(
+        "click",
+        async function (event) {
+
+            event.preventDefault();
+
+            try {
+
+                await signOut(auth);
+
+                console.log(
+                    "✅ User logged out successfully."
+                );
+
+                window.location.href =
+                    "loginpg.html";
+
+            } catch (error) {
+
+                console.error(
+                    "❌ Logout error:",
+                    error
+                );
+
+            }
+
+        }
+    );
+
 }
 
 
