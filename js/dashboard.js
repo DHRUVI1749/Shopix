@@ -1,8 +1,3 @@
-// ==========================================
-// SHOPIX - DASHBOARD
-// Recent Receipts
-// ==========================================
-
 import { auth, db } from "./firebase.js";
 
 import {
@@ -19,180 +14,93 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
 
-// =========================
-// HTML ELEMENT
-// =========================
+// ===============================
+// RECENT RECEIPTS
+// ===============================
 
 const receiptList =
     document.getElementById("dashboardReceiptList");
 
-const logoutButton =
-    document.querySelector(".logout-btn");
 
-
-// =========================
+// ===============================
 // LOAD RECENT RECEIPTS
-// =========================
+// ===============================
 
 async function loadRecentReceipts(user) {
 
-    if (!receiptList) {
-        return;
-    }
+    if (!receiptList) return;
+
+    receiptList.innerHTML =
+        "<p>Loading recent receipts...</p>";
 
     try {
 
-        const receiptsRef = collection(
-            db,
-            "users",
-            user.uid,
-            "receipts"
-        );
+        const receiptsRef =
+            collection(
+                db,
+                "users",
+                user.uid,
+                "receipts"
+            );
 
-
-        const receiptsQuery = query(
-            receiptsRef,
-            orderBy("createdAt", "desc"),
-            limit(3)
-        );
-
+        const receiptsQuery =
+            query(
+                receiptsRef,
+                orderBy("createdAt", "desc"),
+                limit(3)
+            );
 
         const snapshot =
             await getDocs(receiptsQuery);
 
 
-        // Clear loading message
-        receiptList.innerHTML = "";
-
-
-        // =========================
-        // NO RECEIPTS
-        // =========================
-
         if (snapshot.empty) {
 
-            const emptyRow =
-                document.createElement("div");
-
-            emptyRow.className =
-                "receipt-row";
-
-            emptyRow.innerHTML = `
-                <div class="receipt-store-icon">
-                    🧾
-                </div>
-
-                <div class="receipt-info">
-
-                    <strong>
-                        No receipts yet
-                    </strong>
-
-                    <span>
-                        Upload your first receipt
-                    </span>
-
-                </div>
-
-                <div class="receipt-price">
-                    —
-                </div>
-            `;
-
-            receiptList.appendChild(emptyRow);
+            receiptList.innerHTML =
+                "<p>No recent receipts found.</p>";
 
             return;
         }
 
 
-        // =========================
-        // DISPLAY RECEIPTS
-        // =========================
-
-        snapshot.forEach((docSnapshot) => {
-
-            const receipt =
-                docSnapshot.data();
+        receiptList.innerHTML = "";
 
 
-            // Receipt row
-            const row =
+        snapshot.forEach((doc) => {
+
+            const data = doc.data();
+
+            const receiptItem =
                 document.createElement("div");
 
-            row.className =
-                "receipt-row";
+            receiptItem.className =
+                "receipt-item";
 
 
-            // Store icon
-            const icon =
-                document.createElement("div");
+            receiptItem.innerHTML = `
+                <div>
+                    <h4>
+                        ${data.storeName || "Unknown Store"}
+                    </h4>
 
-            icon.className =
-                "receipt-store-icon";
+                    <p>
+                        ${data.purchaseDate || ""}
+                    </p>
+                </div>
 
-            icon.textContent =
-                "▣";
-
-
-            // Information
-            const info =
-                document.createElement("div");
-
-            info.className =
-                "receipt-info";
+                <div>
+                    ₹${data.totalAmount || 0}
+                </div>
+            `;
 
 
-            // Store name
-            const store =
-                document.createElement("strong");
-
-            store.textContent =
-                receipt.storeName ||
-                "Unknown Store";
-
-
-            // Category + date
-            const meta =
-                document.createElement("span");
-
-            meta.textContent =
-                `${receipt.category || "Other"} · ${receipt.purchaseDate || "No date"}`;
-
-
-            info.appendChild(store);
-            info.appendChild(meta);
-
-
-            // Amount
-            const price =
-                document.createElement("div");
-
-            price.className =
-                "receipt-price";
-
-            price.textContent =
-                "₹" + (receipt.totalAmount || 0);
-
-
-            // Add elements
-            row.appendChild(icon);
-            row.appendChild(info);
-            row.appendChild(price);
-
-
-            // =========================
-            // OPEN RECEIPT DETAILS
-            // =========================
-
-            row.style.cursor = "pointer";
-
-            row.addEventListener(
+            receiptItem.addEventListener(
                 "click",
                 function () {
 
                     localStorage.setItem(
                         "selectedReceiptId",
-                        docSnapshot.id
+                        doc.id
                     );
 
                     window.location.href =
@@ -201,7 +109,9 @@ async function loadRecentReceipts(user) {
             );
 
 
-            receiptList.appendChild(row);
+            receiptList.appendChild(
+                receiptItem
+            );
 
         });
 
@@ -209,39 +119,24 @@ async function loadRecentReceipts(user) {
     } catch (error) {
 
         console.error(
-            "❌ Error loading dashboard receipts:",
+            "Error loading receipts:",
             error
         );
 
-
-        receiptList.innerHTML = `
-            <div class="receipt-row">
-
-                <div class="receipt-store-icon">
-                    !
-                </div>
-
-                <div class="receipt-info">
-
-                    <strong>
-                        Unable to load receipts
-                    </strong>
-
-                    <span>
-                        Please try again later
-                    </span>
-
-                </div>
-
-            </div>
-        `;
+        receiptList.innerHTML =
+            "<p>Unable to load recent receipts.</p>";
     }
 }
 
 
-// =========================
+
+// ===============================
 // LOGOUT
-// =========================
+// ===============================
+
+const logoutButton =
+    document.querySelector(".logout-btn");
+
 
 if (logoutButton) {
 
@@ -251,6 +146,7 @@ if (logoutButton) {
 
             event.preventDefault();
 
+
             try {
 
                 await signOut(auth);
@@ -259,8 +155,69 @@ if (logoutButton) {
                     "✅ User logged out successfully."
                 );
 
-                window.location.href =
-                    "loginpg.html";
+
+                // Create logout message
+                const logoutMessage =
+                    document.createElement("div");
+
+
+                logoutMessage.textContent =
+                    "✅ You have been logged out successfully.";
+
+
+                // Message position & design
+                logoutMessage.style.position =
+                    "fixed";
+
+                logoutMessage.style.bottom =
+                    "30px";
+
+                logoutMessage.style.left =
+                    "50%";
+
+                logoutMessage.style.transform =
+                    "translateX(-50%)";
+
+                logoutMessage.style.padding =
+                    "14px 22px";
+
+                logoutMessage.style.background =
+                    "#ffffff";
+
+                logoutMessage.style.color =
+                    "#142d6b";
+
+                logoutMessage.style.borderRadius =
+                    "10px";
+
+                logoutMessage.style.boxShadow =
+                    "0 4px 15px rgba(0,0,0,0.15)";
+
+                logoutMessage.style.fontSize =
+                    "15px";
+
+                logoutMessage.style.fontWeight =
+                    "600";
+
+                logoutMessage.style.zIndex =
+                    "9999";
+
+
+                document.body.appendChild(
+                    logoutMessage
+                );
+
+
+                // Wait 3 seconds
+                setTimeout(() => {
+
+                    logoutMessage.remove();
+
+                    window.location.href =
+                        "loginpg.html";
+
+                }, 3000);
+
 
             } catch (error) {
 
@@ -277,9 +234,10 @@ if (logoutButton) {
 }
 
 
-// =========================
-// AUTH STATE
-// =========================
+
+// ===============================
+// AUTHENTICATION CHECK
+// ===============================
 
 onAuthStateChanged(
     auth,
@@ -287,43 +245,14 @@ onAuthStateChanged(
 
         if (user) {
 
-            console.log(
-                "✅ Dashboard user:",
-                user.uid
-            );
-
             loadRecentReceipts(user);
 
         } else {
 
-            console.log(
-                "ℹ️ No user logged in."
-            );
-
-
             if (receiptList) {
 
-                receiptList.innerHTML = `
-                    <div class="receipt-row">
-
-                        <div class="receipt-store-icon">
-                            !
-                        </div>
-
-                        <div class="receipt-info">
-
-                            <strong>
-                                Please login
-                            </strong>
-
-                            <span>
-                                Login to view your receipts
-                            </span>
-
-                        </div>
-
-                    </div>
-                `;
+                receiptList.innerHTML =
+                    "<p>Please login to view your receipts.</p>";
             }
 
         }
