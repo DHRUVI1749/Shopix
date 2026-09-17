@@ -510,6 +510,82 @@
 
 
         // ==========================================
+        // LOGOUT / BACK BUTTON PROTECTION
+        // ==========================================
+
+        function showLogoutMessage() {
+
+            loginMessage.textContent =
+                "❌ Please login first.";
+
+            loginMessage.className =
+                "login-message error";
+
+            loginButtonText.textContent =
+                "Login to SHOPIX";
+
+            loginButton.disabled =
+                false;
+
+        }
+
+
+        // Check if user came here after logout
+
+        if (
+            sessionStorage.getItem("loggedOut") ===
+            "true"
+        ) {
+
+            showLogoutMessage();
+
+        }
+
+
+
+        // ==========================================
+        // HANDLE BROWSER BACK BUTTON
+        // ==========================================
+
+        window.addEventListener(
+            "pageshow",
+            function () {
+
+                // Always reset old login-success state
+
+                loginMessage.textContent =
+                    "";
+
+                loginMessage.className =
+                    "login-message";
+
+
+                loginButtonText.textContent =
+                    "Login to SHOPIX";
+
+
+                loginButton.disabled =
+                    false;
+
+
+                // If user was logged out,
+                // show login required message
+
+                if (
+                    sessionStorage.getItem("loggedOut") ===
+                    "true"
+                ) {
+
+                    showLogoutMessage();
+
+                }
+
+            }
+        );
+
+
+
+        // ==========================================
         // SHOW / HIDE PASSWORD
         // ==========================================
 
@@ -686,12 +762,19 @@
 
 
                     // ==================================
-                    // SUCCESS
+                    // LOGIN SUCCESS
                     // ==================================
 
                     console.log(
                         "Login successful:",
                         user
+                    );
+
+
+                    // Remove logout flag
+
+                    sessionStorage.removeItem(
+                        "loggedOut"
                     );
 
 
