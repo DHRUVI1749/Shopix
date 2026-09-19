@@ -5,18 +5,22 @@ import {
     getDocs
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
-
 const insightText =
     document.querySelector(".ai-card p") ||
     document.getElementById("mainInsight");
+
 const totalSpendingElement =
     document.getElementById("totalSpending");
 
 const totalReceiptsElement =
     document.getElementById("totalReceipts");
 
+const topCategoryElement =
+    document.getElementById("topCategory");
+
 const averageSpendingElement =
     document.getElementById("averageSpending");
+
 let currentUser = null;
 
 
@@ -26,26 +30,11 @@ let currentUser = null;
 
 async function loadSmartInsight() {
 
-    if (snapshot.empty) {
-
-    insightText.textContent =
-        "Add some receipts to start receiving smart shopping insights.";
-
-    if (totalSpendingElement) {
-        totalSpendingElement.textContent = "₹0.00";
+    if (!currentUser) {
+        insightText.textContent =
+            "Your shopping insights will appear here when receipt data is available.";
+        return;
     }
-
-    if (totalReceiptsElement) {
-        totalReceiptsElement.textContent = "0";
-    }
-
-    if (topCategoryElement) {
-        topCategoryElement.textContent = "-";
-    }
-
-    return;
-}
-
 
     try {
 
@@ -61,33 +50,31 @@ async function loadSmartInsight() {
 
         if (snapshot.empty) {
 
-    insightText.textContent =
-        "Add some receipts to start receiving smart shopping insights.";
+            insightText.textContent =
+                "Add some receipts to start receiving smart shopping insights.";
 
-    if (totalSpendingElement) {
-        totalSpendingElement.textContent = "₹0.00";
-    }
+            if (totalSpendingElement) {
+                totalSpendingElement.textContent = "₹0.00";
+            }
 
-    if (totalReceiptsElement) {
-        totalReceiptsElement.textContent = "0";
-    }
+            if (totalReceiptsElement) {
+                totalReceiptsElement.textContent = "0";
+            }
 
-    if (topCategoryElement) {
-        topCategoryElement.textContent = "-";
-    }
+            if (topCategoryElement) {
+                topCategoryElement.textContent = "-";
+            }
 
-    if (averageSpendingElement) {
-        averageSpendingElement.textContent = "₹0.00";
-    }
+            if (averageSpendingElement) {
+                averageSpendingElement.textContent = "₹0.00";
+            }
 
-    return;
-}
+            return;
+        }
 
 
         let totalSpent = 0;
-
         const categoryTotals = {};
-
         let receiptCount = 0;
 
 
@@ -101,23 +88,17 @@ async function loadSmartInsight() {
 
             receiptCount++;
 
-
             const amount =
                 Number(receipt.totalAmount) || 0;
 
             totalSpent += amount;
 
-
             const category =
                 receipt.category || "Other";
 
-
             if (!categoryTotals[category]) {
-
                 categoryTotals[category] = 0;
-
             }
-
 
             categoryTotals[category] += amount;
 
@@ -128,32 +109,29 @@ async function loadSmartInsight() {
            FIND TOP CATEGORY
         ========================== */
 
-        const sortedCategories = Object.entries(categoryTotals)
-    .sort((a, b) => b[1] - a[1]);
+        const sortedCategories =
+            Object.entries(categoryTotals)
+                .sort((a, b) => b[1] - a[1]);
 
+        const topCategory =
+            sortedCategories.length > 0
+                ? sortedCategories[0][0]
+                : "Other";
 
-const topCategory =
-    sortedCategories.length > 0
-        ? sortedCategories[0][0]
-        : "Other";
+        const topAmount =
+            sortedCategories.length > 0
+                ? sortedCategories[0][1]
+                : 0;
 
+        const secondCategory =
+            sortedCategories.length > 1
+                ? sortedCategories[1][0]
+                : null;
 
-const topAmount =
-    sortedCategories.length > 0
-        ? sortedCategories[0][1]
-        : 0;
-
-
-const secondCategory =
-    sortedCategories.length > 1
-        ? sortedCategories[1][0]
-        : null;
-
-
-const secondAmount =
-    sortedCategories.length > 1
-        ? sortedCategories[1][1]
-        : 0;        
+        const secondAmount =
+            sortedCategories.length > 1
+                ? sortedCategories[1][1]
+                : 0;
 
 
         /* =========================
@@ -166,58 +144,72 @@ const secondAmount =
                     (topAmount / totalSpent) * 100
                 )
                 : 0;
-                const averageSpending =
-    receiptCount > 0
-        ? totalSpent / receiptCount
-        : 0;
 
-if (averageSpendingElement) {
-    averageSpendingElement.textContent =
-        `₹${averageSpending.toFixed(2)}`;
-}
-                if (totalSpendingElement) {
-    totalSpendingElement.textContent =
-        `₹${totalSpent.toFixed(2)}`;
-}
 
-if (totalReceiptsElement) {
-    totalReceiptsElement.textContent =
-        receiptCount;
-}
+        /* =========================
+           CALCULATE AVERAGE
+        ========================== */
 
-if (topCategoryElement) {
-    topCategoryElement.textContent =
-        topCategory;
-}
+        const averageSpending =
+            receiptCount > 0
+                ? totalSpent / receiptCount
+                : 0;
+
+
+        /* =========================
+           UPDATE SUMMARY
+        ========================== */
+
+        if (averageSpendingElement) {
+            averageSpendingElement.textContent =
+                `₹${averageSpending.toFixed(2)}`;
+        }
+
+        if (totalSpendingElement) {
+            totalSpendingElement.textContent =
+                `₹${totalSpent.toFixed(2)}`;
+        }
+
+        if (totalReceiptsElement) {
+            totalReceiptsElement.textContent =
+                receiptCount;
+        }
+
+        if (topCategoryElement) {
+            topCategoryElement.textContent =
+                topCategory;
+        }
+
 
         /* =========================
            DISPLAY INSIGHT
         ========================== */
 
         let insightMessage =
-    `You have ${receiptCount} recorded receipt` +
-    `${receiptCount !== 1 ? "s" : ""} ` +
-    `with total spending of ₹${totalSpent.toFixed(2)}. ` +
-    `${topCategory} is your highest spending category ` +
-    `at ${percentage}% of your recorded spending.`;
+            `You have ${receiptCount} recorded receipt` +
+            `${receiptCount !== 1 ? "s" : ""} ` +
+            `with total spending of ₹${totalSpent.toFixed(2)}. ` +
+            `${topCategory} is your highest spending category ` +
+            `at ${percentage}% of your recorded spending.`;
 
 
-if (secondCategory) {
+        if (secondCategory) {
 
-    const secondPercentage =
-        totalSpent > 0
-            ? Math.round(
-                (secondAmount / totalSpent) * 100
-            )
-            : 0;
+            const secondPercentage =
+                totalSpent > 0
+                    ? Math.round(
+                        (secondAmount / totalSpent) * 100
+                    )
+                    : 0;
 
-    insightMessage +=
-        ` ${secondCategory} is your second-highest category ` +
-        `at ${secondPercentage}%.`;
-}
+            insightMessage +=
+                ` ${secondCategory} is your second-highest category ` +
+                `at ${secondPercentage}%.`;
+        }
 
 
-insightText.textContent = insightMessage;
+        insightText.textContent = insightMessage;
+
 
     } catch (error) {
 
@@ -260,7 +252,6 @@ onAuthStateChanged(auth, async (user) => {
         "Logged-in User UID:",
         user.uid
     );
-
 
     await loadSmartInsight();
 
