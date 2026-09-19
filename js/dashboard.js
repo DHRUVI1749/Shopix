@@ -15,7 +15,18 @@ import {
 
 
 // ===============================
+<<<<<<< HEAD
 // ELEMENTS
+=======
+// LOGOUT STATUS
+// ===============================
+
+let logoutStarted = false;
+
+
+// ===============================
+// RECENT RECEIPTS
+>>>>>>> 4a0b451920a9aebca3608aac862aa3f73df2f3cd
 // ===============================
 
 const receiptList =
@@ -949,11 +960,26 @@ if (logoutButton) {
             event.preventDefault();
 
 
+            // Mark logout process as started
+            logoutStarted = true;
+
+
             try {
 
+                // Firebase logout
                 await signOut(auth);
 
 
+<<<<<<< HEAD
+=======
+                // Save logout status
+                sessionStorage.setItem(
+                    "loggedOut",
+                    "true"
+                );
+
+
+>>>>>>> 4a0b451920a9aebca3608aac862aa3f73df2f3cd
                 console.log(
                     "✅ User logged out successfully."
                 );
@@ -973,7 +999,11 @@ if (logoutButton) {
                     "✅ You have been logged out successfully.";
 
 
+<<<<<<< HEAD
                 // Position
+=======
+                // Message position
+>>>>>>> 4a0b451920a9aebca3608aac862aa3f73df2f3cd
                 logoutMessage.style.position =
                     "fixed";
 
@@ -987,7 +1017,11 @@ if (logoutButton) {
                     "translateX(-50%)";
 
 
+<<<<<<< HEAD
                 // Design
+=======
+                // Message design
+>>>>>>> 4a0b451920a9aebca3608aac862aa3f73df2f3cd
                 logoutMessage.style.padding =
                     "14px 22px";
 
@@ -1018,14 +1052,29 @@ if (logoutButton) {
                 );
 
 
+<<<<<<< HEAD
                 // Redirect after 3 seconds
                 setTimeout(
                     () => {
+=======
+                // Show message for 3 seconds
+                setTimeout(() => {
+>>>>>>> 4a0b451920a9aebca3608aac862aa3f73df2f3cd
 
                         logoutMessage.remove();
 
+<<<<<<< HEAD
                         window.location.href =
                             "loginpg.html";
+=======
+                    // Use replace so dashboard
+                    // is not kept as a normal
+                    // history page after logout
+
+                    window.location.replace(
+                        "loginpg.html"
+                    );
+>>>>>>> 4a0b451920a9aebca3608aac862aa3f73df2f3cd
 
                     },
                     3000
@@ -1039,6 +1088,8 @@ if (logoutButton) {
                     error
                 );
 
+                logoutStarted = false;
+
             }
 
         }
@@ -1048,7 +1099,7 @@ if (logoutButton) {
 
 
 // ===============================
-// AUTHENTICATION CHECK
+// AUTHENTICATION & DASHBOARD PROTECTION
 // ===============================
 
 onAuthStateChanged(
@@ -1057,6 +1108,7 @@ onAuthStateChanged(
 
         if (user) {
 
+<<<<<<< HEAD
             console.log(
                 "✅ Dashboard user:",
                 user.uid
@@ -1126,6 +1178,32 @@ onAuthStateChanged(
 
             updateChartLabels(
                 0
+=======
+            // User is logged in
+            loadRecentReceipts(user);
+
+        } else {
+
+            // User is logged out
+
+            // If logout button was clicked,
+            // wait for the logout message
+            // and redirect after 3 seconds.
+
+            if (logoutStarted) {
+
+                return;
+
+            }
+
+
+            // If user is not logged in and
+            // directly opens dashboard,
+            // send them to login page.
+
+            window.location.replace(
+                "loginpg.html"
+>>>>>>> 4a0b451920a9aebca3608aac862aa3f73df2f3cd
             );
 
         }

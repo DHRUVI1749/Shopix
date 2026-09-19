@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Smart Insights - SHOPIX</title>
+
+    <link
+        rel="stylesheet"
+        href="css/smart-insights.css"
+    >
+
+</head>
+
+<body>
+
+    <header class="insights-header">
+
+        <div class="header-content">
+
+            <a
+                href="dashboard.html"
+                class="back-link"
+            >
+                ← Dashboard
+            </a>
+
+            <h1>Smart Insights</h1>
+
+            <p>
+                Understand your shopping and spending patterns.
+            </p>
+
+        </div>
+
+    </header>
+
+
+    <main class="insights-container">
+
+        <section class="insights-card">
+
+            <div class="insights-title">
+
+                <span class="insights-icon">
+                    ✦
+                </span>
+
+                <div>
+                    <h2>Your Shopping Insights</h2>
+
+                    <p>
+                        Insights generated from your recorded receipts.
+                    </p>
+                </div>
+
+            </div>
+
+           <div class="summary-grid">
+
+    <div class="summary-card">
+
+        <span class="summary-label">
+            Total Spending
+        </span>
+
+        <strong id="totalSpending">
+            ₹0.00
+        </strong>
+
+    </div>
+
+
+    <div class="summary-card">
+
+        <span class="summary-label">
+            Total Receipts
+        </span>
+
+        <strong id="totalReceipts">
+            0
+        </strong>
+
+    </div>
+
+
+    <div class="summary-card">
+
+        <span class="summary-label">
+            Top Category
+        </span>
+
+        <strong id="topCategory">
+            -
+        </strong>
+
+    </div>
+
+
+    <div class="summary-card">
+
+        <span class="summary-label">
+            Average per Receipt
+        </span>
+
+        <strong id="averageSpending">
+            ₹0.00
+        </strong>
+
+    </div>
+
+</div>
+        
+            <div class="insight-box">
+
+                <h3>Smart Spending Insight</h3>
+
+                <p id="mainInsight">
+                    Your shopping insights will appear here
+                    when receipt data is available.
+                </p>
+
+            </div>
+
+
+            <div class="insight-box">
+
+                <h3>Shopping Tip</h3>
+
+                <p>
+                    Review your recent purchases before making
+                    new purchases to keep track of your spending.
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script
+        type="module"
+        src="js/smart-insights.js"
+    ></script>
+
+</body>
+
+</html>

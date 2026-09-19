@@ -26,6 +26,17 @@
     <!-- Dashboard CSS -->
     <link rel="stylesheet" href="css/dashboard.css">
 
+    <!-- Dashboard Protection -->
+    <script>
+        window.addEventListener("pageshow", function (event) {
+
+            if (event.persisted) {
+                window.location.reload();
+            }
+
+        });
+    </script>
+
 </head>
 
 
@@ -577,7 +588,11 @@
 
 
                         <a
+<<<<<<< HEAD
                             href="expenseAnalytics.html"
+=======
+                            href="smart-insights.html"
+>>>>>>> 4a0b451920a9aebca3608aac862aa3f73df2f3cd
                             class="ai-link">
 
                             View AI Insights →
@@ -766,7 +781,115 @@
 
 
                 </div>
+                
+                <!-- =========================
+     SHOPPING OFFERS
+========================== -->
 
+<div class="dashboard-card offers-card">
+
+    <div class="card-header">
+
+        <div>
+            <h3>Shopping Offers</h3>
+
+            <p>
+                Deals and offers based on your shopping
+            </p>
+        </div>
+
+        <a href="offers.html">
+            View All →
+        </a>
+
+    </div>
+
+
+    <div class="offers-list">
+
+        <!-- OFFER 1 -->
+
+        <div class="offer-row">
+
+            <div class="offer-icon">
+                🛍️
+            </div>
+
+            <div class="offer-info">
+
+                <strong>
+                    Electronics Deals
+                </strong>
+
+                <span>
+                    Special offers on electronics and gadgets
+                </span>
+
+            </div>
+
+            <span class="offer-badge">
+                Up to 20% Off
+            </span>
+
+        </div>
+
+
+        <!-- OFFER 2 -->
+
+        <div class="offer-row">
+
+            <div class="offer-icon">
+                👟
+            </div>
+
+            <div class="offer-info">
+
+                <strong>
+                    Fashion Offers
+                </strong>
+
+                <span>
+                    Save on clothing, footwear and accessories
+                </span>
+
+            </div>
+
+            <span class="offer-badge">
+                Up to 30% Off
+            </span>
+
+        </div>
+
+
+        <!-- OFFER 3 -->
+
+        <div class="offer-row">
+
+            <div class="offer-icon">
+                🏠
+            </div>
+
+            <div class="offer-info">
+
+                <strong>
+                    Home & Living
+                </strong>
+
+                <span>
+                    Deals on home and everyday essentials
+                </span>
+
+            </div>
+
+            <span class="offer-badge">
+                Special Deal
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
 
             </section>
 
@@ -804,6 +927,9 @@
         src="js/dashboard.js">
     </script>
 
+    <script type="module" src="js/offers.js"></script>
+    
+<script type="module" src="js/smart-insights.js"></script>
 
 </body>
 
