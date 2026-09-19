@@ -7,111 +7,250 @@ import { auth, db } from "./firebase.js";
 import {
     collection,
     getDocs,
-    query,
-    orderBy
+    query
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
-const receiptList = document.getElementById("receiptList");
-const loadingMessage = document.getElementById("loadingMessage");
-const emptyMessage = document.getElementById("emptyMessage");
+import {
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+
+
+const receiptList =
+    document.getElementById("receiptList");
+
+const loadingMessage =
+    document.getElementById("loadingMessage");
+
+const emptyMessage =
+    document.getElementById("emptyMessage");
 
 
 // ==========================================
 // LOAD RECEIPTS
 // ==========================================
 
-async function loadReceipts() {
-
-    const user = auth.currentUser;
-
-    if (!user) {
-        loadingMessage.textContent =
-            "Please login to view your receipts.";
-        return;
-    }
+async function loadReceipts(user) {
 
     try {
 
-        const receiptsRef = collection(
-            db,
-            "users",
-            user.uid,
-            "receipts"
+        console.log(
+            "Loading receipts for user:",
+            user.uid
         );
 
-        const receiptsQuery = query(
-            receiptsRef,
-            orderBy("createdAt", "desc")
+        const receiptsRef =
+            collection(
+                db,
+                "users",
+                user.uid,
+                "receipts"
+            );
+
+
+        // Get all receipts
+        // No orderBy for now
+        const receiptsQuery =
+            query(receiptsRef);
+
+
+        const snapshot =
+            await getDocs(receiptsQuery);
+
+
+        console.log(
+            "Receipts found:",
+            snapshot.size
         );
 
-        const snapshot = await getDocs(receiptsQuery);
 
-        loadingMessage.style.display = "none";
+        // Hide loading
+        loadingMessage.style.display =
+            "none";
+
+
+        // ==================================
+        // NO RECEIPTS
+        // ==================================
 
         if (snapshot.empty) {
 
-            emptyMessage.style.display = "block";
+            emptyMessage.style.display =
+                "block";
+
             return;
         }
 
-        snapshot.forEach((docSnapshot) => {
 
-            const receipt = docSnapshot.data();
+        // Hide empty message
+        emptyMessage.style.display =
+            "none";
 
-            const card = document.createElement("div");
-            card.className = "receipt-card";
 
-            const info = document.createElement("div");
-            info.className = "receipt-info";
+        // Clear old list
+        receiptList.innerHTML = "";
 
-            const store = document.createElement("div");
-            store.className = "receipt-store";
-            store.textContent =
-                receipt.storeName || "Unknown Store";
 
-            const meta = document.createElement("div");
-            meta.className = "receipt-meta";
+        // ==================================
+        // DISPLAY RECEIPTS
+        // ==================================
 
-            const date = document.createElement("span");
-            date.textContent =
-                receipt.purchaseDate || "No date";
+        snapshot.forEach(
+            (docSnapshot) => {
 
-            const category = document.createElement("span");
-            category.textContent =
-                receipt.category || "Other";
+                const receipt =
+                    docSnapshot.data();
 
-            meta.appendChild(date);
-            meta.appendChild(category);
 
-            const amount = document.createElement("div");
-            amount.className = "receipt-amount";
-            amount.textContent =
-                "₹" + (receipt.totalAmount || 0);
+                // Receipt Card
+                const card =
+                    document.createElement(
+                        "div"
+                    );
 
-            info.appendChild(store);
-            info.appendChild(meta);
-            info.appendChild(amount);
+                card.className =
+                    "receipt-card";
 
-            const viewButton = document.createElement("button");
-            viewButton.className = "view-btn";
-            viewButton.textContent = "View Details";
 
-            viewButton.addEventListener("click", function () {
+                // ==================================
+                // INFO SECTION
+                // ==================================
 
-                localStorage.setItem(
-                    "selectedReceiptId",
-                    docSnapshot.id
+                const info =
+                    document.createElement(
+                        "div"
+                    );
+
+                info.className =
+                    "receipt-info";
+
+
+                // Store Name
+                const store =
+                    document.createElement(
+                        "div"
+                    );
+
+                store.className =
+                    "receipt-store";
+
+                store.textContent =
+                    receipt.storeName ||
+                    "Unknown Store";
+
+
+                // ==================================
+                // META
+                // ==================================
+
+                const meta =
+                    document.createElement(
+                        "div"
+                    );
+
+                meta.className =
+                    "receipt-meta";
+
+
+                // Date
+                const date =
+                    document.createElement(
+                        "span"
+                    );
+
+                date.textContent =
+                    receipt.purchaseDate ||
+                    "No date";
+
+
+                // Category
+                const category =
+                    document.createElement(
+                        "span"
+                    );
+
+                category.textContent =
+                    receipt.category ||
+                    "Other";
+
+
+                meta.appendChild(date);
+                meta.appendChild(category);
+
+
+                // ==================================
+                // AMOUNT
+                // ==================================
+
+                const amount =
+                    document.createElement(
+                        "div"
+                    );
+
+                amount.className =
+                    "receipt-amount";
+
+                amount.textContent =
+                    "₹" +
+                    (
+                        receipt.totalAmount || 0
+                    );
+
+
+                // Add information
+                info.appendChild(store);
+                info.appendChild(meta);
+                info.appendChild(amount);
+
+
+                // ==================================
+                // VIEW DETAILS BUTTON
+                // ==================================
+
+                const viewButton =
+                    document.createElement(
+                        "button"
+                    );
+
+                viewButton.className =
+                    "view-btn";
+
+                viewButton.textContent =
+                    "View Details";
+
+
+                viewButton.addEventListener(
+                    "click",
+                    function () {
+
+                        localStorage.setItem(
+                            "selectedReceiptId",
+                            docSnapshot.id
+                        );
+
+                        window.location.href =
+                            "receiptDetails.html";
+
+                    }
                 );
 
-                window.location.href =
-                    "receiptDetails.html";
-            });
 
-            card.appendChild(info);
-            card.appendChild(viewButton);
+                // ==================================
+                // ADD CARD TO PAGE
+                // ==================================
 
-            receiptList.appendChild(card);
-        });
+                card.appendChild(info);
+
+                card.appendChild(
+                    viewButton
+                );
+
+                receiptList.appendChild(
+                    card
+                );
+
+            }
+        );
+
 
     } catch (error) {
 
@@ -120,14 +259,45 @@ async function loadReceipts() {
             error
         );
 
+
+        loadingMessage.style.display =
+            "block";
+
         loadingMessage.textContent =
             "Unable to load receipts. Please try again.";
+
     }
+
 }
 
 
 // ==========================================
-// START
+// WAIT FOR FIREBASE AUTH
 // ==========================================
 
-loadReceipts();
+onAuthStateChanged(
+    auth,
+    function (user) {
+
+        console.log(
+            "Auth state:",
+            user
+                ? "Logged in"
+                : "Not logged in"
+        );
+
+
+        if (user) {
+
+            // User is logged in
+            loadReceipts(user);
+
+        } else {
+
+            loadingMessage.textContent =
+                "Please login to view your receipts.";
+
+        }
+
+    }
+);

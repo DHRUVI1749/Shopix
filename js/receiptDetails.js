@@ -10,194 +10,182 @@ import {
     deleteDoc
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
-// =========================
+import {
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+
+
+// ==========================================
 // HTML ELEMENTS
-// =========================
+// ==========================================
 
-const loadingMessage = document.getElementById("loadingMessage");
-const receiptDetails = document.getElementById("receiptDetails");
-const errorMessage = document.getElementById("errorMessage");
+const loadingMessage =
+    document.getElementById("loadingMessage");
 
-const receiptImage = document.getElementById("receiptImage");
-const storeName = document.getElementById("storeName");
-const purchaseDate = document.getElementById("purchaseDate");
-const totalAmount = document.getElementById("totalAmount");
-const category = document.getElementById("category");
-const itemsList = document.getElementById("itemsList");
-const deleteReceiptBtn = document.getElementById("deleteReceiptBtn");
+const receiptDetails =
+    document.getElementById("receiptDetails");
+
+const errorMessage =
+    document.getElementById("errorMessage");
+
+const receiptImage =
+    document.getElementById("receiptImage");
+
+const storeName =
+    document.getElementById("storeName");
+
+const purchaseDate =
+    document.getElementById("purchaseDate");
+
+const totalAmount =
+    document.getElementById("totalAmount");
+
+const category =
+    document.getElementById("category");
+
+const itemsList =
+    document.getElementById("itemsList");
+
+const deleteReceiptBtn =
+    document.getElementById("deleteReceiptBtn");
 
 
-// =========================
-//  Delete Receipt
-// =========================
-deleteReceiptBtn.addEventListener("click", async function () {
+// ==========================================
+// LOAD RECEIPT
+// ==========================================
 
-    const user = auth.currentUser;
-    const receiptId =
-        localStorage.getItem("selectedReceiptId");
+async function loadReceipt(user) {
 
-    if (!user) {
-        alert("Please login first.");
-        return;
-    }
-
-    if (!receiptId) {
-        alert("No receipt selected.");
-        return;
-    }
-
-    const confirmDelete = confirm(
-        "Are you sure you want to delete this receipt?"
+    console.log(
+        "Loading receipt for user:",
+        user.uid
     );
 
-    if (!confirmDelete) {
-        return;
-    }
 
-    deleteReceiptBtn.disabled = true;
-    deleteReceiptBtn.textContent = "Deleting...";
+    // ==========================================
+    // GET SELECTED RECEIPT ID
+    // ==========================================
 
-    try {
-
-        const receiptRef = doc(
-            db,
-            "users",
-            user.uid,
-            "receipts",
-            receiptId
-        );
-
-        await deleteDoc(receiptRef);
-
-        localStorage.removeItem("selectedReceiptId");
-
-        alert("✅ Receipt deleted successfully!");
-
-        window.location.href =
-            "receiptHistory.html";
-
-    } catch (error) {
-
-        console.error(
-            "❌ Error deleting receipt:",
-            error
-        );
-
-        alert(
-            "Unable to delete receipt. Please try again."
-        );
-
-        deleteReceiptBtn.disabled = false;
-        deleteReceiptBtn.textContent =
-            "Delete Receipt";
-    }
-});
-
-// =========================
-// LOAD RECEIPT
-// =========================
-
-async function loadReceipt() {
-
-    const user = auth.currentUser;
-
-    // Check login
-    if (!user) {
-        loadingMessage.style.display = "none";
-        errorMessage.textContent =
-            "Please login to view this receipt.";
-        errorMessage.style.display = "block";
-        return;
-    }
-
-
-    // Get selected receipt ID
     const receiptId =
-        localStorage.getItem("selectedReceiptId");
+        localStorage.getItem(
+            "selectedReceiptId"
+        );
+
 
     if (!receiptId) {
-        loadingMessage.style.display = "none";
+
+        loadingMessage.style.display =
+            "none";
+
         errorMessage.textContent =
             "No receipt selected.";
-        errorMessage.style.display = "block";
+
+        errorMessage.style.display =
+            "block";
+
         return;
     }
 
 
     try {
 
-        // Receipt document reference
-        const receiptRef = doc(
-            db,
-            "users",
-            user.uid,
-            "receipts",
-            receiptId
-        );
+        // ==========================================
+        // RECEIPT DOCUMENT
+        // ==========================================
+
+        const receiptRef =
+            doc(
+                db,
+                "users",
+                user.uid,
+                "receipts",
+                receiptId
+            );
 
 
-        // Get receipt from Firestore
+        // ==========================================
+        // GET RECEIPT
+        // ==========================================
+
         const receiptSnapshot =
             await getDoc(receiptRef);
 
 
         if (!receiptSnapshot.exists()) {
 
-            loadingMessage.style.display = "none";
+            loadingMessage.style.display =
+                "none";
 
             errorMessage.textContent =
                 "Receipt not found.";
 
-            errorMessage.style.display = "block";
+            errorMessage.style.display =
+                "block";
 
             return;
         }
 
 
-        // Receipt data
         const receipt =
             receiptSnapshot.data();
 
 
-        // =========================
-        // DISPLAY BASIC INFORMATION
-        // =========================
+        console.log(
+            "Receipt loaded:",
+            receipt
+        );
+
+
+        // ==========================================
+        // STORE NAME
+        // ==========================================
 
         storeName.textContent =
-            receipt.storeName || "Unknown Store";
+            receipt.storeName ||
+            "Unknown Store";
+
+
+        // ==========================================
+        // PURCHASE DATE
+        // ==========================================
 
         purchaseDate.textContent =
-            receipt.purchaseDate || "No date";
+            receipt.purchaseDate ||
+            "No date";
+
+
+        // ==========================================
+        // TOTAL AMOUNT
+        // ==========================================
 
         totalAmount.textContent =
-            "₹" + (receipt.totalAmount || 0);
+            "₹" +
+            (receipt.totalAmount || 0);
+
+
+        // ==========================================
+        // CATEGORY
+        // ==========================================
 
         category.textContent =
-            receipt.category || "Other";
+            receipt.category ||
+            "Other";
 
 
-        // =========================
-        // DISPLAY RECEIPT IMAGE
-        // =========================
+        // ==========================================
+        // RECEIPT IMAGE
+        // ==========================================
 
-        if (receipt.imageUrl) {
+        // Storage is not being used.
+        // Therefore there is no permanent image URL.
 
-            receiptImage.src =
-                receipt.imageUrl;
-
-            receiptImage.style.display =
-                "block";
-
-        } else {
-
-            receiptImage.style.display =
-                "none";
-        }
+        receiptImage.style.display =
+            "none";
 
 
-        // =========================
-        // DISPLAY ITEMS
-        // =========================
+        // ==========================================
+        // PURCHASED ITEMS
+        // ==========================================
 
         itemsList.innerHTML = "";
 
@@ -205,73 +193,118 @@ async function loadReceipt() {
             receipt.items || [];
 
 
-        if (items.length === 0) {
+        if (
+            !Array.isArray(items) ||
+            items.length === 0
+        ) {
 
             itemsList.textContent =
                 "No items found.";
 
         } else {
 
-            items.forEach((item) => {
+            items.forEach(
+                function (item) {
 
-                const itemRow =
-                    document.createElement("div");
+                    const itemRow =
+                        document.createElement(
+                            "div"
+                        );
 
-                itemRow.className =
-                    "item-row";
-
-
-                const itemName =
-                    document.createElement("span");
-
-                itemName.className =
-                    "item-name";
+                    itemRow.className =
+                        "item-row";
 
 
-                const itemPrice =
-                    document.createElement("span");
+                    const itemName =
+                        document.createElement(
+                            "span"
+                        );
 
-                itemPrice.className =
-                    "item-price";
+                    itemName.className =
+                        "item-name";
 
 
-                // Support object or simple text
-                if (typeof item === "object") {
+                    const itemPrice =
+                        document.createElement(
+                            "span"
+                        );
 
-                    itemName.textContent =
-                        item.name || "Unknown Item";
+                    itemPrice.className =
+                        "item-price";
 
-                    itemPrice.textContent =
-                        "₹" + (item.price || 0);
 
-                } else {
+                    if (
+                        typeof item ===
+                        "object"
+                    ) {
 
-                    itemName.textContent =
-                        item;
+                        itemName.textContent =
+                            item.name ||
+                            "Unknown Item";
 
-                    itemPrice.textContent =
-                        "";
+
+                        const quantity =
+                            item.quantity ||
+                            1;
+
+
+                        const price =
+                            item.price ||
+                            0;
+
+
+                        itemPrice.textContent =
+                            "Qty: " +
+                            quantity +
+                            " • ₹" +
+                            price;
+
+                    } else {
+
+                        itemName.textContent =
+                            item;
+
+                        itemPrice.textContent =
+                            "";
+
+                    }
+
+
+                    itemRow.appendChild(
+                        itemName
+                    );
+
+                    itemRow.appendChild(
+                        itemPrice
+                    );
+
+                    itemsList.appendChild(
+                        itemRow
+                    );
+
                 }
+            );
 
-
-                itemRow.appendChild(itemName);
-                itemRow.appendChild(itemPrice);
-
-                itemsList.appendChild(itemRow);
-
-            });
         }
 
 
-        // =========================
+        // ==========================================
         // SHOW DETAILS
-        // =========================
+        // ==========================================
 
         loadingMessage.style.display =
             "none";
 
+        errorMessage.style.display =
+            "none";
+
         receiptDetails.style.display =
             "block";
+
+
+        console.log(
+            "✅ Receipt details displayed successfully."
+        );
 
 
     } catch (error) {
@@ -281,6 +314,7 @@ async function loadReceipt() {
             error
         );
 
+
         loadingMessage.style.display =
             "none";
 
@@ -289,12 +323,156 @@ async function loadReceipt() {
 
         errorMessage.style.display =
             "block";
+
     }
+
 }
 
 
-// =========================
-// START
-// =========================
+// ==========================================
+// DELETE RECEIPT
+// ==========================================
 
-loadReceipt();
+deleteReceiptBtn.addEventListener(
+    "click",
+    async function () {
+
+        const user =
+            auth.currentUser;
+
+        const receiptId =
+            localStorage.getItem(
+                "selectedReceiptId"
+            );
+
+
+        if (!user) {
+
+            alert(
+                "Please login first."
+            );
+
+            return;
+        }
+
+
+        if (!receiptId) {
+
+            alert(
+                "No receipt selected."
+            );
+
+            return;
+        }
+
+
+        const confirmDelete =
+            confirm(
+                "Are you sure you want to delete this receipt?"
+            );
+
+
+        if (!confirmDelete) {
+
+            return;
+        }
+
+
+        deleteReceiptBtn.disabled =
+            true;
+
+        deleteReceiptBtn.textContent =
+            "Deleting...";
+
+
+        try {
+
+            const receiptRef =
+                doc(
+                    db,
+                    "users",
+                    user.uid,
+                    "receipts",
+                    receiptId
+                );
+
+
+            await deleteDoc(
+                receiptRef
+            );
+
+
+            localStorage.removeItem(
+                "selectedReceiptId"
+            );
+
+
+            alert(
+                "✅ Receipt deleted successfully!"
+            );
+
+
+            window.location.href =
+                "receiptHistory.html";
+
+
+        } catch (error) {
+
+            console.error(
+                "❌ Error deleting receipt:",
+                error
+            );
+
+
+            alert(
+                "Unable to delete receipt. Please try again."
+            );
+
+
+            deleteReceiptBtn.disabled =
+                false;
+
+            deleteReceiptBtn.textContent =
+                "Delete Receipt";
+
+        }
+
+    }
+);
+
+
+// ==========================================
+// WAIT FOR FIREBASE AUTH
+// ==========================================
+
+onAuthStateChanged(
+    auth,
+    function (user) {
+
+        console.log(
+            "Auth state:",
+            user
+                ? "Logged in"
+                : "Not logged in"
+        );
+
+
+        if (user) {
+
+            loadReceipt(user);
+
+        } else {
+
+            loadingMessage.style.display =
+                "none";
+
+            errorMessage.textContent =
+                "Please login to view this receipt.";
+
+            errorMessage.style.display =
+                "block";
+
+        }
+
+    }
+);
