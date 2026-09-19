@@ -128,28 +128,39 @@ function displayOffers(categories) {
         offerRow.className = "offer-row";
 
         offerRow.innerHTML = `
-            <div class="offer-icon">
-                ${offer.icon}
-            </div>
+    <div class="offer-icon">
+        ${offer.icon}
+    </div>
 
-            <div class="offer-info">
+    <div class="offer-info">
 
-                <strong>
-                    ${offer.title}
-                </strong>
+        <strong>
+            ${offer.title}
+        </strong>
 
-                <span>
-                    ${offer.description}
-                </span>
+        <span>
+            ${offer.description}
+        </span>
 
-            </div>
+    </div>
 
-            <span class="offer-badge">
-                ${offer.badge}
-            </span>
-        `;
+    <span class="offer-badge">
+        ${offer.badge}
+    </span>
+
+    <button class="offer-view-btn" type="button">
+        View
+    </button>
+`;
 
         offersList.appendChild(offerRow);
+        const viewButton = offerRow.querySelector(".offer-view-btn");
+
+viewButton.addEventListener("click", () => {
+    alert(
+        `${offer.title}\n\n${offer.description}\n\n${offer.badge}`
+    );
+});
 
     });
 }

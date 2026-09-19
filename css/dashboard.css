@@ -1417,3 +1417,22 @@ button {
     }
 
 }
+/* =========================
+   OFFER VIEW BUTTON
+========================= */
+
+.offer-view-btn {
+    border: none;
+    background: #2853b8;
+    color: #ffffff;
+    padding: 7px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.offer-view-btn:hover {
+    opacity: 0.9;
+}
