@@ -30,13 +30,18 @@ offerButtons.forEach((button) => {
             card.querySelector(".offer-badge")?.textContent.trim() ||
             "Special Deal";
 
-        alert(
-            `${title}\n\n` +
-            `Category: ${category}\n` +
-            `Offer: ${badge}\n` +
-            `Details: ${description}\n` +
-            `Type: Demo Offer`
-        );
+
+        const params = new URLSearchParams({
+            title: title,
+            category: category,
+            description: description,
+            discount: badge
+        });
+
+
+        window.location.href =
+            `offer-details.html?${params.toString()}`;
+
     });
 
 });
