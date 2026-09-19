@@ -157,8 +157,20 @@ function displayOffers(categories) {
         const viewButton = offerRow.querySelector(".offer-view-btn");
 
 viewButton.addEventListener("click", () => {
+
+    const offerDetails = `
+        <strong>${offer.title}</strong><br><br>
+
+        <b>Category:</b> ${offer.category}<br>
+        <b>Offer:</b> ${offer.badge}<br>
+        <b>Details:</b> ${offer.description}<br>
+        <b>Type:</b> Demo Offer
+    `;
+
     alert(
-        `${offer.title}\n\n${offer.description}\n\n${offer.badge}`
+        offerDetails
+            .replace(/<br>/g, "\n")
+            .replace(/<[^>]*>/g, "")
     );
 });
 
