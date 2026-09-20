@@ -1,9 +1,9 @@
 // ==========================================
 // SHOPIX - RECEIPT SCANNER
-// UPLOAD + PREVIEW + CAMERA
+// UPLOAD + PREVIEW + CAMERA + AI + FIRESTORE
 // ==========================================
 
-import { auth, db, storage } from "./firebase.js";
+import { auth, db } from "./firebase.js";
 import { model } from "./ai.js";
 
 import {
@@ -12,12 +12,6 @@ import {
     setDoc,
     serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
-
-import {
-    ref,
-    uploadBytes,
-    getDownloadURL
-} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-storage.js";
 
 console.log("Firebase connected successfully!");
 
@@ -33,7 +27,6 @@ const noPreviewText = document.getElementById("noPreviewText");
 const previewStatus = document.getElementById("previewStatus");
 const scanButton = document.getElementById("scanBtn");
 const captureButton = document.getElementById("captureBtn");
-
 
 // ==========================================
 // FILE UPLOAD
@@ -81,7 +74,6 @@ fileInput.addEventListener("change", function () {
     showPreview(file);
 });
 
-
 // ==========================================
 // SHOW RECEIPT PREVIEW
 // ==========================================
@@ -102,7 +94,6 @@ function showPreview(file) {
     console.log("Receipt selected:", file.name);
 }
 
-
 // ==========================================
 // RESET PREVIEW
 // ==========================================
@@ -120,85 +111,135 @@ function resetPreview() {
 }
 
 // ==========================================
-// SAVE RECEIPT
+// SAVE RECEIPT TO FIRESTORE
 // ==========================================
 
-const saveReceiptButton = document.getElementById("saveReceiptBtn");
+const saveReceiptButton =
+    document.getElementById("saveReceiptBtn");
 
-saveReceiptButton.addEventListener("click", async function () {
+saveReceiptButton.addEventListener(
+    "click",
+    async function () {
 
-    if (!currentExtractedData) {
-        alert("Please scan the receipt first.");
-        return;
-    }
+        if (!currentExtractedData) {
 
-    const user = auth.currentUser;
+            alert("Please scan the receipt first.");
 
-    if (!user) {
-        alert("Please login first.");
-        return;
-    }
+            return;
+        }
 
-    const file = fileInput.files[0];
+        const user = auth.currentUser;
 
-    if (!file) {
-        alert("Receipt image not found.");
-        return;
-    }
+        if (!user) {
 
-    saveReceiptButton.disabled = true;
-    saveReceiptButton.textContent = "Saving...";
+            alert("Please login first.");
 
-    try {
+            return;
+        }
 
-        const receiptId = doc(
-            collection(db, "users", user.uid, "receipts")
-        ).id;
+        saveReceiptButton.disabled = true;
+        saveReceiptButton.textContent = "Saving...";
 
-        // Upload receipt image
-        const storageRef = ref(
-            storage,
-            `receipts/${user.uid}/${receiptId}_${file.name}`
-        );
+        try {
 
-        await uploadBytes(storageRef, file);
+            // Create new receipt ID
+            const receiptId = doc(
+                collection(
+                    db,
+                    "users",
+                    user.uid,
+                    "receipts"
+                )
+            ).id;
 
-        const imageUrl = await getDownloadURL(storageRef);
+            // ==================================
+            // GET FORM DATA
+            // ==================================
 
-        // Save receipt data
-        await setDoc(
-            doc(db, "users", user.uid, "receipts", receiptId),
-            {
-                storeName: document.getElementById("storeName").value,
-                purchaseDate: document.getElementById("purchaseDate").value,
-                totalAmount: Number(
-                    document.getElementById("totalAmount").value
+            const storeName =
+                document.getElementById(
+                    "storeName"
+                ).value;
+
+            const purchaseDate =
+                document.getElementById(
+                    "purchaseDate"
+                ).value;
+
+            const totalAmount =
+                Number(
+                    document.getElementById(
+                        "totalAmount"
+                    ).value
+                );
+
+            const category =
+                document.getElementById(
+                    "category"
+                ).value;
+
+            // ==================================
+            // SAVE DATA TO FIRESTORE
+            // ==================================
+
+            await setDoc(
+                doc(
+                    db,
+                    "users",
+                    user.uid,
+                    "receipts",
+                    receiptId
                 ),
-                category: document.getElementById("category").value,
-                items: currentExtractedData.items || [],
-                imageUrl: imageUrl,
-                createdAt: serverTimestamp()
-            }
-        );
+                {
+                    storeName: storeName,
 
-        alert("✅ Receipt saved successfully!");
+                    purchaseDate: purchaseDate,
 
-        console.log("Receipt saved:", receiptId);
+                    totalAmount: totalAmount,
 
-    } catch (error) {
+                    category: category,
 
-        console.error("❌ Error saving receipt:", error);
+                    items:
+                        currentExtractedData.items || [],
 
-        alert("Unable to save receipt. Please try again.");
+                    createdAt:
+                        serverTimestamp()
+                }
+            );
 
-    } finally {
+            console.log(
+                "Receipt saved successfully:",
+                receiptId
+            );
 
-        saveReceiptButton.disabled = false;
-        saveReceiptButton.textContent = "Save Receipt";
+            alert(
+                "✅ Receipt saved successfully!"
+            );
+
+            // Reset button
+            saveReceiptButton.textContent =
+                "Saved ✓";
+
+        } catch (error) {
+
+            console.error(
+                "❌ Error saving receipt:",
+                error
+            );
+
+            alert(
+                "Unable to save receipt. Please try again."
+            );
+
+            saveReceiptButton.disabled = false;
+
+            saveReceiptButton.textContent =
+                "Save Receipt";
+
+        }
 
     }
-});
-
+);
 
 // ==========================================
 // CAMERA CAPTURE
@@ -226,32 +267,33 @@ captureButton.addEventListener(
         try {
 
             // Open camera
-            stream = await navigator.mediaDevices.getUserMedia({
-                video: {
-                    facingMode: "environment"
-                }
-            });
-
+            stream =
+                await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: "environment"
+                    }
+                });
 
             // ==================================
             // CAMERA OVERLAY
             // ==================================
 
-            const overlay = document.createElement("div");
+            const overlay =
+                document.createElement("div");
 
-            overlay.className = "camera-overlay";
-
+            overlay.className =
+                "camera-overlay";
 
             // ==================================
             // VIDEO
             // ==================================
 
-            const video = document.createElement("video");
+            const video =
+                document.createElement("video");
 
             video.autoplay = true;
             video.playsInline = true;
             video.srcObject = stream;
-
 
             // ==================================
             // CAPTURE BUTTON
@@ -260,11 +302,11 @@ captureButton.addEventListener(
             const capturePhoto =
                 document.createElement("button");
 
-            capturePhoto.textContent = "📸 Capture Photo";
+            capturePhoto.textContent =
+                "📸 Capture Photo";
 
             capturePhoto.className =
                 "camera-capture-btn";
-
 
             // ==================================
             // CLOSE BUTTON
@@ -273,11 +315,11 @@ captureButton.addEventListener(
             const closeCamera =
                 document.createElement("button");
 
-            closeCamera.textContent = "✕ Close";
+            closeCamera.textContent =
+                "✕ Close";
 
             closeCamera.className =
                 "camera-close-btn";
-
 
             // Add elements
             overlay.appendChild(video);
@@ -285,7 +327,6 @@ captureButton.addEventListener(
             overlay.appendChild(closeCamera);
 
             document.body.appendChild(overlay);
-
 
             // ==================================
             // CAPTURE PHOTO
@@ -308,7 +349,6 @@ captureButton.addEventListener(
                         return;
                     }
 
-
                     // Create canvas
                     const canvas =
                         document.createElement("canvas");
@@ -318,7 +358,6 @@ captureButton.addEventListener(
 
                     canvas.height =
                         video.videoHeight;
-
 
                     // Draw camera frame
                     const context =
@@ -331,7 +370,6 @@ captureButton.addEventListener(
                         canvas.width,
                         canvas.height
                     );
-
 
                     // Convert image to file
                     canvas.toBlob(
@@ -346,7 +384,6 @@ captureButton.addEventListener(
                                 return;
                             }
 
-
                             const capturedFile =
                                 new File(
                                     [blob],
@@ -355,7 +392,6 @@ captureButton.addEventListener(
                                         type: "image/jpeg"
                                     }
                                 );
-
 
                             // Put captured image
                             // into file input
@@ -369,7 +405,6 @@ captureButton.addEventListener(
                             fileInput.files =
                                 dataTransfer.files;
 
-
                             // Stop camera
                             stream
                                 .getTracks()
@@ -378,16 +413,13 @@ captureButton.addEventListener(
                                         track.stop()
                                 );
 
-
                             // Remove camera overlay
                             overlay.remove();
-
 
                             // Show captured receipt
                             showPreview(
                                 capturedFile
                             );
-
 
                             console.log(
                                 "Receipt captured successfully."
@@ -400,7 +432,6 @@ captureButton.addEventListener(
 
                 }
             );
-
 
             // ==================================
             // CLOSE CAMERA
@@ -425,7 +456,6 @@ captureButton.addEventListener(
                 }
             );
 
-
         } catch (error) {
 
             console.error(
@@ -441,7 +471,6 @@ captureButton.addEventListener(
     }
 );
 
-
 // ==========================================
 // AI RECEIPT SCANNING
 // ==========================================
@@ -450,7 +479,8 @@ scanButton.addEventListener(
     "click",
     async function () {
 
-        const file = fileInput.files[0];
+        const file =
+            fileInput.files[0];
 
         if (!file) {
 
@@ -464,7 +494,8 @@ scanButton.addEventListener(
         // Disable button while AI is working
         scanButton.disabled = true;
 
-        const originalText = scanButton.textContent;
+        const originalText =
+            scanButton.textContent;
 
         scanButton.textContent =
             "✨ Scanning Receipt...";
@@ -476,7 +507,6 @@ scanButton.addEventListener(
                 file.name
             );
 
-
             // ==================================
             // CONVERT IMAGE TO BASE64
             // ==================================
@@ -484,11 +514,9 @@ scanButton.addEventListener(
             const base64Image =
                 await fileToBase64(file);
 
-
             console.log(
                 "Receipt image converted successfully."
             );
-
 
             // ==================================
             // AI PROMPT
@@ -542,7 +570,6 @@ Rules:
 - Read the receipt carefully and do not invent information.
 `;
 
-
             // ==================================
             // SEND IMAGE + PROMPT TO GEMINI
             // ==================================
@@ -559,13 +586,11 @@ Rules:
 
             };
 
-
             const result =
                 await model.generateContent([
                     prompt,
                     imagePart
                 ]);
-
 
             const response =
                 result.response;
@@ -573,12 +598,10 @@ Rules:
             const text =
                 response.text();
 
-
             console.log(
                 "Gemini raw response:",
                 text
             );
-
 
             // ==================================
             // CLEAN AI RESPONSE
@@ -590,7 +613,6 @@ Rules:
                     .replace(/```/g, "")
                     .trim();
 
-
             // ==================================
             // CONVERT RESPONSE TO JSON
             // ==================================
@@ -598,13 +620,14 @@ Rules:
             const data =
                 JSON.parse(cleanedText);
 
-            currentExtractedData = data;
+            // Store extracted data
+            currentExtractedData =
+                data;
 
             console.log(
                 "Extracted receipt data:",
                 data
             );
-
 
             // ==================================
             // SHOW EXTRACTED DATA
@@ -612,11 +635,9 @@ Rules:
 
             showExtractedData(data);
 
-
             alert(
                 "✅ Receipt scanned successfully!"
             );
-
 
         } catch (error) {
 
@@ -629,10 +650,8 @@ Rules:
                 "Unable to scan the receipt. Please try again."
             );
 
-
         } finally {
 
-            // Enable button again
             scanButton.disabled = false;
 
             scanButton.textContent =
@@ -642,7 +661,6 @@ Rules:
 
     }
 );
-
 
 // ==========================================
 // FILE TO BASE64
@@ -655,7 +673,6 @@ function fileToBase64(file) {
 
             const reader =
                 new FileReader();
-
 
             reader.onload =
                 function () {
@@ -670,7 +687,6 @@ function fileToBase64(file) {
 
                 };
 
-
             reader.onerror =
                 function () {
 
@@ -682,7 +698,6 @@ function fileToBase64(file) {
 
                 };
 
-
             reader.readAsDataURL(file);
 
         }
@@ -690,43 +705,45 @@ function fileToBase64(file) {
 
 }
 
-
 // ==========================================
 // SHOW EXTRACTED RECEIPT DATA
 // ==========================================
 
 function showExtractedData(data) {
 
-
     console.log(
         "Showing extracted receipt data:",
         data
     );
-
 
     // ==========================================
     // GET FORM ELEMENTS
     // ==========================================
 
     const storeNameInput =
-        document.getElementById("storeName");
-
+        document.getElementById(
+            "storeName"
+        );
 
     const purchaseDateInput =
-        document.getElementById("purchaseDate");
-
+        document.getElementById(
+            "purchaseDate"
+        );
 
     const totalAmountInput =
-        document.getElementById("totalAmount");
-
+        document.getElementById(
+            "totalAmount"
+        );
 
     const categoryInput =
-        document.getElementById("category");
-
+        document.getElementById(
+            "category"
+        );
 
     const itemsList =
-        document.getElementById("itemsList");
-
+        document.getElementById(
+            "itemsList"
+        );
 
     // ==========================================
     // STORE NAME
@@ -739,29 +756,27 @@ function showExtractedData(data) {
 
     }
 
-
     // ==========================================
     // PURCHASE DATE
     // ==========================================
 
     if (purchaseDateInput) {
 
-
         let date =
             data.purchaseDate || "";
-
 
         // Convert DD-MM-YYYY
         // to YYYY-MM-DD
 
         if (
-            /^\d{2}-\d{2}-\d{4}$/.test(date)
+            /^\d{2}-\d{2}-\d{4}$/.test(
+                date
+            )
         ) {
 
             const parts =
                 date.split("-");
 
-
             date =
                 parts[2] +
                 "-" +
@@ -770,18 +785,18 @@ function showExtractedData(data) {
                 parts[0];
 
         }
-
 
         // Convert DD/MM/YYYY
         // to YYYY-MM-DD
 
         if (
-            /^\d{2}\/\d{2}\/\d{4}$/.test(date)
+            /^\d{2}\/\d{2}\/\d{4}$/.test(
+                date
+            )
         ) {
 
             const parts =
                 date.split("/");
-
 
             date =
                 parts[2] +
@@ -792,12 +807,10 @@ function showExtractedData(data) {
 
         }
 
-
         purchaseDateInput.value =
             date;
 
     }
-
 
     // ==========================================
     // TOTAL AMOUNT
@@ -810,13 +823,11 @@ function showExtractedData(data) {
 
     }
 
-
     // ==========================================
     // CATEGORY
     // ==========================================
 
     if (categoryInput) {
-
 
         const allowedCategories = [
 
@@ -830,7 +841,6 @@ function showExtractedData(data) {
             "Other"
 
         ];
-
 
         if (
             allowedCategories.includes(
@@ -850,58 +860,50 @@ function showExtractedData(data) {
 
     }
 
-
     // ==========================================
     // PURCHASED ITEMS
     // ==========================================
 
     if (itemsList) {
 
-
         // Clear old items
-
-        itemsList.innerHTML =
-            "";
-
+        itemsList.innerHTML = "";
 
         if (
             Array.isArray(data.items) &&
             data.items.length > 0
         ) {
 
-
             data.items.forEach(
                 function (item) {
 
-
                     const itemRow =
-                        document.createElement("div");
-
+                        document.createElement(
+                            "div"
+                        );
 
                     itemRow.className =
                         "extracted-item";
 
-
                     const itemName =
-                        document.createElement("span");
-
+                        document.createElement(
+                            "span"
+                        );
 
                     itemName.className =
                         "item-name";
-
 
                     itemName.textContent =
                         item.name ||
                         "Unknown item";
 
-
                     const itemDetails =
-                        document.createElement("span");
-
+                        document.createElement(
+                            "span"
+                        );
 
                     itemDetails.className =
                         "item-details";
-
 
                     itemDetails.textContent =
                         "Qty: " +
@@ -909,16 +911,13 @@ function showExtractedData(data) {
                         " • ₹" +
                         (item.price || 0);
 
-
                     itemRow.appendChild(
                         itemName
                     );
 
-
                     itemRow.appendChild(
                         itemDetails
                     );
-
 
                     itemsList.appendChild(
                         itemRow
@@ -927,9 +926,7 @@ function showExtractedData(data) {
                 }
             );
 
-
         } else {
-
 
             itemsList.textContent =
                 "No items detected.";
@@ -937,7 +934,6 @@ function showExtractedData(data) {
         }
 
     }
-
 
     // ==========================================
     // SHOW EXTRACTED DATA SECTION
@@ -948,13 +944,10 @@ function showExtractedData(data) {
             "extractedDataSection"
         );
 
-
     if (extractedSection) {
-
 
         extractedSection.style.display =
             "block";
-
 
         extractedSection.scrollIntoView({
 
@@ -964,9 +957,7 @@ function showExtractedData(data) {
 
         });
 
-
     } else {
-
 
         console.error(
             "❌ extractedDataSection not found in HTML."
@@ -974,13 +965,11 @@ function showExtractedData(data) {
 
     }
 
-
     console.log(
         "✅ Extracted data displayed successfully."
     );
 
 }
-
 
 // ==========================================
 // INITIAL STATE

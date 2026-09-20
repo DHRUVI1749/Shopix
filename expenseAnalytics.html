@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Expense Analytics | SHOPIX</title>
+
+    <link rel="stylesheet" href="css/expenseAnalytics.css">
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="page-header">
+
+        <div class="header-left">
+
+            <a href="dashboard.html" class="back-btn">
+                ←
+            </a>
+
+            <div>
+                <h1>Expense Analytics</h1>
+                <p>Understand your spending patterns</p>
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="analytics-container">
+
+        <!-- INTRO -->
+        <section class="analytics-intro">
+
+            <h2>Your Spending Overview</h2>
+
+            <p>
+                Track and understand your expenses from your saved receipts.
+            </p>
+
+        </section>
+
+
+        <!-- SUMMARY CARDS -->
+        <section class="summary-grid">
+
+            <!-- TOTAL SPENDING -->
+            <div class="summary-card">
+
+                <div class="summary-icon">
+                    ₹
+                </div>
+
+                <div class="summary-content">
+
+                    <span>Total Spending</span>
+
+                    <h3 id="totalSpending">
+                        ₹0
+                    </h3>
+
+                </div>
+
+            </div>
+
+
+            <!-- TOTAL RECEIPTS -->
+            <div class="summary-card">
+
+                <div class="summary-icon">
+                    🧾
+                </div>
+
+                <div class="summary-content">
+
+                    <span>Total Receipts</span>
+
+                    <h3 id="totalReceipts">
+                        0
+                    </h3>
+
+                </div>
+
+            </div>
+
+
+            <!-- TOP CATEGORY -->
+            <div class="summary-card">
+
+                <div class="summary-icon">
+                    📊
+                </div>
+
+                <div class="summary-content">
+
+                    <span>Top Category</span>
+
+                    <h3 id="topCategory">
+                        —
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- CATEGORY SECTION -->
+        <section class="analytics-section">
+
+            <div class="section-header">
+
+                <div>
+                    <h2>Category-wise Spending</h2>
+
+                    <p>
+                        See how your expenses are distributed.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div id="categoryList" class="category-list">
+
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+                        📊
+                    </div>
+
+                    <h3>No expense data yet</h3>
+
+                    <p>
+                        Save some receipts to see your spending analysis.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- SPENDING DISTRIBUTION -->
+            <div class="chart-section">
+
+                <h3>Spending Distribution</h3>
+
+                <div id="spendingChart" class="spending-chart">
+                    <!-- Chart will be generated automatically -->
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- RECENT EXPENSES -->
+        <section class="analytics-section">
+
+            <div class="section-header">
+
+                <div>
+                    <h2>Recent Expenses</h2>
+
+                    <p>
+                        Your latest saved receipt expenses.
+                    </p>
+                </div>
+
+                <a href="receiptHistory.html" class="view-all-btn">
+                    View All
+                </a>
+
+            </div>
+
+
+            <div id="recentExpenses" class="recent-expenses">
+
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+                        🧾
+                    </div>
+
+                    <h3>No expenses yet</h3>
+
+                    <p>
+                        Your saved receipts will appear here.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+    <!-- JAVASCRIPT -->
+    <script type="module" src="js/expenseAnalytics.js"></script>
+
+</body>
+
+</html>

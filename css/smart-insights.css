@@ -1,0 +1,163 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Inter, Arial, sans-serif;
+    background: #f6f8fc;
+    color: #101828;
+}
+
+.insights-header {
+    background: #ffffff;
+    border-bottom: 1px solid #eaecf0;
+    padding: 25px 35px;
+}
+
+.header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.back-link {
+    display: inline-block;
+    margin-bottom: 15px;
+    color: #2853b8;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.insights-header h1 {
+    font-size: 26px;
+    margin-bottom: 6px;
+}
+
+.insights-header p {
+    color: #667085;
+    font-size: 14px;
+}
+
+.insights-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 35px;
+}
+
+.insights-card {
+    background: #ffffff;
+    border: 1px solid #eaecf0;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 2px 8px rgba(16, 24, 40, 0.04);
+}
+
+.insights-title {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 25px;
+}
+
+.insights-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 10px;
+    background: #eef4ff;
+    color: #2853b8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+}
+
+.insights-title h2 {
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+
+.insights-title p {
+    color: #667085;
+    font-size: 13px;
+}
+
+.insight-box {
+    border: 1px solid #eaecf0;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 15px;
+}
+
+.insight-box h3 {
+    font-size: 15px;
+    margin-bottom: 8px;
+}
+
+.insight-box p {
+    color: #667085;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+@media (max-width: 600px) {
+
+    .insights-header {
+        padding: 20px;
+    }
+
+    .insights-container {
+        padding: 20px;
+    }
+
+    .insights-card {
+        padding: 18px;
+    }
+
+}
+/* =========================
+   SUMMARY CARDS
+========================= */
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.summary-card {
+    border: 1px solid #eaecf0;
+    border-radius: 10px;
+    padding: 20px;
+    background: #ffffff;
+}
+
+.summary-label {
+    display: block;
+    color: #667085;
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+.summary-card strong {
+    display: block;
+    color: #101828;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+@media (max-width: 900px) {
+
+    .summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+@media (max-width: 600px) {
+    .summary-grid {
+    grid-template-columns: 1fr;
+}
+}
