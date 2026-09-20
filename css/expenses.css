@@ -47,13 +47,12 @@ a {
     padding: 25px 16px;
 
     background: white;
-
     border-right: 1px solid #eaecf0;
 
     z-index: 100;
 }
 
-/* LOGO */
+/* ================= LOGO ================= */
 
 .logo {
     display: flex;
@@ -61,14 +60,12 @@ a {
     gap: 10px;
 
     padding: 0 10px;
-
     margin-bottom: 40px;
 
     color: #102a72;
 
     font-size: 23px;
     font-weight: 800;
-
     letter-spacing: -1px;
 }
 
@@ -83,14 +80,13 @@ a {
     border-radius: 9px;
 
     background: #102a72;
-
     color: white;
 
     font-size: 17px;
     font-weight: 700;
 }
 
-/* NAVIGATION */
+/* ================= NAVIGATION ================= */
 
 .sidebar nav {
     display: flex;
@@ -101,7 +97,6 @@ a {
 .sidebar nav a {
     display: flex;
     align-items: center;
-
     gap: 12px;
 
     padding: 11px 12px;
@@ -140,24 +135,26 @@ a {
     margin-left: 245px;
     min-height: 100vh;
 
-    padding: 35px;
+    padding: 32px;
 }
 
 /* ================= TOP CONTENT ================= */
 
 .topbar {
-    margin-bottom: 28px;
+    margin-bottom: 22px;
 }
 
 .topbar h1 {
     font-size: 27px;
+    font-weight: 700;
     letter-spacing: -0.8px;
-    margin-bottom: 7px;
+    margin-bottom: 6px;
 }
 
 .topbar p {
     color: #667085;
-    font-size: 11px;
+    font-size: 13px;
+    line-height: 1.5;
 }
 
 /* ================= SUMMARY CARDS ================= */
@@ -172,39 +169,39 @@ a {
 }
 
 .card {
-    padding: 18px;
+    padding: 17px 18px;
 
     background: white;
 
     border: 1px solid #eaecf0;
-
     border-radius: 12px;
 
     box-shadow: 0 3px 12px rgba(16, 24, 40, 0.025);
 }
 
 .card h3 {
-    color: #98a2b3;
+    color: #667085;
 
-    font-size: 8px;
+    font-size: 12px;
     font-weight: 700;
 
-    letter-spacing: 0.7px;
+    letter-spacing: 0.4px;
 
-    margin-bottom: 15px;
+    margin-bottom: 11px;
 }
 
 .amount {
     font-size: 22px;
+    font-weight: 700;
 
     letter-spacing: -0.5px;
 
-    margin-bottom: 7px;
+    margin-bottom: 5px;
 }
 
 .card span {
-    color: #98a2b3;
-    font-size: 9px;
+    color: #667085;
+    font-size: 11px;
 }
 
 /* ================= EXPENSE SECTIONS ================= */
@@ -213,7 +210,6 @@ a {
     background: white;
 
     border: 1px solid #eaecf0;
-
     border-radius: 12px;
 
     box-shadow: 0 3px 12px rgba(16, 24, 40, 0.025);
@@ -222,14 +218,24 @@ a {
 }
 
 .section-header {
-    padding: 19px 20px;
+    padding: 16px 20px;
 
     border-bottom: 1px solid #f0f2f5;
 }
 
 .section-header h2 {
-    font-size: 13px;
+    font-size: 15px;
+    font-weight: 700;
+
     margin-bottom: 4px;
+
+    color: #101828;
+}
+
+.section-header p {
+    color: #667085;
+    font-size: 12px;
+    line-height: 1.5;
 }
 
 /* ================= CATEGORY ================= */
@@ -239,9 +245,9 @@ a {
 
     grid-template-columns: repeat(2, 1fr);
 
-    gap: 10px;
+    gap: 7px;
 
-    padding: 15px 20px 20px;
+    padding: 10px 20px 12px;
 }
 
 .category-item {
@@ -250,31 +256,36 @@ a {
     justify-content: space-between;
     align-items: center;
 
-    padding: 12px;
+    min-height: 32px;
 
-    background: white;
+    padding: 5px 13px;
+
+    background: #ffffff;
 
     border: 1px solid #eaecf0;
-
     border-radius: 8px;
 }
 
 .category-item span {
-    color: #667085;
-    font-size: 10px;
+    color: #475467;
+
+    font-size: 12px;
+    font-weight: 600;
 }
 
 .category-item strong {
     color: #101828;
-    font-size: 10px;
+
+    font-size: 12px;
+    font-weight: 700;
 }
 
 /* ================= CHARTS ================= */
 
 .category-chart {
-    height: 220px;
+    height: 200px;
 
-    margin: 0 20px 20px;
+    margin: 0 20px 16px;
 
     position: relative;
 
@@ -289,7 +300,7 @@ a {
 }
 
 .chart-placeholder {
-    height: 245px;
+    height: 190px;
 
     position: relative;
 
@@ -297,7 +308,7 @@ a {
     align-items: center;
     justify-content: center;
 
-    padding: 20px;
+    padding: 12px 20px 18px;
 }
 
 .chart-placeholder canvas {
@@ -326,16 +337,17 @@ td {
 
     border-bottom: 1px solid #f2f4f7;
 
-    font-size: 9px;
+    font-size: 12px;
 }
 
 th {
-    color: #98a2b3;
-    font-weight: 600;
+    color: #475467;
+    font-weight: 700;
 }
 
 td {
-    color: #667085;
+    color: #475467;
+    font-weight: 500;
 }
 
 tbody tr:hover {
@@ -397,9 +409,12 @@ tbody tr:hover {
 
 .nav-title {
     margin: 0 8px 10px;
-    color: #98a2b3;
-    font-size: 8px;
+
+    color: #667085;
+
+    font-size: 10px;
     font-weight: 700;
+
     letter-spacing: 0.8px;
 }
 
@@ -407,10 +422,11 @@ tbody tr:hover {
     margin-top: 28px;
 }
 
-/* Sidebar bottom user area */
+/* ================= SIDEBAR BOTTOM ================= */
 
 .sidebar-bottom {
     position: absolute;
+
     left: 16px;
     right: 16px;
     bottom: 18px;
@@ -419,11 +435,13 @@ tbody tr:hover {
 .user-mini {
     display: flex;
     align-items: center;
+
     gap: 10px;
 
     padding: 12px 8px;
 
     border-top: 1px solid #eaecf0;
+
     margin-bottom: 8px;
 }
 
@@ -447,17 +465,18 @@ tbody tr:hover {
 .user-info {
     display: flex;
     flex-direction: column;
+
     gap: 2px;
 }
 
 .user-info strong {
     color: #101828;
-    font-size: 10px;
+    font-size: 11px;
 }
 
 .user-info span {
-    color: #98a2b3;
-    font-size: 8px;
+    color: #667085;
+    font-size: 9px;
 }
 
 .logout-btn {
@@ -469,7 +488,7 @@ tbody tr:hover {
     padding: 9px 8px !important;
 
     color: #667085 !important;
-    font-size: 10px !important;
+    font-size: 11px !important;
 }
 
 .logout-btn:hover {
