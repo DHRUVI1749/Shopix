@@ -475,14 +475,16 @@
         // ==========================================
 
         import {
-            auth,
-            db
+            app,
+            auth
         } from "./js/firebase.js";
 
 
         import {
             createUserWithEmailAndPassword,
-            updateProfile
+            updateProfile,
+            GoogleAuthProvider,
+            signInWithPopup
         } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
 
@@ -491,9 +493,13 @@
         // ==========================================
 
         import {
+            getDatabase,
             ref,
             set
-        } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+        } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
+
+
+        const db = getDatabase(app);
 
 
 
@@ -699,7 +705,8 @@
                 // BUTTON DISABLE
                 // ==================================
 
-                signupButton.disabled = true;
+                signupButton.disabled =
+                    true;
 
                 signupButtonText.textContent =
                     "Creating Account...";
@@ -811,6 +818,18 @@
                     );
 
 
+                    console.error(
+                        "Error Code:",
+                        error.code
+                    );
+
+
+                    console.error(
+                        "Error Message:",
+                        error.message
+                    );
+
+
                     let errorMessage =
                         "Something went wrong. Please try again.";
 
@@ -876,6 +895,38 @@
                     }
 
 
+                    // ==================================
+                    // DATABASE PERMISSION ERROR
+                    // ==================================
+
+                    else if (
+                        error.code ===
+                        "PERMISSION_DENIED"
+                    ) {
+
+                        errorMessage =
+                            "❌ Account created, but user data could not be saved. Check Realtime Database Rules.";
+
+                    }
+
+
+                    // ==================================
+                    // DATABASE ERROR
+                    // ==================================
+
+                    else if (
+                        error.message &&
+                        error.message.toLowerCase().includes(
+                            "permission"
+                        )
+                    ) {
+
+                        errorMessage =
+                            "❌ Account created, but database permission was denied.";
+
+                    }
+
+
 
                     // Show error
 
@@ -907,12 +958,109 @@
 
         googleButton.addEventListener(
             "click",
-            function () {
+            async function () {
 
-                showMessage(
-                    "Google login will be added later.",
-                    "loading"
-                );
+                try {
+
+                    googleButton.disabled = true;
+
+                    showMessage(
+                        "Connecting with Google...",
+                        "loading"
+                    );
+
+                    const provider =
+                        new GoogleAuthProvider();
+
+                    const result =
+                        await signInWithPopup(
+                            auth,
+                            provider
+                        );
+
+                    const user =
+                        result.user;
+
+                    // Save Google user data in Realtime Database
+
+                    await set(
+                        ref(
+                            db,
+                            "users/" + user.uid
+                        ),
+                        {
+                            uid: user.uid,
+                            name: user.displayName || "",
+                            email: user.email || "",
+                            createdAt: Date.now()
+                        }
+                    );
+
+                    showMessage(
+                        "✅ Google account connected successfully!",
+                        "success"
+                    );
+
+                    setTimeout(
+                        function () {
+
+                            window.location.href =
+                                "dashboard.html";
+
+                        },
+                        1000
+                    );
+
+                }
+
+                catch (error) {
+
+                    console.error(
+                        "Google Sign-In Error:",
+                        error
+                    );
+
+                    let errorMessage =
+                        "❌ Google sign-in failed. Please try again.";
+
+                    if (
+                        error.code ===
+                        "auth/popup-closed-by-user"
+                    ) {
+
+                        errorMessage =
+                            "❌ Google sign-in was cancelled.";
+
+                    }
+
+                    else if (
+                        error.code ===
+                        "auth/popup-blocked"
+                    ) {
+
+                        errorMessage =
+                            "❌ Popup was blocked by your browser.";
+
+                    }
+
+                    else if (
+                        error.code ===
+                        "auth/account-exists-with-different-credential"
+                    ) {
+
+                        errorMessage =
+                            "❌ An account already exists with this email.";
+
+                    }
+
+                    showMessage(
+                        errorMessage,
+                        "error"
+                    );
+
+                    googleButton.disabled = false;
+
+                }
 
             }
         );

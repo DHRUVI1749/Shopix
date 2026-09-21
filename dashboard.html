@@ -13,10 +13,12 @@
         content="SHOPIX Smart Receipt and Shopping Assistant Dashboard">
 
     <!-- Google Font -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
 
     <link rel="preconnect"
-        href="https://fonts.gstatic.com"
+        href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+        href="https://fonts.googleapis.com"
         crossorigin>
 
     <link
@@ -24,18 +26,9 @@
         rel="stylesheet">
 
     <!-- Dashboard CSS -->
-    <link rel="stylesheet" href="css/dashboard.css">
 
-    <!-- Dashboard Protection -->
-    <script>
-        window.addEventListener("pageshow", function (event) {
-
-            if (event.persisted) {
-                window.location.reload();
-            }
-
-        });
-    </script>
+    <link rel="stylesheet"
+        href="css/dashboard.css">
 
 </head>
 
@@ -46,7 +39,8 @@
     <!-- =========================
          DASHBOARD LAYOUT
     ========================== -->
-  <div class="dashboard-layout">
+
+    <div class="dashboard-layout">
 
 
         <!-- =========================
@@ -58,7 +52,8 @@
 
             <!-- LOGO -->
 
-            <a href="index.html" class="sidebar-logo">
+            <a href="index.html"
+                class="sidebar-logo">
 
                 <span class="logo-icon">
                     S
@@ -83,7 +78,8 @@
 
                 <!-- Dashboard -->
 
-                <a href="dashboard.html" class="nav-item active">
+                <a href="dashboard.html"
+                    class="nav-item active">
 
                     <span class="nav-icon">
                         ▦
@@ -96,7 +92,8 @@
 
                 <!-- Receipts -->
 
-                <a href="receiptHistory.html" class="nav-item">
+                <a href="receiptHistory.html"
+                    class="nav-item">
 
                     <span class="nav-icon">
                         ▤
@@ -109,7 +106,8 @@
 
                 <!-- Upload Receipt -->
 
-                <a href="receiptScanner.html" class="nav-item">
+                <a href="receiptScanner.html"
+                    class="nav-item">
 
                     <span class="nav-icon">
                         ↑
@@ -122,7 +120,8 @@
 
                 <!-- Expenses -->
 
-                <a href="expenses.html" class="nav-item">
+                <a href="#"
+                    class="nav-item">
 
                     <span class="nav-icon">
                         ◫
@@ -135,7 +134,8 @@
 
                 <!-- Warranties -->
 
-                <a href="warranties.html" class="nav-item">
+                <a href="warranties.html"
+                    class="nav-item">
 
                     <span class="nav-icon">
                         ♢
@@ -148,7 +148,8 @@
 
                 <!-- Settings -->
 
-                <a href="#" class="nav-item">
+                <a href="#"
+                    class="nav-item">
 
                     <span class="nav-icon">
                         ⚙
@@ -188,7 +189,8 @@
                 </div>
 
 
-                <a href="index.html" class="logout-btn">
+                <a href="index.html"
+                    class="logout-btn">
 
                     <span>
                         ↪
@@ -222,6 +224,7 @@
 
                 <div class="header-left">
 
+
                     <button
                         class="mobile-menu-btn"
                         type="button">
@@ -229,6 +232,7 @@
                         ☰
 
                     </button>
+
 
                     <div>
 
@@ -241,6 +245,7 @@
                         </h2>
 
                     </div>
+
 
                 </div>
 
@@ -259,15 +264,25 @@
                     </button>
 
 
-                    <div class="top-user">
+                    <!-- PROFILE BUTTON -->
 
-                        <div class="top-avatar">
+                    <div
+                        class="top-user"
+                        id="profileButton"
+                        style="cursor: pointer;">
+
+                        <div
+                            class="top-avatar"
+                            id="profileAvatar">
+
                             U
+
                         </div>
+
 
                         <div>
 
-                            <strong>
+                            <strong id="profileName">
                                 User
                             </strong>
 
@@ -278,6 +293,7 @@
                         </div>
 
                     </div>
+
 
                 </div>
 
@@ -347,25 +363,38 @@
 
                     <div class="stat-card">
 
+
                         <div class="stat-top">
+
 
                             <div class="stat-icon blue">
                                 ₹
                             </div>
 
+
                             <span class="stat-label">
                                 TOTAL EXPENSE
                             </span>
 
+
                         </div>
 
+
                         <h2>
-                            ₹0
+                            ₹45,000
                         </h2>
 
+
                         <p class="stat-change positive">
-                            Based on saved receipts
+
+                            ↑ 8.2%
+
+                            <span>
+                                vs last month
+                            </span>
+
                         </p>
+
 
                     </div>
 
@@ -375,25 +404,32 @@
 
                     <div class="stat-card">
 
+
                         <div class="stat-top">
+
 
                             <div class="stat-icon purple">
                                 ◫
                             </div>
 
+
                             <span class="stat-label">
                                 MONTHLY BUDGET
                             </span>
 
+
                         </div>
+
 
                         <h2>
                             ₹50,000
                         </h2>
 
+
                         <p class="stat-change">
                             ₹5,000 remaining
                         </p>
+
 
                     </div>
 
@@ -403,25 +439,32 @@
 
                     <div class="stat-card">
 
+
                         <div class="stat-top">
+
 
                             <div class="stat-icon green">
                                 ♢
                             </div>
 
+
                             <span class="stat-label">
                                 WARRANTIES
                             </span>
 
+
                         </div>
+
 
                         <h2>
                             5
                         </h2>
 
+
                         <p class="stat-change warning">
                             2 expiring soon
                         </p>
+
 
                     </div>
 
@@ -431,25 +474,38 @@
 
                     <div class="stat-card">
 
+
                         <div class="stat-top">
+
 
                             <div class="stat-icon orange">
                                 ↗
                             </div>
 
+
                             <span class="stat-label">
                                 THIS MONTH
                             </span>
 
+
                         </div>
 
+
                         <h2>
-                            ₹0
+                            ₹12,450
                         </h2>
 
+
                         <p class="stat-change positive">
-                            Current month spending
+
+                            ↓ 4.2%
+
+                            <span>
+                                vs last month
+                            </span>
+
                         </p>
+
 
                     </div>
 
@@ -472,6 +528,7 @@
 
                         <div class="card-header">
 
+
                             <div>
 
                                 <h3>
@@ -485,38 +542,40 @@
                             </div>
 
 
-                            <select id="chartPeriod">
+                            <select>
 
-                                <option value="6">
+                                <option>
                                     Last 6 months
                                 </option>
 
-                                <option value="12">
-                                    Last 12 months
+                                <option>
+                                    This year
                                 </option>
 
                             </select>
+
 
                         </div>
 
 
 
-                        <!-- DYNAMIC CHART -->
+                        <!-- SIMPLE CHART -->
 
                         <div class="chart">
 
+
                             <div class="chart-values">
 
-                                <span id="chartValueTop">
-                                    ₹0
+                                <span>
+                                    ₹15k
                                 </span>
 
-                                <span id="chartValueSecond">
-                                    ₹0
+                                <span>
+                                    ₹10k
                                 </span>
 
-                                <span id="chartValueThird">
-                                    ₹0
+                                <span>
+                                    ₹5k
                                 </span>
 
                                 <span>
@@ -524,6 +583,7 @@
                                 </span>
 
                             </div>
+
 
 
                             <div class="chart-area">
@@ -538,14 +598,106 @@
                                 <div class="chart-grid-line"></div>
 
 
-                                <!-- BARS WILL BE GENERATED BY JAVASCRIPT -->
 
-                                <div
-                                    class="bars"
-                                    id="spendingBars">
+                                <div class="bars">
+
+
+                                    <div class="bar-wrapper">
+
+                                        <div
+                                            class="bar"
+                                            style="height:45%;">
+
+                                        </div>
+
+                                        <span>
+                                            Mar
+                                        </span>
+
+                                    </div>
+
+
+
+                                    <div class="bar-wrapper">
+
+                                        <div
+                                            class="bar"
+                                            style="height:60%;">
+
+                                        </div>
+
+                                        <span>
+                                            Apr
+                                        </span>
+
+                                    </div>
+
+
+
+                                    <div class="bar-wrapper">
+
+                                        <div
+                                            class="bar"
+                                            style="height:40%;">
+
+                                        </div>
+
+                                        <span>
+                                            May
+                                        </span>
+
+                                    </div>
+
+
+
+                                    <div class="bar-wrapper">
+
+                                        <div
+                                            class="bar"
+                                            style="height:70%;">
+
+                                        </div>
+
+                                        <span>
+                                            Jun
+                                        </span>
+
+                                    </div>
+
+
+
+                                    <div class="bar-wrapper">
+
+                                        <div
+                                            class="bar"
+                                            style="height:55%;">
+
+                                        </div>
+
+                                        <span>
+                                            Jul
+                                        </span>
+
+                                    </div>
+
+
+
+                                    <div class="bar-wrapper">
+
+                                        <div
+                                            class="bar"
+                                            style="height:82%;">
+
+                                        </div>
+
+                                        <span>
+                                            Aug
+                                        </span>
+
+                                    </div>
+
 
                                 </div>
-
 
                             </div>
 
@@ -563,13 +715,16 @@
 
                         <div class="ai-card-top">
 
+
                             <div class="ai-icon">
                                 ✦
                             </div>
 
+
                             <span>
                                 AI INSIGHT
                             </span>
+
 
                         </div>
 
@@ -580,13 +735,14 @@
 
 
                         <p>
-                            Your spending insights will be generated
-                            from your saved receipts.
+                            Your spending on Electronics is higher
+                            this month. Consider reviewing your recent
+                            purchases before your next shopping trip.
                         </p>
 
 
                         <a
-                            href="smart-insights.html"
+                            href="#"
                             class="ai-link">
 
                             View AI Insights →
@@ -703,9 +859,10 @@
                         </div>
 
 
-                        <a href="warranties.html">
+                        <a href="#">
                             View All →
                         </a>
+
 
                     </div>
 
@@ -739,6 +896,7 @@
                                 Expiring Soon
                             </span>
 
+
                         </div>
 
 
@@ -768,123 +926,6 @@
                                 Active
                             </span>
 
-                        </div>
-
-
-                    </div>
-
-
-                </div>
-
-
-                <!-- =========================
-                     SHOPPING OFFERS
-                ========================== -->
-
-                <div class="dashboard-card offers-card">
-
-
-                    <div class="card-header">
-
-                        <div>
-
-                            <h3>
-                                Shopping Offers
-                            </h3>
-
-                            <p>
-                                Deals and offers based on your shopping
-                            </p>
-
-                        </div>
-
-                        <a href="offers.html">
-                            View All →
-                        </a>
-
-                    </div>
-
-
-                    <div class="offers-list">
-
-
-                        <!-- OFFER 1 -->
-
-                        <div class="offer-row">
-
-                            <div class="offer-icon">
-                                🛍️
-                            </div>
-
-                            <div class="offer-info">
-
-                                <strong>
-                                    Electronics Deals
-                                </strong>
-
-                                <span>
-                                    Special offers on electronics and gadgets
-                                </span>
-
-                            </div>
-
-                            <span class="offer-badge">
-                                Up to 20% Off
-                            </span>
-
-                        </div>
-
-
-                        <!-- OFFER 2 -->
-
-                        <div class="offer-row">
-
-                            <div class="offer-icon">
-                                👟
-                            </div>
-
-                            <div class="offer-info">
-
-                                <strong>
-                                    Fashion Offers
-                                </strong>
-
-                                <span>
-                                    Save on clothing, footwear and accessories
-                                </span>
-
-                            </div>
-
-                            <span class="offer-badge">
-                                Up to 30% Off
-                            </span>
-
-                        </div>
-
-
-                        <!-- OFFER 3 -->
-
-                        <div class="offer-row">
-
-                            <div class="offer-icon">
-                                🏠
-                            </div>
-
-                            <div class="offer-info">
-
-                                <strong>
-                                    Home & Living
-                                </strong>
-
-                                <span>
-                                    Deals on home and everyday essentials
-                                </span>
-
-                            </div>
-
-                            <span class="offer-badge">
-                                Special Deal
-                            </span>
 
                         </div>
 
@@ -896,6 +937,251 @@
 
 
             </section>
+
+
+
+            <!-- =========================
+                 PROFILE MODAL
+            ========================== -->
+
+            <div
+                id="profileModal"
+                style="
+                    display:none;
+                    position:fixed;
+                    inset:0;
+                    background:rgba(0,0,0,0.45);
+                    z-index:9999;
+                    align-items:center;
+                    justify-content:center;
+                ">
+
+
+                <div
+                    style="
+                        width:90%;
+                        max-width:420px;
+                        background:white;
+                        border-radius:16px;
+                        padding:25px;
+                        box-shadow:0 20px 50px rgba(0,0,0,0.2);
+                    ">
+
+
+                    <div
+                        style="
+                            display:flex;
+                            justify-content:space-between;
+                            align-items:center;
+                            margin-bottom:20px;
+                        ">
+
+                        <h2 style="margin:0;">
+                            My Profile
+                        </h2>
+
+
+                        <button
+                            id="closeProfile"
+                            type="button"
+                            style="
+                                border:none;
+                                background:none;
+                                font-size:24px;
+                                cursor:pointer;
+                            ">
+
+                            ×
+
+                        </button>
+
+
+                    </div>
+
+
+
+                    <!-- =========================
+                         PROFILE AVATAR
+                    ========================== -->
+
+                    <div
+                        style="
+                            text-align:center;
+                            margin-bottom:20px;
+                        ">
+
+
+                        <div
+                            id="profileLargeAvatar"
+                            style="
+                                width:75px;
+                                height:75px;
+                                margin:auto;
+                                border-radius:50%;
+                                display:flex;
+                                align-items:center;
+                                justify-content:center;
+                                background:#eef2ff;
+                                font-size:28px;
+                                font-weight:700;
+                                cursor:pointer;
+                                overflow:hidden;
+                            ">
+
+                            U
+
+                        </div>
+
+
+                        <!-- CHANGE AVATAR -->
+
+                        <button
+                            type="button"
+                            id="changeAvatarBtn"
+                            style="
+                                margin-top:10px;
+                                border:none;
+                                background:none;
+                                cursor:pointer;
+                                font-size:14px;
+                                font-weight:600;
+                            ">
+
+                            Change Avatar
+
+                        </button>
+
+
+                        <!-- REMOVE AVATAR -->
+
+                        <button
+                            type="button"
+                            id="removeAvatarBtn"
+                            style="
+                                display:block;
+                                margin:6px auto 0;
+                                border:none;
+                                background:none;
+                                color:red;
+                                cursor:pointer;
+                                font-size:14px;
+                                font-weight:600;
+                            ">
+
+                            Remove Avatar
+
+                        </button>
+
+
+                        <!-- HIDDEN IMAGE INPUT -->
+
+                        <input
+                            type="file"
+                            id="avatarInput"
+                            accept="image/*"
+                            style="display:none;">
+
+                    </div>
+
+
+
+                    <!-- NAME -->
+
+                    <label
+                        for="profileNameInput"
+                        style="
+                            display:block;
+                            margin-bottom:7px;
+                            font-weight:600;
+                        ">
+
+                        Name
+
+                    </label>
+
+
+                    <input
+                        type="text"
+                        id="profileNameInput"
+                        placeholder="Enter your name"
+                        style="
+                            width:100%;
+                            box-sizing:border-box;
+                            padding:12px;
+                            border:1px solid #ddd;
+                            border-radius:8px;
+                            margin-bottom:15px;
+                        ">
+
+
+
+                    <!-- EMAIL -->
+
+                    <label
+                        for="profileEmailInput"
+                        style="
+                            display:block;
+                            margin-bottom:7px;
+                            font-weight:600;
+                        ">
+
+                        Email
+
+                    </label>
+
+
+                    <input
+                        type="email"
+                        id="profileEmailInput"
+                        readonly
+                        style="
+                            width:100%;
+                            box-sizing:border-box;
+                            padding:12px;
+                            border:1px solid #ddd;
+                            border-radius:8px;
+                            margin-bottom:15px;
+                            background:#f5f5f5;
+                        ">
+
+
+
+                    <!-- MESSAGE -->
+
+                    <div
+                        id="profileMessage"
+                        style="
+                            min-height:20px;
+                            margin-bottom:12px;
+                            font-size:14px;
+                        ">
+
+                    </div>
+
+
+
+                    <!-- SAVE BUTTON -->
+
+                    <button
+                        id="saveProfile"
+                        type="button"
+                        style="
+                            width:100%;
+                            padding:12px;
+                            border:none;
+                            border-radius:8px;
+                            cursor:pointer;
+                            font-weight:600;
+                        ">
+
+                        Save Changes
+
+                    </button>
+
+
+                </div>
+
+            </div>
 
 
 
@@ -922,6 +1208,7 @@
     </div>
 
 
+
     <!-- =========================
          DASHBOARD SCRIPT
     ========================== -->
@@ -931,9 +1218,6 @@
         src="js/dashboard.js">
     </script>
 
-    <script type="module" src="js/offers.js"></script>
-
-    <script type="module" src="js/smart-insights.js"></script>
 
 </body>
 
