@@ -9,7 +9,6 @@ import {
     storage
 } from "./firebase.js";
 
-
 import {
     collection,
     query,
@@ -18,20 +17,17 @@ import {
     getDocs
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
-
 import {
     onAuthStateChanged,
     signOut,
     updateProfile
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
-
 import {
     getDatabase,
     ref,
     update
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
-
 
 import {
     ref as storageRef,
@@ -41,10 +37,11 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-storage.js";
 
 
-// Realtime Database for user profile
+// ==========================================
+// REALTIME DATABASE
+// ==========================================
 
 const realtimeDB = getDatabase(app);
-
 
 
 // ==========================================
@@ -55,6 +52,21 @@ const realtimeDB = getDatabase(app);
 
 const receiptList =
     document.getElementById("dashboardReceiptList");
+
+
+// Dashboard statistics
+
+const totalExpenseElement =
+    document.getElementById("totalExpense");
+
+const thisMonthExpenseElement =
+    document.getElementById("thisMonthExpense");
+
+
+// Chart
+
+const chartSelect =
+    document.getElementById("chartPeriod");
 
 
 // Profile
@@ -104,20 +116,15 @@ const avatarInput =
     document.getElementById("avatarInput");
 
 
-// Current logged-in user
+// ==========================================
+// CURRENT USER
+// ==========================================
 
 let currentUser = null;
 
-
-// Selected avatar file
-
 let selectedAvatarFile = null;
 
-
-// Avatar removed flag
-
 let avatarRemoved = false;
-
 
 
 // ==========================================
@@ -136,7 +143,6 @@ function formatCurrency(amount) {
     ).format(amount);
 
 }
-
 
 
 // ==========================================
@@ -175,7 +181,6 @@ function parseAmount(value) {
 }
 
 
-
 // ==========================================
 // PARSE RECEIPT DATE
 // ==========================================
@@ -187,9 +192,23 @@ function parseReceiptDate(value) {
     }
 
 
+    // Firestore Timestamp
+
     if (
         typeof value === "object" &&
-        value.seconds
+        typeof value.toDate === "function"
+    ) {
+
+        return value.toDate();
+
+    }
+
+
+    // Firestore Timestamp-like object
+
+    if (
+        typeof value === "object" &&
+        typeof value.seconds === "number"
     ) {
 
         return new Date(
@@ -199,8 +218,161 @@ function parseReceiptDate(value) {
     }
 
 
+    // Already Date object
+
+    if (value instanceof Date) {
+
+        return isNaN(value.getTime())
+            ? null
+            : value;
+
+    }
+
+
+    const stringValue =
+        String(value).trim();
+
+
+    // ==================================
+    // YYYY-MM-DD
+    // ==================================
+
+    if (
+        /^\d{4}-\d{2}-\d{2}$/
+            .test(stringValue)
+    ) {
+
+        const [
+            year,
+            month,
+            day
+        ] =
+            stringValue
+                .split("-")
+                .map(Number);
+
+
+        const date =
+            new Date(
+                year,
+                month - 1,
+                day
+            );
+
+
+        return isNaN(date.getTime())
+            ? null
+            : date;
+
+    }
+
+
+    // ==================================
+    // YYYY/MM/DD
+    // ==================================
+
+    if (
+        /^\d{4}\/\d{2}\/\d{2}$/
+            .test(stringValue)
+    ) {
+
+        const [
+            year,
+            month,
+            day
+        ] =
+            stringValue
+                .split("/")
+                .map(Number);
+
+
+        const date =
+            new Date(
+                year,
+                month - 1,
+                day
+            );
+
+
+        return isNaN(date.getTime())
+            ? null
+            : date;
+
+    }
+
+
+    // ==================================
+    // DD-MM-YYYY
+    // ==================================
+
+    if (
+        /^\d{2}-\d{2}-\d{4}$/
+            .test(stringValue)
+    ) {
+
+        const [
+            day,
+            month,
+            year
+        ] =
+            stringValue
+                .split("-")
+                .map(Number);
+
+
+        const date =
+            new Date(
+                year,
+                month - 1,
+                day
+            );
+
+
+        return isNaN(date.getTime())
+            ? null
+            : date;
+
+    }
+
+
+    // ==================================
+    // DD/MM/YYYY
+    // ==================================
+
+    if (
+        /^\d{2}\/\d{2}\/\d{4}$/
+            .test(stringValue)
+    ) {
+
+        const [
+            day,
+            month,
+            year
+        ] =
+            stringValue
+                .split("/")
+                .map(Number);
+
+
+        const date =
+            new Date(
+                year,
+                month - 1,
+                day
+            );
+
+
+        return isNaN(date.getTime())
+            ? null
+            : date;
+
+    }
+
+
+    // Normal date string
+
     const date =
-        new Date(value);
+        new Date(stringValue);
 
 
     if (isNaN(date.getTime())) {
@@ -211,7 +383,6 @@ function parseReceiptDate(value) {
     return date;
 
 }
-
 
 
 // ==========================================
@@ -232,10 +403,26 @@ async function loadDashboardData(user) {
 
 
         const snapshot =
-            await getDocs(receiptsRef);
+            await getDocs(
+                receiptsRef
+            );
 
 
         let totalExpense = 0;
+
+        let thisMonthExpense = 0;
+
+
+        const today =
+            new Date();
+
+
+        const currentMonth =
+            today.getMonth();
+
+
+        const currentYear =
+            today.getFullYear();
 
 
         snapshot.forEach(
@@ -245,15 +432,81 @@ async function loadDashboardData(user) {
                     doc.data();
 
 
-                totalExpense +=
+                const amount =
                     parseAmount(
                         data.totalAmount ||
                         data.total ||
                         data.amount
                     );
 
+
+                totalExpense +=
+                    amount;
+
+
+                const receiptDate =
+                    parseReceiptDate(
+                        data.purchaseDate ||
+                        data.date ||
+                        data.createdAt
+                    );
+
+
+                if (receiptDate) {
+
+                    const receiptMonth =
+                        receiptDate.getMonth();
+
+
+                    const receiptYear =
+                        receiptDate.getFullYear();
+
+
+                    if (
+                        receiptMonth ===
+                            currentMonth &&
+
+                        receiptYear ===
+                            currentYear
+                    ) {
+
+                        thisMonthExpense +=
+                            amount;
+
+                    }
+
+                }
+
             }
         );
+
+
+        // ==================================
+        // TOTAL EXPENSE
+        // ==================================
+
+        if (totalExpenseElement) {
+
+            totalExpenseElement.textContent =
+                formatCurrency(
+                    totalExpense
+                );
+
+        }
+
+
+        // ==================================
+        // THIS MONTH
+        // ==================================
+
+        if (thisMonthExpenseElement) {
+
+            thisMonthExpenseElement.textContent =
+                formatCurrency(
+                    thisMonthExpense
+                );
+
+        }
 
 
         console.log(
@@ -261,6 +514,11 @@ async function loadDashboardData(user) {
             totalExpense
         );
 
+
+        console.log(
+            "This Month Expense:",
+            thisMonthExpense
+        );
 
     }
 
@@ -274,7 +532,6 @@ async function loadDashboardData(user) {
     }
 
 }
-
 
 
 // ==========================================
@@ -295,11 +552,125 @@ async function loadSpendingChart(user) {
 
 
         const snapshot =
-            await getDocs(receiptsRef);
+            await getDocs(
+                receiptsRef
+            );
 
 
-        const monthlyData = {};
+        const selectedPeriod =
+            chartSelect
+                ? chartSelect.value
+                : "6";
 
+
+        const today =
+            new Date();
+
+
+        const currentYear =
+            today.getFullYear();
+
+
+        const currentMonth =
+            today.getMonth();
+
+
+        const monthData = [];
+
+
+        // ==================================
+        // THIS YEAR
+        // ==================================
+
+        if (selectedPeriod === "12") {
+
+            for (
+                let month = 0;
+                month < 12;
+                month++
+            ) {
+
+                const date =
+                    new Date(
+                        currentYear,
+                        month,
+                        1
+                    );
+
+
+                monthData.push({
+
+                    year:
+                        currentYear,
+
+                    month:
+                        month,
+
+                    label:
+                        date.toLocaleString(
+                            "en-US",
+                            {
+                                month: "short"
+                            }
+                        ),
+
+                    value: 0
+
+                });
+
+            }
+
+        }
+
+
+        // ==================================
+        // LAST 6 MONTHS
+        // ==================================
+
+        else {
+
+            for (
+                let i = 5;
+                i >= 0;
+                i--
+            ) {
+
+                const date =
+                    new Date(
+                        currentYear,
+                        currentMonth - i,
+                        1
+                    );
+
+
+                monthData.push({
+
+                    year:
+                        date.getFullYear(),
+
+                    month:
+                        date.getMonth(),
+
+                    label:
+                        date.toLocaleString(
+                            "en-US",
+                            {
+                                month: "short"
+                            }
+                        ),
+
+                    value: 0
+
+                });
+
+            }
+
+        }
+
+
+        // ==================================
+        // ADD RECEIPTS TO MONTHS
+        // ==================================
 
         snapshot.forEach(
             function (doc) {
@@ -308,7 +679,7 @@ async function loadSpendingChart(user) {
                     doc.data();
 
 
-                const date =
+                const receiptDate =
                     parseReceiptDate(
                         data.purchaseDate ||
                         data.date ||
@@ -316,18 +687,9 @@ async function loadSpendingChart(user) {
                     );
 
 
-                if (!date) {
+                if (!receiptDate) {
                     return;
                 }
-
-
-                const month =
-                    date.toLocaleString(
-                        "en-US",
-                        {
-                            month: "short"
-                        }
-                    );
 
 
                 const amount =
@@ -338,25 +700,59 @@ async function loadSpendingChart(user) {
                     );
 
 
-                if (!monthlyData[month]) {
-                    monthlyData[month] = 0;
+                const matchingMonth =
+                    monthData.find(
+                        function (item) {
+
+                            return (
+
+                                item.year ===
+                                    receiptDate
+                                        .getFullYear()
+
+                                &&
+
+                                item.month ===
+                                    receiptDate
+                                        .getMonth()
+
+                            );
+
+                        }
+                    );
+
+
+                if (matchingMonth) {
+
+                    matchingMonth.value +=
+                        amount;
+
                 }
-
-
-                monthlyData[month] += amount;
 
             }
         );
 
 
         console.log(
-            "Monthly spending:",
-            monthlyData
+            "Selected chart:",
+            selectedPeriod === "12"
+                ? "This year"
+                : "Last 6 months"
         );
 
 
-        updateChartLabels(
-            monthlyData
+        console.log(
+            "Chart data:",
+            monthData
+        );
+
+
+        // ==================================
+        // UPDATE CHART
+        // ==================================
+
+        updateChart(
+            monthData
         );
 
     }
@@ -373,92 +769,317 @@ async function loadSpendingChart(user) {
 }
 
 
-
 // ==========================================
-// UPDATE CHART LABELS
+// UPDATE CHART
 // ==========================================
 
-function updateChartLabels(data) {
+function updateChart(monthData) {
 
-    const chartBars =
-        document.querySelectorAll(
-            ".bar-wrapper"
+    const barsContainer =
+        document.querySelector(
+            ".bars"
         );
 
 
-    if (!chartBars.length) {
+    if (!barsContainer) {
+
+        console.error(
+            "Chart bars container not found."
+        );
+
         return;
+
     }
 
 
-    const months = [
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug"
-    ];
+    // Clear old bars
 
+    barsContainer.innerHTML =
+        "";
+
+
+    // ==================================
+    // FIND MAX VALUE
+    // ==================================
 
     let maxValue = 0;
 
 
-    Object.values(data).forEach(
-        function (value) {
+    monthData.forEach(
+        function (item) {
 
-            if (value > maxValue) {
-                maxValue = value;
+            if (
+                item.value >
+                maxValue
+            ) {
+
+                maxValue =
+                    item.value;
+
             }
 
         }
     );
 
 
-    if (maxValue === 0) {
-        return;
-    }
+    // ==================================
+    // CREATE CHART BARS
+    // ==================================
 
+    monthData.forEach(
+        function (item) {
 
-    chartBars.forEach(
-        function (wrapper, index) {
-
-            const month =
-                months[index];
-
-
-            const value =
-                data[month] || 0;
-
-
-            const bar =
-                wrapper.querySelector(
-                    ".bar"
+            const wrapper =
+                document.createElement(
+                    "div"
                 );
 
 
-            if (!bar) {
-                return;
+            wrapper.className =
+                "bar-wrapper";
+
+
+            const bar =
+                document.createElement(
+                    "div"
+                );
+
+
+            bar.className =
+                "bar";
+
+
+            const label =
+                document.createElement(
+                    "span"
+                );
+
+
+            label.textContent =
+                item.label;
+
+
+            // ==================================
+            // CALCULATE BAR HEIGHT
+            // ==================================
+
+            let percentage = 0;
+
+
+            if (maxValue > 0) {
+
+                percentage =
+                    (
+                        item.value /
+                        maxValue
+                    ) * 100;
+
             }
 
 
-            let percentage =
-                (value / maxValue) * 100;
+            // ==================================
+            // SMALL VALUE VISIBILITY
+            // ==================================
 
+            if (
+                item.value > 0 &&
+                percentage < 8
+            ) {
 
-            if (percentage < 5 && value > 0) {
-                percentage = 5;
+                percentage = 8;
+
             }
 
 
             bar.style.height =
                 percentage + "%";
 
+
+            // Tooltip
+
+            bar.title =
+                item.label +
+                " - " +
+                formatCurrency(
+                    item.value
+                );
+
+
+            wrapper.appendChild(
+                bar
+            );
+
+
+            wrapper.appendChild(
+                label
+            );
+
+
+            barsContainer.appendChild(
+                wrapper
+            );
+
         }
+    );
+
+
+    // ==================================
+    // UPDATE Y AXIS
+    // ==================================
+
+    updateChartYAxis(
+        maxValue
     );
 
 }
 
+
+// ==========================================
+// UPDATE CHART Y AXIS
+// ==========================================
+
+function updateChartYAxis(maxValue) {
+
+    const chartValues =
+        document.querySelectorAll(
+            ".chart-values span"
+        );
+
+
+    if (!chartValues.length) {
+        return;
+    }
+
+
+    // ==================================
+    // NO DATA
+    // ==================================
+
+    if (maxValue <= 0) {
+
+        if (chartValues[0]) {
+
+            chartValues[0].textContent =
+                "₹1k";
+
+        }
+
+
+        if (chartValues[1]) {
+
+            chartValues[1].textContent =
+                "₹700";
+
+        }
+
+
+        if (chartValues[2]) {
+
+            chartValues[2].textContent =
+                "₹300";
+
+        }
+
+
+        if (chartValues[3]) {
+
+            chartValues[3].textContent =
+                "₹0";
+
+        }
+
+
+        return;
+
+    }
+
+
+    // ==================================
+    // SMART SCALE
+    // ==================================
+
+    let top;
+
+
+    // Small values
+
+    if (maxValue < 1000) {
+
+        top =
+            Math.ceil(
+                maxValue / 100
+            ) * 100;
+
+
+        if (top < 100) {
+            top = 100;
+        }
+
+    }
+
+
+    // Medium / large values
+
+    else {
+
+        top =
+            Math.ceil(
+                maxValue / 5000
+            ) * 5000;
+
+    }
+
+
+    const second =
+        top * (2 / 3);
+
+
+    const third =
+        top * (1 / 3);
+
+
+    // ==================================
+    // UPDATE LABELS
+    // ==================================
+
+    if (chartValues[0]) {
+
+        chartValues[0].textContent =
+            formatChartValue(
+                top
+            );
+
+    }
+
+
+    if (chartValues[1]) {
+
+        chartValues[1].textContent =
+            formatChartValue(
+                second
+            );
+
+    }
+
+
+    if (chartValues[2]) {
+
+        chartValues[2].textContent =
+            formatChartValue(
+                third
+            );
+
+    }
+
+
+    if (chartValues[3]) {
+
+        chartValues[3].textContent =
+            "₹0";
+
+    }
+
+}
 
 
 // ==========================================
@@ -467,32 +1088,41 @@ function updateChartLabels(data) {
 
 function formatChartValue(value) {
 
+    if (value >= 100000) {
+
+        return (
+            "₹" +
+            (value / 100000)
+                .toFixed(1) +
+            "L"
+        );
+
+    }
+
+
     if (value >= 1000) {
 
         return (
             "₹" +
-            (value / 1000).toFixed(1) +
+            (value / 1000)
+                .toFixed(1) +
             "k"
         );
 
     }
 
 
-    return "₹" + value;
+    return (
+        "₹" +
+        Math.round(value)
+    );
 
 }
 
 
-
 // ==========================================
-// CHART PERIOD
+// CHART DROPDOWN
 // ==========================================
-
-const chartSelect =
-    document.querySelector(
-        ".spending-card select"
-    );
-
 
 if (chartSelect) {
 
@@ -501,15 +1131,23 @@ if (chartSelect) {
         function () {
 
             console.log(
-                "Chart period:",
+                "Chart period changed:",
                 this.value
             );
+
+
+            if (currentUser) {
+
+                loadSpendingChart(
+                    currentUser
+                );
+
+            }
 
         }
     );
 
 }
-
 
 
 // ==========================================
@@ -551,7 +1189,8 @@ async function loadRecentReceipts(user) {
             );
 
 
-        receiptList.innerHTML = "";
+        receiptList.innerHTML =
+            "";
 
 
         if (snapshot.empty) {
@@ -713,12 +1352,9 @@ async function loadRecentReceipts(user) {
 }
 
 
-
 // ==========================================
-// PROFILE
+// PROFILE - OPEN
 // ==========================================
-
-// Open profile
 
 if (profileButton) {
 
@@ -811,13 +1447,13 @@ if (profileButton) {
                 "";
 
 
-            // Reset selected file
-
-            selectedAvatarFile = null;
+            selectedAvatarFile =
+                null;
 
 
             if (avatarInput) {
-                avatarInput.value = "";
+                avatarInput.value =
+                    "";
             }
 
 
@@ -830,12 +1466,14 @@ if (profileButton) {
 }
 
 
-
 // ==========================================
 // CHANGE AVATAR
 // ==========================================
 
-if (changeAvatarBtn && avatarInput) {
+if (
+    changeAvatarBtn &&
+    avatarInput
+) {
 
     changeAvatarBtn.addEventListener(
         "click",
@@ -860,38 +1498,41 @@ if (changeAvatarBtn && avatarInput) {
             }
 
 
-            // Check image
-
-            if (!file.type.startsWith("image/")) {
+            if (
+                !file.type.startsWith(
+                    "image/"
+                )
+            ) {
 
                 profileMessage.textContent =
                     "Please select an image.";
 
+
                 profileMessage.style.color =
                     "red";
 
-                avatarInput.value = "";
+
+                avatarInput.value =
+                    "";
+
 
                 return;
 
             }
 
 
-            // Save selected file
-
             selectedAvatarFile =
                 file;
 
 
-            // New avatar selected
+            avatarRemoved =
+                false;
 
-            avatarRemoved = false;
-
-
-            // Create preview
 
             const imageURL =
-                URL.createObjectURL(file);
+                URL.createObjectURL(
+                    file
+                );
 
 
             profileAvatar.innerHTML =
@@ -925,6 +1566,7 @@ if (changeAvatarBtn && avatarInput) {
             profileMessage.textContent =
                 "Avatar selected. Click Save Changes to save it.";
 
+
             profileMessage.style.color =
                 "green";
 
@@ -932,7 +1574,6 @@ if (changeAvatarBtn && avatarInput) {
     );
 
 }
-
 
 
 // ==========================================
@@ -950,19 +1591,18 @@ if (removeAvatarBtn) {
             }
 
 
-            // Remove selected new image
-
-            selectedAvatarFile = null;
+            selectedAvatarFile =
+                null;
 
 
             if (avatarInput) {
-                avatarInput.value = "";
+                avatarInput.value =
+                    "";
             }
 
 
-            // Mark avatar as removed
-
-            avatarRemoved = true;
+            avatarRemoved =
+                true;
 
 
             const name =
@@ -976,8 +1616,6 @@ if (removeAvatarBtn) {
                     .toUpperCase();
 
 
-            // Show initial instead of photo
-
             profileAvatar.textContent =
                 initial;
 
@@ -989,6 +1627,7 @@ if (removeAvatarBtn) {
             profileMessage.textContent =
                 "Profile picture removed. Click Save Changes to confirm.";
 
+
             profileMessage.style.color =
                 "green";
 
@@ -996,7 +1635,6 @@ if (removeAvatarBtn) {
     );
 
 }
-
 
 
 // ==========================================
@@ -1018,9 +1656,8 @@ if (closeProfile) {
 }
 
 
-
 // ==========================================
-// CLOSE PROFILE BY CLICKING OUTSIDE
+// CLOSE PROFILE OUTSIDE
 // ==========================================
 
 if (profileModal) {
@@ -1045,7 +1682,6 @@ if (profileModal) {
 }
 
 
-
 // ==========================================
 // SAVE PROFILE
 // ==========================================
@@ -1065,15 +1701,15 @@ if (saveProfile) {
                 profileNameInput.value.trim();
 
 
-            // Validation
-
             if (!newName) {
 
                 profileMessage.textContent =
                     "Please enter your name.";
 
+
                 profileMessage.style.color =
                     "red";
+
 
                 return;
 
@@ -1099,11 +1735,12 @@ if (saveProfile) {
                 // ==================================
 
                 let photoURL =
-                    currentUser.photoURL || null;
+                    currentUser.photoURL ||
+                    null;
 
 
                 // ==================================
-                // REMOVE AVATAR FROM STORAGE
+                // REMOVE OLD AVATAR
                 // ==================================
 
                 if (avatarRemoved) {
@@ -1132,9 +1769,6 @@ if (saveProfile) {
 
                     catch (error) {
 
-                        // If old image does not exist,
-                        // continue normally.
-
                         console.log(
                             "No old avatar found in Storage."
                         );
@@ -1142,7 +1776,8 @@ if (saveProfile) {
                     }
 
 
-                    photoURL = null;
+                    photoURL =
+                        null;
 
                 }
 
@@ -1162,15 +1797,11 @@ if (saveProfile) {
                         );
 
 
-                    // Upload image to Firebase Storage
-
                     await uploadBytes(
                         avatarRef,
                         selectedAvatarFile
                     );
 
-
-                    // Get permanent download URL
 
                     photoURL =
                         await getDownloadURL(
@@ -1186,14 +1817,17 @@ if (saveProfile) {
 
 
                 // ==================================
-                // UPDATE FIREBASE AUTH PROFILE
+                // UPDATE AUTH PROFILE
                 // ==================================
 
                 await updateProfile(
                     currentUser,
                     {
-                        displayName: newName,
-                        photoURL: photoURL
+                        displayName:
+                            newName,
+
+                        photoURL:
+                            photoURL
                     }
                 );
 
@@ -1209,7 +1843,9 @@ if (saveProfile) {
                         currentUser.uid
                     ),
                     {
-                        name: newName,
+                        name:
+                            newName,
+
                         email:
                             currentUser.email ||
                             ""
@@ -1218,7 +1854,7 @@ if (saveProfile) {
 
 
                 // ==================================
-                // UPDATE DASHBOARD UI
+                // UPDATE UI
                 // ==================================
 
                 profileName.textContent =
@@ -1275,28 +1911,24 @@ if (saveProfile) {
                 profileMessage.textContent =
                     "Profile updated successfully.";
 
+
                 profileMessage.style.color =
                     "green";
 
 
-                console.log(
-                    "Profile updated successfully."
-                );
+                selectedAvatarFile =
+                    null;
 
 
-                // Reset variables
-
-                selectedAvatarFile = null;
-
-                avatarRemoved = false;
+                avatarRemoved =
+                    false;
 
 
                 if (avatarInput) {
-                    avatarInput.value = "";
+                    avatarInput.value =
+                        "";
                 }
 
-
-                // Close modal after 1 second
 
                 setTimeout(
                     function () {
@@ -1321,6 +1953,7 @@ if (saveProfile) {
                 profileMessage.textContent =
                     "Unable to update profile. Please try again.";
 
+
                 profileMessage.style.color =
                     "red";
 
@@ -1338,7 +1971,6 @@ if (saveProfile) {
     );
 
 }
-
 
 
 // ==========================================
@@ -1362,7 +1994,9 @@ if (logoutButton) {
 
             try {
 
-                await signOut(auth);
+                await signOut(
+                    auth
+                );
 
 
                 sessionStorage.setItem(
@@ -1397,7 +2031,6 @@ if (logoutButton) {
 }
 
 
-
 // ==========================================
 // AUTH STATE
 // ==========================================
@@ -1409,14 +2042,15 @@ onAuthStateChanged(
         if (user) {
 
             // ==================================
-            // USER IS LOGGED IN
+            // USER LOGGED IN
             // ==================================
 
             currentUser =
                 user;
 
 
-            avatarRemoved = false;
+            avatarRemoved =
+                false;
 
 
             console.log(
@@ -1424,8 +2058,6 @@ onAuthStateChanged(
                 user.uid
             );
 
-
-            // Remove old logout flag
 
             sessionStorage.removeItem(
                 "loggedOut"
@@ -1450,7 +2082,7 @@ onAuthStateChanged(
 
 
             // ==================================
-            // LOAD PROFILE AVATAR
+            // PROFILE AVATAR
             // ==================================
 
             if (profileAvatar) {
@@ -1526,7 +2158,8 @@ onAuthStateChanged(
             if (profileEmailInput) {
 
                 profileEmailInput.value =
-                    user.email || "";
+                    user.email ||
+                    "";
 
             }
 
@@ -1577,8 +2210,6 @@ onAuthStateChanged(
 
             }
 
-
-            // Redirect to login
 
             window.location.replace(
                 "loginpg.html"

@@ -120,7 +120,7 @@
 
                 <!-- Expenses -->
 
-                <a href="#"
+                <a href="expenseAnalytics.html"
                     class="nav-item">
 
                     <span class="nav-icon">
@@ -380,8 +380,10 @@
                         </div>
 
 
-                        <h2>
-                            ₹45,000
+                        <!-- DYNAMIC TOTAL EXPENSE -->
+
+                        <h2 id="totalExpense">
+                            ₹0
                         </h2>
 
 
@@ -491,8 +493,10 @@
                         </div>
 
 
-                        <h2>
-                            ₹12,450
+                        <!-- DYNAMIC THIS MONTH -->
+
+                        <h2 id="thisMonthExpense">
+                            ₹0
                         </h2>
 
 
@@ -542,13 +546,13 @@
                             </div>
 
 
-                            <select>
+                            <select id="chartPeriod">
 
-                                <option>
+                                <option value="6">
                                     Last 6 months
                                 </option>
 
-                                <option>
+                                <option value="12">
                                     This year
                                 </option>
 
@@ -604,14 +608,10 @@
 
                                     <div class="bar-wrapper">
 
-                                        <div
-                                            class="bar"
-                                            style="height:45%;">
-
-                                        </div>
+                                        <div class="bar"></div>
 
                                         <span>
-                                            Mar
+                                            —
                                         </span>
 
                                     </div>
@@ -620,14 +620,10 @@
 
                                     <div class="bar-wrapper">
 
-                                        <div
-                                            class="bar"
-                                            style="height:60%;">
-
-                                        </div>
+                                        <div class="bar"></div>
 
                                         <span>
-                                            Apr
+                                            —
                                         </span>
 
                                     </div>
@@ -636,14 +632,10 @@
 
                                     <div class="bar-wrapper">
 
-                                        <div
-                                            class="bar"
-                                            style="height:40%;">
-
-                                        </div>
+                                        <div class="bar"></div>
 
                                         <span>
-                                            May
+                                            —
                                         </span>
 
                                     </div>
@@ -652,14 +644,10 @@
 
                                     <div class="bar-wrapper">
 
-                                        <div
-                                            class="bar"
-                                            style="height:70%;">
-
-                                        </div>
+                                        <div class="bar"></div>
 
                                         <span>
-                                            Jun
+                                            —
                                         </span>
 
                                     </div>
@@ -668,14 +656,10 @@
 
                                     <div class="bar-wrapper">
 
-                                        <div
-                                            class="bar"
-                                            style="height:55%;">
-
-                                        </div>
+                                        <div class="bar"></div>
 
                                         <span>
-                                            Jul
+                                            —
                                         </span>
 
                                     </div>
@@ -684,14 +668,10 @@
 
                                     <div class="bar-wrapper">
 
-                                        <div
-                                            class="bar"
-                                            style="height:82%;">
-
-                                        </div>
+                                        <div class="bar"></div>
 
                                         <span>
-                                            Aug
+                                            —
                                         </span>
 
                                     </div>
@@ -1000,9 +980,7 @@
 
 
 
-                    <!-- =========================
-                         PROFILE AVATAR
-                    ========================== -->
+                    <!-- PROFILE AVATAR -->
 
                     <div
                         style="
