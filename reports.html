@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SHOPIX | Reports</title>
+
+    <meta name="description" content="SHOPIX Expense and Receipt Reports">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="css/reports.css">
+</head>
+
+<body>
+
+<div class="dashboard-layout">
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar">
+
+        <a href="index.html" class="sidebar-logo">
+            <span class="logo-icon">S</span>
+            <span>SHOPIX</span>
+        </a>
+
+        <nav class="sidebar-nav">
+
+            <p class="nav-title">MAIN MENU</p>
+
+            <a href="dashboard.html" class="nav-item">
+                <span class="nav-icon">▦</span>
+                Dashboard
+            </a>
+
+            <a href="receiptHistory.html" class="nav-item">
+                <span class="nav-icon">▤</span>
+                Receipts
+            </a>
+
+            <a href="receiptScanner.html" class="nav-item">
+                <span class="nav-icon">↑</span>
+                Upload Receipt
+            </a>
+
+            <a href="expenseAnalytics.html" class="nav-item">
+                <span class="nav-icon">◫</span>
+                Expenses
+            </a>
+
+            <a href="warranties.html" class="nav-item">
+                <span class="nav-icon">♢</span>
+                Warranties
+            </a>
+
+            <a href="reports.html" class="nav-item active">
+                <span class="nav-icon">▤</span>
+                Reports
+            </a>
+
+            <a href="settings.html" class="nav-item">
+                <span class="nav-icon">⚙</span>
+                Settings
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <div class="help-box">
+
+                <div class="help-icon">?</div>
+
+                <div>
+                    <strong>Need Help?</strong>
+                    <span>We're here for you</span>
+                </div>
+
+            </div>
+
+            <a href="index.html" class="logout-btn">
+                <span>↪</span>
+                Logout
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main class="main-content">
+
+        <!-- ================= HEADER ================= -->
+
+        <header class="top-header">
+
+            <div class="header-left">
+
+                <button
+                    class="mobile-menu-btn"
+                    type="button"
+                    id="mobileMenuBtn">
+                    ☰
+                </button>
+
+                <div>
+
+                    <span class="header-label">
+                        SHOPIX REPORTS
+                    </span>
+
+                    <h2>Reports</h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="header-right">
+
+                <button
+                    class="notification-btn"
+                    type="button"
+                    aria-label="Notifications">
+
+                    ♧
+                    <span></span>
+
+                </button>
+
+
+                <div
+                    class="top-user"
+                    id="profileButton">
+
+                    <div
+                        class="top-avatar"
+                        id="profileAvatar">
+                        U
+                    </div>
+
+                    <div>
+
+                        <strong id="profileName">
+                            User
+                        </strong>
+
+                        <small>
+                            Account
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- ================= REPORT CONTENT ================= -->
+
+        <section class="reports-content">
+
+
+            <!-- ================= PRINT HEADER ================= -->
+
+            <div class="print-report-header">
+
+                <div class="print-brand">
+
+                    <div class="print-logo">
+                        S
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            SHOPIX
+                        </strong>
+
+                        <span>
+                            Smart Receipt & Shopping Assistant
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="print-report-title">
+
+                    <h1>
+                        Expense Report
+                    </h1>
+
+                    <p>
+                        Financial overview of receipts, spending and expenses
+                    </p>
+
+                </div>
+
+
+                <div class="print-report-meta">
+
+                    <div>
+
+                        <span>
+                            REPORT PERIOD
+                        </span>
+
+                        <strong id="printReportPeriod">
+                            This Month
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            GENERATED ON
+                        </span>
+
+                        <strong id="printGeneratedDate">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            CURRENCY
+                        </span>
+
+                        <strong id="printReportCurrency">
+                            All Currencies
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= INTRO ================= -->
+
+            <div class="reports-welcome">
+
+                <div>
+
+                    <p class="welcome-small">
+                        Financial Overview 📊
+                    </p>
+
+                    <h1>
+                        Expense Reports
+                    </h1>
+
+                    <p class="welcome-description">
+                        Analyze your receipts, spending and expenses in one place.
+                    </p>
+
+                </div>
+
+
+                <a
+                    href="receiptScanner.html"
+                    class="upload-main-btn">
+
+                    <span>↑</span>
+                    Add Receipt
+
+                </a>
+
+            </div>
+
+
+            <!-- ================= FILTERS ================= -->
+
+            <div class="dashboard-card report-filter-card">
+
+                <div class="card-header">
+
+                    <div>
+
+                        <h3>
+                            Report Filters
+                        </h3>
+
+                        <p>
+                            Select the period, currency and category for your report.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        id="resetReportBtn"
+                        class="reset-filter-btn">
+
+                        Reset
+
+                    </button>
+
+                </div>
+
+
+                <div class="report-filters">
+
+
+                    <!-- PERIOD -->
+
+                    <div class="filter-group">
+
+                        <label for="reportPeriod">
+                            Period
+                        </label>
+
+                        <select id="reportPeriod">
+
+                            <option value="7">
+                                Last 7 Days
+                            </option>
+
+                            <option value="30" selected>
+                                This Month
+                            </option>
+
+                            <option value="90">
+                                Last 3 Months
+                            </option>
+
+                            <option value="365">
+                                This Year
+                            </option>
+
+                            <option value="all">
+                                All Time
+                            </option>
+
+                            <option value="custom">
+                                Custom Range
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- FROM -->
+
+                    <div
+                        class="filter-group custom-date-field"
+                        id="fromDateGroup">
+
+                        <label for="fromDate">
+                            From
+                        </label>
+
+                        <input
+                            type="date"
+                            id="fromDate">
+
+                    </div>
+
+
+                    <!-- TO -->
+
+                    <div
+                        class="filter-group custom-date-field"
+                        id="toDateGroup">
+
+                        <label for="toDate">
+                            To
+                        </label>
+
+                        <input
+                            type="date"
+                            id="toDate">
+
+                    </div>
+
+
+                    <!-- CURRENCY -->
+
+                    <div class="filter-group">
+
+                        <label for="reportCurrency">
+                            Currency
+                        </label>
+
+                        <select id="reportCurrency">
+
+                            <option value="ALL">
+                                All Currencies
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- CATEGORY -->
+
+                    <div class="filter-group">
+
+                        <label for="reportCategory">
+                            Category
+                        </label>
+
+                        <select id="reportCategory">
+
+                            <option value="ALL">
+                                All Categories
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- APPLY -->
+
+                    <button
+                        type="button"
+                        id="applyReportBtn"
+                        class="apply-report-btn">
+
+                        Apply Filters
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= SUMMARY ================= -->
+
+            <div class="report-summary-grid">
+
+
+                <!-- TOTAL SPENDING -->
+
+                <div class="report-stat-card">
+
+                    <div class="report-stat-icon blue">
+                        ¤
+                    </div>
+
+                    <div>
+
+                        <span>
+                            TOTAL SPENDING
+                        </span>
+
+                        <h2 id="reportTotalExpense">
+                            --
+                        </h2>
+
+                        <p id="totalExpenseSub">
+                            Based on selected period
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- TOTAL RECEIPTS -->
+
+                <div class="report-stat-card">
+
+                    <div class="report-stat-icon purple">
+                        ▤
+                    </div>
+
+                    <div>
+
+                        <span>
+                            TOTAL RECEIPTS
+                        </span>
+
+                        <h2 id="reportReceiptCount">
+                            0
+                        </h2>
+
+                        <p>
+                            Saved receipts
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- TOP CATEGORY -->
+
+                <div class="report-stat-card">
+
+                    <div class="report-stat-icon orange">
+                        ◫
+                    </div>
+
+                    <div>
+
+                        <span>
+                            TOP CATEGORY
+                        </span>
+
+                        <h2 id="reportTopCategory">
+                            --
+                        </h2>
+
+                        <p id="topCategorySub">
+                            Highest spending category
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- AVERAGE -->
+
+                <div class="report-stat-card">
+
+                    <div class="report-stat-icon green">
+                        ∑
+                    </div>
+
+                    <div>
+
+                        <span>
+                            AVERAGE RECEIPT
+                        </span>
+
+                        <h2 id="reportAverageExpense">
+                            --
+                        </h2>
+
+                        <p id="averageExpenseSub">
+                            Average spending per receipt
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= CATEGORY + CURRENCY ================= -->
+
+            <div class="reports-grid">
+
+
+                <!-- CATEGORY -->
+
+                <div class="dashboard-card report-card">
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <span class="section-label">
+                                BREAKDOWN
+                            </span>
+
+                            <h3>
+                                Category-wise Spending
+                            </h3>
+
+                            <p>
+                                Spending grouped by category and currency
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="categoryReportList"
+                        class="category-report-list">
+
+                        <div class="report-loading">
+                            Loading category data...
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CURRENCY -->
+
+                <div class="dashboard-card report-card">
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <span class="section-label">
+                                CURRENCY
+                            </span>
+
+                            <h3>
+                                Currency Summary
+                            </h3>
+
+                            <p>
+                                Original currency totals
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="reportCurrencyList"
+                        class="currency-report-list">
+
+                        <div class="report-loading">
+                            Loading currency data...
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= SPENDING OVERVIEW ================= -->
+
+            <div class="dashboard-card report-card monthly-report-card">
+
+                <div class="card-header">
+
+                    <div>
+
+                        <span class="section-label">
+                            TREND ANALYSIS
+                        </span>
+
+                        <h3>
+                            Spending Overview
+                        </h3>
+
+                        <p>
+                            Monthly spending activity
+                        </p>
+
+                    </div>
+
+
+                    <div class="chart-currency-control">
+
+                        <label for="chartCurrency">
+                            Currency
+                        </label>
+
+                        <select id="chartCurrency">
+
+                            <option value="AUTO">
+                                Auto
+                            </option>
+
+                            <option value="ALL">
+                                All Currencies
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <div class="report-chart-container">
+
+                    <div
+                        id="monthlyReportChart"
+                        class="report-chart">
+                    </div>
+
+
+                    <div
+                        id="chartEmpty"
+                        class="report-empty chart-empty">
+
+                        <strong>
+                            No spending data
+                        </strong>
+
+                        <span>
+                            Select a currency with available transactions.
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= REPORT DETAILS ================= -->
+
+            <div class="dashboard-card report-card recent-report-card">
+
+                <div class="card-header">
+
+                    <div>
+
+                        <span class="section-label">
+                            TRANSACTION DATA
+                        </span>
+
+                        <h3>
+                            Report Details
+                        </h3>
+
+                        <p>
+                            Receipts included in this report
+                        </p>
+
+                    </div>
+
+
+                    <div
+                        id="reportRecordCount"
+                        class="record-count">
+
+                        0 records
+
+                    </div>
+
+                </div>
+
+
+                <div class="report-table-wrapper">
+
+                    <table class="report-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <!-- IMPORTANT:
+                                     Keep this exact order -->
+
+                                <th>
+                                    Store
+                                </th>
+
+                                <th>
+                                    Date
+                                </th>
+
+                                <th>
+                                    Category
+                                </th>
+
+                                <th>
+                                    Amount
+                                </th>
+
+                                <th>
+                                    Currency
+                                </th>
+
+                                <th>
+                                    Items
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="reportReceiptTable">
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+                <div
+                    id="reportTableEmpty"
+                    class="table-empty">
+
+                    <div class="empty-table-icon">
+                        ▤
+                    </div>
+
+                    <strong>
+                        No receipts found
+                    </strong>
+
+                    <span>
+                        No receipts match the selected filters.
+                    </span>
+
+                    <a href="receiptScanner.html">
+                        Add Receipt
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= ACTIONS ================= -->
+
+            <div class="report-actions">
+
+                <button
+                    type="button"
+                    id="printReportBtn"
+                    class="report-action-btn">
+
+                    🖨 Print Report
+
+                </button>
+
+
+                <button
+                    type="button"
+                    id="exportReportBtn"
+                    class="report-action-btn primary">
+
+                    ↓ Export Report
+
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= FOOTER ================= -->
+
+        <footer class="dashboard-footer">
+
+            <span>
+                © 2026 SHOPIX
+            </span>
+
+            <span>
+                AI Powered Smart Receipt & Shopping Assistant
+            </span>
+
+        </footer>
+
+    </main>
+
+</div>
+
+
+<script>
+    self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+</script>
+
+<script
+    type="module"
+    src="js/reports.js">
+</script>
+
+</body>
+
+</html>
