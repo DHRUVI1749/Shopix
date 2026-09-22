@@ -20,34 +20,198 @@ import {
 // ==========================================
 
 const loadingMessage =
-    document.getElementById("loadingMessage");
+    document.getElementById(
+        "loadingMessage"
+    );
 
 const receiptDetails =
-    document.getElementById("receiptDetails");
+    document.getElementById(
+        "receiptDetails"
+    );
 
 const errorMessage =
-    document.getElementById("errorMessage");
+    document.getElementById(
+        "errorMessage"
+    );
 
 const receiptImage =
-    document.getElementById("receiptImage");
+    document.getElementById(
+        "receiptImage"
+    );
 
 const storeName =
-    document.getElementById("storeName");
+    document.getElementById(
+        "storeName"
+    );
 
 const purchaseDate =
-    document.getElementById("purchaseDate");
+    document.getElementById(
+        "purchaseDate"
+    );
 
 const totalAmount =
-    document.getElementById("totalAmount");
+    document.getElementById(
+        "totalAmount"
+    );
 
 const category =
-    document.getElementById("category");
+    document.getElementById(
+        "category"
+    );
 
 const itemsList =
-    document.getElementById("itemsList");
+    document.getElementById(
+        "itemsList"
+    );
 
 const deleteReceiptBtn =
-    document.getElementById("deleteReceiptBtn");
+    document.getElementById(
+        "deleteReceiptBtn"
+    );
+
+
+// ==========================================
+// FORMAT CURRENCY
+// ==========================================
+
+function formatCurrency(
+    amount,
+    currency = "INR"
+) {
+
+    const numericAmount =
+        Number(amount) || 0;
+
+
+    try {
+
+        return new Intl.NumberFormat(
+            "en-IN",
+            {
+                style:
+                    "currency",
+
+                currency:
+                    currency
+            }
+        ).format(
+            numericAmount
+        );
+
+    } catch (error) {
+
+        return (
+            currency +
+            " " +
+            numericAmount
+        );
+
+    }
+
+}
+
+
+// ==========================================
+// NORMALIZE CURRENCY
+// ==========================================
+
+function normalizeCurrency(currency) {
+
+    if (!currency) {
+        return "INR";
+    }
+
+
+    const value =
+        String(currency)
+            .trim()
+            .toUpperCase();
+
+
+    if (
+        value === "₹" ||
+        value === "RS" ||
+        value === "RS." ||
+        value === "INR"
+    ) {
+
+        return "INR";
+
+    }
+
+
+    if (
+        value === "$" ||
+        value === "US$" ||
+        value === "USD"
+    ) {
+
+        return "USD";
+
+    }
+
+
+    if (
+        value === "€" ||
+        value === "EUR"
+    ) {
+
+        return "EUR";
+
+    }
+
+
+    if (
+        value === "£" ||
+        value === "GBP"
+    ) {
+
+        return "GBP";
+
+    }
+
+
+    if (
+        value === "AED" ||
+        value === "د.إ"
+    ) {
+
+        return "AED";
+
+    }
+
+
+    if (
+        value === "AUD"
+    ) {
+
+        return "AUD";
+
+    }
+
+
+    if (
+        value === "CAD"
+    ) {
+
+        return "CAD";
+
+    }
+
+
+    if (
+        value === "JPY" ||
+        value === "¥"
+    ) {
+
+        return "JPY";
+
+    }
+
+
+    return value;
+
+}
 
 
 // ==========================================
@@ -77,13 +241,17 @@ async function loadReceipt(user) {
         loadingMessage.style.display =
             "none";
 
+
         errorMessage.textContent =
             "No receipt selected.";
+
 
         errorMessage.style.display =
             "block";
 
+
         return;
+
     }
 
 
@@ -108,21 +276,29 @@ async function loadReceipt(user) {
         // ==========================================
 
         const receiptSnapshot =
-            await getDoc(receiptRef);
+            await getDoc(
+                receiptRef
+            );
 
 
-        if (!receiptSnapshot.exists()) {
+        if (
+            !receiptSnapshot.exists()
+        ) {
 
             loadingMessage.style.display =
                 "none";
 
+
             errorMessage.textContent =
                 "Receipt not found.";
+
 
             errorMessage.style.display =
                 "block";
 
+
             return;
+
         }
 
 
@@ -133,6 +309,22 @@ async function loadReceipt(user) {
         console.log(
             "Receipt loaded:",
             receipt
+        );
+
+
+        // ==========================================
+        // GET CURRENCY
+        // ==========================================
+
+        const currency =
+            normalizeCurrency(
+                receipt.currency
+            );
+
+
+        console.log(
+            "Receipt currency:",
+            currency
         );
 
 
@@ -159,8 +351,10 @@ async function loadReceipt(user) {
         // ==========================================
 
         totalAmount.textContent =
-            "₹" +
-            (receipt.totalAmount || 0);
+            formatCurrency(
+                receipt.totalAmount || 0,
+                currency
+            );
 
 
         // ==========================================
@@ -187,7 +381,9 @@ async function loadReceipt(user) {
         // PURCHASED ITEMS
         // ==========================================
 
-        itemsList.innerHTML = "";
+        itemsList.innerHTML =
+            "";
+
 
         const items =
             receipt.items || [];
@@ -256,8 +452,12 @@ async function loadReceipt(user) {
                         itemPrice.textContent =
                             "Qty: " +
                             quantity +
-                            " • ₹" +
-                            price;
+                            " • " +
+                            formatCurrency(
+                                price,
+                                currency
+                            );
+
 
                     } else {
 
@@ -274,9 +474,11 @@ async function loadReceipt(user) {
                         itemName
                     );
 
+
                     itemRow.appendChild(
                         itemPrice
                     );
+
 
                     itemsList.appendChild(
                         itemRow
@@ -295,8 +497,10 @@ async function loadReceipt(user) {
         loadingMessage.style.display =
             "none";
 
+
         errorMessage.style.display =
             "none";
+
 
         receiptDetails.style.display =
             "block";
@@ -318,8 +522,10 @@ async function loadReceipt(user) {
         loadingMessage.style.display =
             "none";
 
+
         errorMessage.textContent =
             "Unable to load receipt. Please try again.";
+
 
         errorMessage.style.display =
             "block";
@@ -340,6 +546,7 @@ deleteReceiptBtn.addEventListener(
         const user =
             auth.currentUser;
 
+
         const receiptId =
             localStorage.getItem(
                 "selectedReceiptId"
@@ -353,6 +560,7 @@ deleteReceiptBtn.addEventListener(
             );
 
             return;
+
         }
 
 
@@ -363,6 +571,7 @@ deleteReceiptBtn.addEventListener(
             );
 
             return;
+
         }
 
 
@@ -375,11 +584,13 @@ deleteReceiptBtn.addEventListener(
         if (!confirmDelete) {
 
             return;
+
         }
 
 
         deleteReceiptBtn.disabled =
             true;
+
 
         deleteReceiptBtn.textContent =
             "Deleting...";
@@ -432,6 +643,7 @@ deleteReceiptBtn.addEventListener(
             deleteReceiptBtn.disabled =
                 false;
 
+
             deleteReceiptBtn.textContent =
                 "Delete Receipt";
 
@@ -459,15 +671,19 @@ onAuthStateChanged(
 
         if (user) {
 
-            loadReceipt(user);
+            loadReceipt(
+                user
+            );
 
         } else {
 
             loadingMessage.style.display =
                 "none";
 
+
             errorMessage.textContent =
                 "Please login to view this receipt.";
+
 
             errorMessage.style.display =
                 "block";

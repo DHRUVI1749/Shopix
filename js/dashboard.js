@@ -1,9 +1,12 @@
 // ==========================================
+// SHOPIX - DASHBOARD
+// ==========================================
+
+// ==========================================
 // FIREBASE IMPORT
 // ==========================================
 
 import {
-    app,
     auth,
     db,
     storage
@@ -24,12 +27,6 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
 import {
-    getDatabase,
-    ref,
-    update
-} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
-
-import {
     ref as storageRef,
     uploadBytes,
     getDownloadURL,
@@ -38,38 +35,56 @@ import {
 
 
 // ==========================================
-// REALTIME DATABASE
-// ==========================================
-
-const realtimeDB = getDatabase(app);
-
-
-// ==========================================
 // GET HTML ELEMENTS
 // ==========================================
 
-// Receipt
-
+// Recent Receipts
 const receiptList =
     document.getElementById("dashboardReceiptList");
 
-
-// Dashboard statistics
-
+// Total Expense
 const totalExpenseElement =
     document.getElementById("totalExpense");
 
-const thisMonthExpenseElement =
-    document.getElementById("thisMonthExpense");
+const totalExpenseNote =
+    document.getElementById("totalExpenseNote");
 
+// Currency Summary
+const currencySummaryText =
+    document.getElementById("currencySummaryText");
+
+const currencySummaryList =
+    document.getElementById("currencySummaryList");
 
 // Chart
-
 const chartSelect =
     document.getElementById("chartPeriod");
 
+const chartCurrency =
+    document.getElementById("chartCurrency");
 
-// Profile
+const spendingBars =
+    document.getElementById("spendingBars");
+
+const chartY1 =
+    document.getElementById("chartY1");
+
+const chartY2 =
+    document.getElementById("chartY2");
+
+const chartY3 =
+    document.getElementById("chartY3");
+
+const chartY4 =
+    document.getElementById("chartY4");
+
+const chartDescription =
+    document.getElementById("chartDescription");
+
+
+// ==========================================
+// PROFILE
+// ==========================================
 
 const profileButton =
     document.getElementById("profileButton");
@@ -128,20 +143,66 @@ let avatarRemoved = false;
 
 
 // ==========================================
+// CURRENCY SYMBOL
+// ==========================================
+
+function getCurrencySymbol(currency) {
+
+    const symbols = {
+
+        INR: "₹",
+        USD: "$",
+        EUR: "€",
+        GBP: "£",
+        AED: "د.إ",
+        CAD: "C$",
+        AUD: "A$",
+        Other: ""
+
+    };
+
+    return symbols[currency] || currency || "";
+}
+
+
+// ==========================================
 // FORMAT CURRENCY
 // ==========================================
 
-function formatCurrency(amount) {
+function formatCurrency(
+    amount,
+    currency = "INR"
+) {
 
-    return new Intl.NumberFormat(
-        "en-IN",
-        {
-            style: "currency",
-            currency: "INR",
-            maximumFractionDigits: 0
-        }
-    ).format(amount);
+    const number =
+        Number(amount) || 0;
 
+    const normalizedCurrency =
+        normalizeCurrency(currency);
+
+    const symbol =
+        getCurrencySymbol(
+            normalizedCurrency
+        );
+
+    const formattedNumber =
+        new Intl.NumberFormat(
+            "en-IN",
+            {
+                maximumFractionDigits: 2
+            }
+        ).format(number);
+
+    if (normalizedCurrency === "Other") {
+
+        return formattedNumber;
+
+    }
+
+    return (
+        symbol +
+        formattedNumber
+    );
 }
 
 
@@ -158,26 +219,66 @@ function parseAmount(value) {
         return 0;
     }
 
-
-    if (typeof value === "number") {
+    if (
+        typeof value === "number"
+    ) {
         return value;
     }
 
-
     const cleaned =
         String(value)
-            .replace(/[₹,\s]/g, "")
-            .replace(/[^\d.-]/g, "");
-
+            .replace(
+                /[₹$€£,\s]/g,
+                ""
+            )
+            .replace(
+                /[^\d.-]/g,
+                ""
+            );
 
     const amount =
         parseFloat(cleaned);
 
-
     return isNaN(amount)
         ? 0
         : amount;
+}
 
+
+// ==========================================
+// NORMALIZE CURRENCY
+// ==========================================
+
+function normalizeCurrency(currency) {
+
+    if (!currency) {
+        return "INR";
+    }
+
+    const value =
+        String(currency)
+            .trim()
+            .toUpperCase();
+
+    const validCurrencies = [
+        "INR",
+        "USD",
+        "EUR",
+        "GBP",
+        "AED",
+        "CAD",
+        "AUD"
+    ];
+
+    if (
+        validCurrencies.includes(
+            value
+        )
+    ) {
+        return value;
+    }
+
+    return "Other";
 }
 
 
@@ -191,9 +292,7 @@ function parseReceiptDate(value) {
         return null;
     }
 
-
     // Firestore Timestamp
-
     if (
         typeof value === "object" &&
         typeof value.toDate === "function"
@@ -204,8 +303,7 @@ function parseReceiptDate(value) {
     }
 
 
-    // Firestore Timestamp-like object
-
+    // Timestamp-like object
     if (
         typeof value === "object" &&
         typeof value.seconds === "number"
@@ -218,11 +316,14 @@ function parseReceiptDate(value) {
     }
 
 
-    // Already Date object
+    // Date object
+    if (
+        value instanceof Date
+    ) {
 
-    if (value instanceof Date) {
-
-        return isNaN(value.getTime())
+        return isNaN(
+            value.getTime()
+        )
             ? null
             : value;
 
@@ -233,13 +334,11 @@ function parseReceiptDate(value) {
         String(value).trim();
 
 
-    // ==================================
     // YYYY-MM-DD
-    // ==================================
-
     if (
-        /^\d{4}-\d{2}-\d{2}$/
-            .test(stringValue)
+        /^\d{4}-\d{2}-\d{2}$/.test(
+            stringValue
+        )
     ) {
 
         const [
@@ -251,7 +350,6 @@ function parseReceiptDate(value) {
                 .split("-")
                 .map(Number);
 
-
         const date =
             new Date(
                 year,
@@ -259,21 +357,19 @@ function parseReceiptDate(value) {
                 day
             );
 
-
-        return isNaN(date.getTime())
+        return isNaN(
+            date.getTime()
+        )
             ? null
             : date;
-
     }
 
 
-    // ==================================
     // YYYY/MM/DD
-    // ==================================
-
     if (
-        /^\d{4}\/\d{2}\/\d{2}$/
-            .test(stringValue)
+        /^\d{4}\/\d{2}\/\d{2}$/.test(
+            stringValue
+        )
     ) {
 
         const [
@@ -285,7 +381,6 @@ function parseReceiptDate(value) {
                 .split("/")
                 .map(Number);
 
-
         const date =
             new Date(
                 year,
@@ -293,21 +388,19 @@ function parseReceiptDate(value) {
                 day
             );
 
-
-        return isNaN(date.getTime())
+        return isNaN(
+            date.getTime()
+        )
             ? null
             : date;
-
     }
 
 
-    // ==================================
     // DD-MM-YYYY
-    // ==================================
-
     if (
-        /^\d{2}-\d{2}-\d{4}$/
-            .test(stringValue)
+        /^\d{2}-\d{2}-\d{4}$/.test(
+            stringValue
+        )
     ) {
 
         const [
@@ -319,7 +412,6 @@ function parseReceiptDate(value) {
                 .split("-")
                 .map(Number);
 
-
         const date =
             new Date(
                 year,
@@ -327,21 +419,19 @@ function parseReceiptDate(value) {
                 day
             );
 
-
-        return isNaN(date.getTime())
+        return isNaN(
+            date.getTime()
+        )
             ? null
             : date;
-
     }
 
 
-    // ==================================
     // DD/MM/YYYY
-    // ==================================
-
     if (
-        /^\d{2}\/\d{2}\/\d{4}$/
-            .test(stringValue)
+        /^\d{2}\/\d{2}\/\d{4}$/.test(
+            stringValue
+        )
     ) {
 
         const [
@@ -353,7 +443,6 @@ function parseReceiptDate(value) {
                 .split("/")
                 .map(Number);
 
-
         const date =
             new Date(
                 year,
@@ -361,124 +450,175 @@ function parseReceiptDate(value) {
                 day
             );
 
-
-        return isNaN(date.getTime())
+        return isNaN(
+            date.getTime()
+        )
             ? null
             : date;
-
     }
 
 
-    // Normal date string
-
+    // Normal date
     const date =
         new Date(stringValue);
 
-
-    if (isNaN(date.getTime())) {
-        return null;
-    }
-
-
-    return date;
-
+    return isNaN(
+        date.getTime()
+    )
+        ? null
+        : date;
 }
 
 
 // ==========================================
-// LOAD DASHBOARD DATA
+// GET RECEIPT DATA
+// ==========================================
+
+function getReceiptAmount(data) {
+
+    return parseAmount(
+        data.totalAmount ??
+        data.total ??
+        data.amount
+    );
+}
+
+
+function getReceiptCurrency(data) {
+
+    return normalizeCurrency(
+        data.currency
+    );
+}
+
+
+function getReceiptDate(data) {
+
+    return parseReceiptDate(
+        data.purchaseDate ??
+        data.date ??
+        data.createdAt
+    );
+}
+
+
+// ==========================================
+// LOAD ALL RECEIPTS
+// ==========================================
+
+async function getAllReceipts(user) {
+
+    const receiptsRef =
+        collection(
+            db,
+            "users",
+            user.uid,
+            "receipts"
+        );
+
+    const snapshot =
+        await getDocs(
+            receiptsRef
+        );
+
+    const receipts = [];
+
+    snapshot.forEach(
+        function (docSnapshot) {
+
+            receipts.push({
+                id: docSnapshot.id,
+                data: docSnapshot.data()
+            });
+
+        }
+    );
+
+    return receipts;
+}
+
+
+// ==========================================
+// LOAD DASHBOARD TOTAL + CURRENCY SUMMARY
 // ==========================================
 
 async function loadDashboardData(user) {
 
     try {
 
-        const receiptsRef =
-            collection(
-                db,
-                "users",
-                user.uid,
-                "receipts"
-            );
+        const receipts =
+            await getAllReceipts(user);
 
 
-        const snapshot =
-            await getDocs(
-                receiptsRef
-            );
+        const totalByCurrency = {};
+
+        const countByCurrency = {};
 
 
-        let totalExpense = 0;
+        // ==================================
+        // CALCULATE TOTALS
+        // ==================================
 
-        let thisMonthExpense = 0;
-
-
-        const today =
-            new Date();
-
-
-        const currentMonth =
-            today.getMonth();
-
-
-        const currentYear =
-            today.getFullYear();
-
-
-        snapshot.forEach(
-            function (doc) {
+        receipts.forEach(
+            function (receipt) {
 
                 const data =
-                    doc.data();
-
+                    receipt.data;
 
                 const amount =
-                    parseAmount(
-                        data.totalAmount ||
-                        data.total ||
-                        data.amount
+                    getReceiptAmount(
+                        data
+                    );
+
+                const currency =
+                    getReceiptCurrency(
+                        data
                     );
 
 
-                totalExpense +=
-                    amount;
+                if (
+                    !totalByCurrency[
+                        currency
+                    ]
+                ) {
 
-
-                const receiptDate =
-                    parseReceiptDate(
-                        data.purchaseDate ||
-                        data.date ||
-                        data.createdAt
-                    );
-
-
-                if (receiptDate) {
-
-                    const receiptMonth =
-                        receiptDate.getMonth();
-
-
-                    const receiptYear =
-                        receiptDate.getFullYear();
-
-
-                    if (
-                        receiptMonth ===
-                            currentMonth &&
-
-                        receiptYear ===
-                            currentYear
-                    ) {
-
-                        thisMonthExpense +=
-                            amount;
-
-                    }
+                    totalByCurrency[
+                        currency
+                    ] = 0;
 
                 }
 
+
+                if (
+                    !countByCurrency[
+                        currency
+                    ]
+                ) {
+
+                    countByCurrency[
+                        currency
+                    ] = 0;
+
+                }
+
+
+                totalByCurrency[
+                    currency
+                ] += amount;
+
+
+                countByCurrency[
+                    currency
+                ] += 1;
+
             }
         );
+
+
+        const currencies =
+            Object.keys(
+                totalByCurrency
+            );
 
 
         // ==================================
@@ -487,41 +627,98 @@ async function loadDashboardData(user) {
 
         if (totalExpenseElement) {
 
-            totalExpenseElement.textContent =
-                formatCurrency(
-                    totalExpense
-                );
+            if (
+                currencies.length === 0
+            ) {
+
+                totalExpenseElement.textContent =
+                    "--";
+
+                if (totalExpenseNote) {
+
+                    totalExpenseNote.textContent =
+                        "No receipts yet";
+
+                }
+
+            }
+
+            else if (
+                currencies.length === 1
+            ) {
+
+                const currency =
+                    currencies[0];
+
+                totalExpenseElement.textContent =
+                    formatCurrency(
+                        totalByCurrency[
+                            currency
+                        ],
+                        currency
+                    );
+
+                if (totalExpenseNote) {
+
+                    totalExpenseNote.textContent =
+                        countByCurrency[
+                            currency
+                        ] +
+                        (
+                            countByCurrency[
+                                currency
+                            ] === 1
+                                ? " receipt"
+                                : " receipts"
+                        );
+
+                }
+
+            }
+
+            else {
+
+                totalExpenseElement.textContent =
+                    currencies.length +
+                    " currencies";
+
+                if (totalExpenseNote) {
+
+                    totalExpenseNote.textContent =
+                        "See Currency Summary for totals";
+
+                }
+
+            }
 
         }
 
 
         // ==================================
-        // THIS MONTH
+        // CURRENCY SUMMARY
         // ==================================
 
-        if (thisMonthExpenseElement) {
-
-            thisMonthExpenseElement.textContent =
-                formatCurrency(
-                    thisMonthExpense
-                );
-
-        }
+        renderCurrencySummary(
+            totalByCurrency,
+            countByCurrency
+        );
 
 
-        console.log(
-            "Total Expense:",
-            totalExpense
+        // ==================================
+        // UPDATE CHART CURRENCY OPTIONS
+        // ==================================
+
+        updateChartCurrencyOptions(
+            currencies
         );
 
 
         console.log(
-            "This Month Expense:",
-            thisMonthExpense
+            "Original currency totals:",
+            totalByCurrency
         );
 
     }
-
     catch (error) {
 
         console.error(
@@ -529,8 +726,264 @@ async function loadDashboardData(user) {
             error
         );
 
+        if (totalExpenseElement) {
+
+            totalExpenseElement.textContent =
+                "--";
+
+        }
+
+        if (totalExpenseNote) {
+
+            totalExpenseNote.textContent =
+                "Unable to load expense data";
+
+        }
+
+    }
+}
+
+
+// ==========================================
+// RENDER CURRENCY SUMMARY
+// ==========================================
+
+function renderCurrencySummary(
+    totalByCurrency,
+    countByCurrency
+) {
+
+    if (!currencySummaryList) {
+        return;
     }
 
+
+    const entries =
+        Object.entries(
+            totalByCurrency
+        );
+
+
+    // ==================================
+    // NO DATA
+    // ==================================
+
+    if (
+        entries.length === 0
+    ) {
+
+        currencySummaryList.innerHTML = `
+            <div class="currency-summary-empty">
+                No receipt data available yet.
+            </div>
+        `;
+
+        if (currencySummaryText) {
+
+            currencySummaryText.textContent =
+                "Your spending by original currency";
+
+        }
+
+        return;
+    }
+
+
+    // ==================================
+    // SORT CURRENCIES
+    // ==================================
+
+    entries.sort(
+        function (a, b) {
+
+            return (
+                b[1] - a[1]
+            );
+
+        }
+    );
+
+
+    // ==================================
+    // SUMMARY DESCRIPTION
+    // ==================================
+
+    if (currencySummaryText) {
+
+        currencySummaryText.textContent =
+            entries.length === 1
+                ? "Your spending in the original currency"
+                : "Your spending grouped by original currency";
+
+    }
+
+
+    currencySummaryList.innerHTML = "";
+
+
+    // ==================================
+    // CREATE SUMMARY ROWS
+    // ==================================
+
+    entries.forEach(
+        function ([currency, amount]) {
+
+            const row =
+                document.createElement(
+                    "div"
+                );
+
+            row.className =
+                "currency-summary-row";
+
+
+            const count =
+                countByCurrency[
+                    currency
+                ] || 0;
+
+
+            row.innerHTML = `
+                <div>
+                    <strong>
+                        ${currency}
+                    </strong>
+
+                    <span>
+                        ${
+                            count
+                        }
+                        ${
+                            count === 1
+                                ? "receipt"
+                                : "receipts"
+                        }
+                    </span>
+                </div>
+
+                <strong>
+                    ${formatCurrency(
+                        amount,
+                        currency
+                    )}
+                </strong>
+            `;
+
+
+            currencySummaryList.appendChild(
+                row
+            );
+
+        }
+    );
+}
+
+
+// ==========================================
+// UPDATE CHART CURRENCY DROPDOWN
+// ==========================================
+
+function updateChartCurrencyOptions(
+    currencies
+) {
+
+    if (!chartCurrency) {
+        return;
+    }
+
+
+    const oldValue =
+        chartCurrency.value;
+
+
+    chartCurrency.innerHTML = "";
+
+
+    // ==================================
+    // ALL CURRENCIES OPTION
+    // ==================================
+
+    const allOption =
+        document.createElement(
+            "option"
+        );
+
+    allOption.value =
+        "all";
+
+    allOption.textContent =
+        "All currencies";
+
+    chartCurrency.appendChild(
+        allOption
+    );
+
+
+    // ==================================
+    // ADD AVAILABLE CURRENCIES
+    // ==================================
+
+    currencies.forEach(
+        function (currency) {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                currency;
+
+            option.textContent =
+                currency;
+
+            chartCurrency.appendChild(
+                option
+            );
+
+        }
+    );
+
+
+    // ==================================
+    // SELECT PREVIOUS VALUE
+    // ==================================
+
+    if (
+        currencies.includes(
+            oldValue
+        )
+    ) {
+
+        chartCurrency.value =
+            oldValue;
+
+    }
+
+    else if (
+        currencies.length === 1
+    ) {
+
+        chartCurrency.value =
+            currencies[0];
+
+    }
+
+    else {
+
+        chartCurrency.value =
+            "all";
+
+    }
+
+
+    if (currentUser) {
+
+        loadSpendingChart(
+            currentUser
+        );
+
+    }
 }
 
 
@@ -542,18 +995,9 @@ async function loadSpendingChart(user) {
 
     try {
 
-        const receiptsRef =
-            collection(
-                db,
-                "users",
-                user.uid,
-                "receipts"
-            );
-
-
-        const snapshot =
-            await getDocs(
-                receiptsRef
+        const receipts =
+            await getAllReceipts(
+                user
             );
 
 
@@ -563,17 +1007,85 @@ async function loadSpendingChart(user) {
                 : "6";
 
 
+        const selectedCurrency =
+            chartCurrency
+                ? chartCurrency.value
+                : "all";
+
+
         const today =
             new Date();
-
 
         const currentYear =
             today.getFullYear();
 
-
         const currentMonth =
             today.getMonth();
 
+
+        // ==================================
+        // FIND AVAILABLE CURRENCIES
+        // ==================================
+
+        const currencies = [
+            ...new Set(
+                receipts.map(
+                    function (receipt) {
+
+                        return getReceiptCurrency(
+                            receipt.data
+                        );
+
+                    }
+                )
+            )
+        ];
+
+
+        // ==================================
+        // MULTIPLE CURRENCY WARNING
+        // ==================================
+
+        if (
+            selectedCurrency === "all" &&
+            currencies.length > 1
+        ) {
+
+            renderMultiCurrencyChartMessage();
+
+            return;
+
+        }
+
+
+        let activeCurrency =
+            selectedCurrency;
+
+
+        if (
+            selectedCurrency === "all" &&
+            currencies.length === 1
+        ) {
+
+            activeCurrency =
+                currencies[0];
+
+        }
+
+
+        if (
+            currencies.length === 0
+        ) {
+
+            activeCurrency =
+                "INR";
+
+        }
+
+
+        // ==================================
+        // CREATE MONTH DATA
+        // ==================================
 
         const monthData = [];
 
@@ -582,7 +1094,9 @@ async function loadSpendingChart(user) {
         // THIS YEAR
         // ==================================
 
-        if (selectedPeriod === "12") {
+        if (
+            selectedPeriod === "12"
+        ) {
 
             for (
                 let month = 0;
@@ -610,11 +1124,13 @@ async function loadSpendingChart(user) {
                         date.toLocaleString(
                             "en-US",
                             {
-                                month: "short"
+                                month:
+                                    "short"
                             }
                         ),
 
-                    value: 0
+                    amount:
+                        0
 
                 });
 
@@ -627,7 +1143,9 @@ async function loadSpendingChart(user) {
         // LAST 6 MONTHS
         // ==================================
 
-        else {
+        else if (
+            selectedPeriod === "6"
+        ) {
 
             for (
                 let i = 5;
@@ -655,11 +1173,13 @@ async function loadSpendingChart(user) {
                         date.toLocaleString(
                             "en-US",
                             {
-                                month: "short"
+                                month:
+                                    "short"
                             }
                         ),
 
-                    value: 0
+                    amount:
+                        0
 
                 });
 
@@ -669,21 +1189,160 @@ async function loadSpendingChart(user) {
 
 
         // ==================================
-        // ADD RECEIPTS TO MONTHS
+        // ALL TIME
         // ==================================
 
-        snapshot.forEach(
-            function (doc) {
+        else if (
+            selectedPeriod === "all"
+        ) {
+
+            const uniqueMonths = {};
+
+
+            receipts.forEach(
+                function (receipt) {
+
+                    const receiptDate =
+                        getReceiptDate(
+                            receipt.data
+                        );
+
+
+                    if (!receiptDate) {
+                        return;
+                    }
+
+
+                    const key =
+                        receiptDate.getFullYear() +
+                        "-" +
+                        String(
+                            receiptDate.getMonth() + 1
+                        ).padStart(
+                            2,
+                            "0"
+                        );
+
+
+                    uniqueMonths[key] = {
+
+                        year:
+                            receiptDate.getFullYear(),
+
+                        month:
+                            receiptDate.getMonth(),
+
+                        label:
+                            receiptDate.toLocaleString(
+                                "en-US",
+                                {
+                                    month:
+                                        "short"
+                                }
+                            ) +
+                            " " +
+                            receiptDate.getFullYear()
+
+                    };
+
+                }
+            );
+
+
+            Object.values(
+                uniqueMonths
+            )
+                .sort(
+                    function (a, b) {
+
+                        if (
+                            a.year !==
+                            b.year
+                        ) {
+
+                            return (
+                                a.year -
+                                b.year
+                            );
+
+                        }
+
+                        return (
+                            a.month -
+                            b.month
+                        );
+
+                    }
+                )
+                .forEach(
+                    function (item) {
+
+                        monthData.push({
+
+                            year:
+                                item.year,
+
+                            month:
+                                item.month,
+
+                            label:
+                                item.label,
+
+                            amount:
+                                0
+
+                        });
+
+                    }
+                );
+
+
+            // No receipts
+            if (
+                monthData.length === 0
+            ) {
+
+                monthData.push({
+
+                    year:
+                        currentYear,
+
+                    month:
+                        currentMonth,
+
+                    label:
+                        today.toLocaleString(
+                            "en-US",
+                            {
+                                month:
+                                    "short"
+                            }
+                        ),
+
+                    amount:
+                        0
+
+                });
+
+            }
+
+        }
+
+
+        // ==================================
+        // ADD RECEIPTS
+        // ==================================
+
+        receipts.forEach(
+            function (receipt) {
 
                 const data =
-                    doc.data();
+                    receipt.data;
 
 
                 const receiptDate =
-                    parseReceiptDate(
-                        data.purchaseDate ||
-                        data.date ||
-                        data.createdAt
+                    getReceiptDate(
+                        data
                     );
 
 
@@ -692,11 +1351,26 @@ async function loadSpendingChart(user) {
                 }
 
 
+                const currency =
+                    getReceiptCurrency(
+                        data
+                    );
+
+
+                // Only selected currency
+                if (
+                    currency !==
+                    activeCurrency
+                ) {
+
+                    return;
+
+                }
+
+
                 const amount =
-                    parseAmount(
-                        data.totalAmount ||
-                        data.total ||
-                        data.amount
+                    getReceiptAmount(
+                        data
                     );
 
 
@@ -707,14 +1381,12 @@ async function loadSpendingChart(user) {
                             return (
 
                                 item.year ===
-                                    receiptDate
-                                        .getFullYear()
+                                receiptDate.getFullYear()
 
                                 &&
 
                                 item.month ===
-                                    receiptDate
-                                        .getMonth()
+                                receiptDate.getMonth()
 
                             );
 
@@ -722,9 +1394,11 @@ async function loadSpendingChart(user) {
                     );
 
 
-                if (matchingMonth) {
+                if (
+                    matchingMonth
+                ) {
 
-                    matchingMonth.value +=
+                    matchingMonth.amount +=
                         amount;
 
                 }
@@ -734,12 +1408,9 @@ async function loadSpendingChart(user) {
 
 
         console.log(
-            "Selected chart:",
-            selectedPeriod === "12"
-                ? "This year"
-                : "Last 6 months"
+            "Chart currency:",
+            activeCurrency
         );
-
 
         console.log(
             "Chart data:",
@@ -747,16 +1418,12 @@ async function loadSpendingChart(user) {
         );
 
 
-        // ==================================
-        // UPDATE CHART
-        // ==================================
-
         updateChart(
-            monthData
+            monthData,
+            activeCurrency
         );
 
     }
-
     catch (error) {
 
         console.error(
@@ -765,7 +1432,61 @@ async function loadSpendingChart(user) {
         );
 
     }
+}
 
+
+// ==========================================
+// MULTI-CURRENCY CHART MESSAGE
+// ==========================================
+
+function renderMultiCurrencyChartMessage() {
+
+    if (!spendingBars) {
+        return;
+    }
+
+
+    spendingBars.innerHTML = `
+        <div
+            style="
+                width:100%;
+                min-height:180px;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                text-align:center;
+                color:#7b8794;
+                padding:20px;
+            "
+        >
+            <div>
+                <strong>
+                    Select a currency
+                </strong>
+
+                <br>
+
+                <span>
+                    Different currencies are kept separate
+                    and are not converted or combined.
+                </span>
+            </div>
+        </div>
+    `;
+
+
+    updateChartYAxis(
+        0,
+        "INR"
+    );
+
+
+    if (chartDescription) {
+
+        chartDescription.textContent =
+            "Select a currency to view spending";
+
+    }
 }
 
 
@@ -773,15 +1494,12 @@ async function loadSpendingChart(user) {
 // UPDATE CHART
 // ==========================================
 
-function updateChart(monthData) {
+function updateChart(
+    monthData,
+    currency
+) {
 
-    const barsContainer =
-        document.querySelector(
-            ".bars"
-        );
-
-
-    if (!barsContainer) {
+    if (!spendingBars) {
 
         console.error(
             "Chart bars container not found."
@@ -792,14 +1510,24 @@ function updateChart(monthData) {
     }
 
 
-    // Clear old bars
-
-    barsContainer.innerHTML =
-        "";
+    spendingBars.innerHTML = "";
 
 
     // ==================================
-    // FIND MAX VALUE
+    // CHART DESCRIPTION
+    // ==================================
+
+    if (chartDescription) {
+
+        chartDescription.textContent =
+            "Spending in " +
+            currency;
+
+    }
+
+
+    // ==================================
+    // FIND MAXIMUM
     // ==================================
 
     let maxValue = 0;
@@ -809,12 +1537,12 @@ function updateChart(monthData) {
         function (item) {
 
             if (
-                item.value >
+                item.amount >
                 maxValue
             ) {
 
                 maxValue =
-                    item.value;
+                    item.amount;
 
             }
 
@@ -823,7 +1551,7 @@ function updateChart(monthData) {
 
 
     // ==================================
-    // CREATE CHART BARS
+    // CREATE BARS
     // ==================================
 
     monthData.forEach(
@@ -834,7 +1562,6 @@ function updateChart(monthData) {
                     "div"
                 );
 
-
             wrapper.className =
                 "bar-wrapper";
 
@@ -843,7 +1570,6 @@ function updateChart(monthData) {
                 document.createElement(
                     "div"
                 );
-
 
             bar.className =
                 "bar";
@@ -854,35 +1580,33 @@ function updateChart(monthData) {
                     "span"
                 );
 
-
             label.textContent =
                 item.label;
 
 
             // ==================================
-            // CALCULATE BAR HEIGHT
+            // BAR HEIGHT
             // ==================================
 
             let percentage = 0;
 
 
-            if (maxValue > 0) {
+            if (
+                maxValue > 0
+            ) {
 
                 percentage =
                     (
-                        item.value /
+                        item.amount /
                         maxValue
                     ) * 100;
 
             }
 
 
-            // ==================================
-            // SMALL VALUE VISIBILITY
-            // ==================================
-
+            // Keep small values visible
             if (
-                item.value > 0 &&
+                item.amount > 0 &&
                 percentage < 8
             ) {
 
@@ -895,27 +1619,42 @@ function updateChart(monthData) {
                 percentage + "%";
 
 
-            // Tooltip
+            // ==================================
+            // TOOLTIP
+            // ==================================
 
-            bar.title =
-                item.label +
-                " - " +
-                formatCurrency(
-                    item.value
-                );
+            if (
+                item.amount > 0
+            ) {
+
+                bar.title =
+                    item.label +
+                    " - " +
+                    formatCurrency(
+                        item.amount,
+                        currency
+                    );
+
+            }
+            else {
+
+                bar.title =
+                    item.label +
+                    " - No spending";
+
+            }
 
 
             wrapper.appendChild(
                 bar
             );
 
-
             wrapper.appendChild(
                 label
             );
 
 
-            barsContainer.appendChild(
+            spendingBars.appendChild(
                 wrapper
             );
 
@@ -928,9 +1667,9 @@ function updateChart(monthData) {
     // ==================================
 
     updateChartYAxis(
-        maxValue
+        maxValue,
+        currency
     );
-
 }
 
 
@@ -938,15 +1677,17 @@ function updateChart(monthData) {
 // UPDATE CHART Y AXIS
 // ==========================================
 
-function updateChartYAxis(maxValue) {
+function updateChartYAxis(
+    maxValue,
+    currency = "INR"
+) {
 
-    const chartValues =
-        document.querySelectorAll(
-            ".chart-values span"
-        );
-
-
-    if (!chartValues.length) {
+    if (
+        !chartY1 ||
+        !chartY2 ||
+        !chartY3 ||
+        !chartY4
+    ) {
         return;
     }
 
@@ -955,55 +1696,48 @@ function updateChartYAxis(maxValue) {
     // NO DATA
     // ==================================
 
-    if (maxValue <= 0) {
+    if (
+        maxValue <= 0
+    ) {
 
-        if (chartValues[0]) {
+        chartY1.textContent =
+            formatChartValue(
+                1000,
+                currency
+            );
 
-            chartValues[0].textContent =
-                "₹1k";
+        chartY2.textContent =
+            formatChartValue(
+                700,
+                currency
+            );
 
-        }
+        chartY3.textContent =
+            formatChartValue(
+                300,
+                currency
+            );
 
-
-        if (chartValues[1]) {
-
-            chartValues[1].textContent =
-                "₹700";
-
-        }
-
-
-        if (chartValues[2]) {
-
-            chartValues[2].textContent =
-                "₹300";
-
-        }
-
-
-        if (chartValues[3]) {
-
-            chartValues[3].textContent =
-                "₹0";
-
-        }
-
+        chartY4.textContent =
+            formatChartValue(
+                0,
+                currency
+            );
 
         return;
-
     }
 
 
     // ==================================
-    // SMART SCALE
+    // DYNAMIC SCALE
     // ==================================
 
     let top;
 
 
-    // Small values
-
-    if (maxValue < 1000) {
+    if (
+        maxValue < 1000
+    ) {
 
         top =
             Math.ceil(
@@ -1011,16 +1745,30 @@ function updateChartYAxis(maxValue) {
             ) * 100;
 
 
-        if (top < 100) {
+        if (
+            top < 100
+        ) {
+
             top = 100;
+
         }
 
     }
 
+    else if (
+        maxValue < 10000
+    ) {
 
-    // Medium / large values
+        top =
+            Math.ceil(
+                maxValue / 1000
+            ) * 1000;
 
-    else {
+    }
+
+    else if (
+        maxValue < 100000
+    ) {
 
         top =
             Math.ceil(
@@ -1029,56 +1777,46 @@ function updateChartYAxis(maxValue) {
 
     }
 
+    else {
+
+        top =
+            Math.ceil(
+                maxValue / 25000
+            ) * 25000;
+
+    }
+
 
     const second =
         top * (2 / 3);
-
 
     const third =
         top * (1 / 3);
 
 
-    // ==================================
-    // UPDATE LABELS
-    // ==================================
+    chartY1.textContent =
+        formatChartValue(
+            top,
+            currency
+        );
 
-    if (chartValues[0]) {
+    chartY2.textContent =
+        formatChartValue(
+            second,
+            currency
+        );
 
-        chartValues[0].textContent =
-            formatChartValue(
-                top
-            );
+    chartY3.textContent =
+        formatChartValue(
+            third,
+            currency
+        );
 
-    }
-
-
-    if (chartValues[1]) {
-
-        chartValues[1].textContent =
-            formatChartValue(
-                second
-            );
-
-    }
-
-
-    if (chartValues[2]) {
-
-        chartValues[2].textContent =
-            formatChartValue(
-                third
-            );
-
-    }
-
-
-    if (chartValues[3]) {
-
-        chartValues[3].textContent =
-            "₹0";
-
-    }
-
+    chartY4.textContent =
+        formatChartValue(
+            0,
+            currency
+        );
 }
 
 
@@ -1086,26 +1824,59 @@ function updateChartYAxis(maxValue) {
 // FORMAT CHART VALUE
 // ==========================================
 
-function formatChartValue(value) {
+function formatChartValue(
+    value,
+    currency
+) {
 
-    if (value >= 100000) {
+    const symbol =
+        getCurrencySymbol(
+            currency
+        );
+
+
+    if (
+        value >= 10000000
+    ) {
 
         return (
-            "₹" +
-            (value / 100000)
-                .toFixed(1) +
+            symbol +
+            (
+                value /
+                10000000
+            ).toFixed(1) +
+            "Cr"
+        );
+
+    }
+
+
+    if (
+        value >= 100000
+    ) {
+
+        return (
+            symbol +
+            (
+                value /
+                100000
+            ).toFixed(1) +
             "L"
         );
 
     }
 
 
-    if (value >= 1000) {
+    if (
+        value >= 1000
+    ) {
 
         return (
-            "₹" +
-            (value / 1000)
-                .toFixed(1) +
+            symbol +
+            (
+                value /
+                1000
+            ).toFixed(1) +
             "k"
         );
 
@@ -1113,15 +1884,14 @@ function formatChartValue(value) {
 
 
     return (
-        "₹" +
+        symbol +
         Math.round(value)
     );
-
 }
 
 
 // ==========================================
-// CHART DROPDOWN
+// CHART PERIOD DROPDOWN
 // ==========================================
 
 if (chartSelect) {
@@ -1132,6 +1902,36 @@ if (chartSelect) {
 
             console.log(
                 "Chart period changed:",
+                this.value
+            );
+
+
+            if (currentUser) {
+
+                loadSpendingChart(
+                    currentUser
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+// ==========================================
+// CHART CURRENCY DROPDOWN
+// ==========================================
+
+if (chartCurrency) {
+
+    chartCurrency.addEventListener(
+        "change",
+        function () {
+
+            console.log(
+                "Chart currency changed:",
                 this.value
             );
 
@@ -1193,10 +1993,15 @@ async function loadRecentReceipts(user) {
             "";
 
 
-        if (snapshot.empty) {
+        // ==================================
+        // NO RECEIPTS
+        // ==================================
 
-            receiptList.innerHTML =
-                `
+        if (
+            snapshot.empty
+        ) {
+
+            receiptList.innerHTML = `
                 <div class="receipt-row">
 
                     <div class="receipt-store-icon">
@@ -1220,18 +2025,21 @@ async function loadRecentReceipts(user) {
                     </div>
 
                 </div>
-                `;
+            `;
 
             return;
-
         }
 
 
+        // ==================================
+        // DISPLAY RECEIPTS
+        // ==================================
+
         snapshot.forEach(
-            function (doc) {
+            function (docSnapshot) {
 
                 const data =
-                    doc.data();
+                    docSnapshot.data();
 
 
                 const storeName =
@@ -1240,18 +2048,20 @@ async function loadRecentReceipts(user) {
 
 
                 const amount =
-                    parseAmount(
-                        data.totalAmount ||
-                        data.total ||
-                        data.amount
+                    getReceiptAmount(
+                        data
+                    );
+
+
+                const currency =
+                    getReceiptCurrency(
+                        data
                     );
 
 
                 const date =
-                    parseReceiptDate(
-                        data.purchaseDate ||
-                        data.date ||
-                        data.createdAt
+                    getReceiptDate(
+                        data
                     );
 
 
@@ -1269,6 +2079,10 @@ async function loadRecentReceipts(user) {
                 }
 
 
+                // ==================================
+                // CREATE ROW
+                // ==================================
+
                 const row =
                     document.createElement(
                         "div"
@@ -1279,8 +2093,11 @@ async function loadRecentReceipts(user) {
                     "receipt-row";
 
 
-                row.innerHTML =
-                    `
+                row.style.cursor =
+                    "pointer";
+
+
+                row.innerHTML = `
                     <div class="receipt-store-icon">
                         ▣
                     </div>
@@ -1288,7 +2105,9 @@ async function loadRecentReceipts(user) {
                     <div class="receipt-info">
 
                         <strong>
-                            ${storeName}
+                            ${escapeHTML(
+                                storeName
+                            )}
                         </strong>
 
                         <span>
@@ -1298,9 +2117,35 @@ async function loadRecentReceipts(user) {
                     </div>
 
                     <div class="receipt-price">
-                        ${formatCurrency(amount)}
+
+                        ${formatCurrency(
+                            amount,
+                            currency
+                        )}
+
                     </div>
-                    `;
+                `;
+
+
+                // ==================================
+                // OPEN RECEIPT DETAILS
+                // ==================================
+
+                row.addEventListener(
+                    "click",
+                    function () {
+
+                        localStorage.setItem(
+                            "selectedReceiptId",
+                            docSnapshot.id
+                        );
+
+
+                        window.location.href =
+                            "receiptDetails.html";
+
+                    }
+                );
 
 
                 receiptList.appendChild(
@@ -1311,7 +2156,6 @@ async function loadRecentReceipts(user) {
         );
 
     }
-
     catch (error) {
 
         console.error(
@@ -1320,8 +2164,7 @@ async function loadRecentReceipts(user) {
         );
 
 
-        receiptList.innerHTML =
-            `
+        receiptList.innerHTML = `
             <div class="receipt-row">
 
                 <div class="receipt-store-icon">
@@ -1345,10 +2188,39 @@ async function loadRecentReceipts(user) {
                 </div>
 
             </div>
-            `;
+        `;
 
     }
+}
 
+
+// ==========================================
+// ESCAPE HTML
+// ==========================================
+
+function escapeHTML(value) {
+
+    return String(value)
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 }
 
 
@@ -1377,16 +2249,24 @@ if (profileButton) {
                 "";
 
 
-            profileNameInput.value =
-                name;
+            if (profileNameInput) {
+
+                profileNameInput.value =
+                    name;
+
+            }
 
 
-            profileEmailInput.value =
-                email;
+            if (profileEmailInput) {
+
+                profileEmailInput.value =
+                    email;
+
+            }
 
 
             // ==================================
-            // LOAD SAVED AVATAR
+            // PROFILE IMAGE
             // ==================================
 
             if (
@@ -1394,8 +2274,7 @@ if (profileButton) {
                 !avatarRemoved
             ) {
 
-                profileAvatar.innerHTML =
-                    `
+                profileAvatar.innerHTML = `
                     <img
                         src="${currentUser.photoURL}"
                         alt="Profile Avatar"
@@ -1404,12 +2283,12 @@ if (profileButton) {
                             height:100%;
                             object-fit:cover;
                             border-radius:50%;
-                        ">
-                    `;
+                        "
+                    >
+                `;
 
 
-                profileLargeAvatar.innerHTML =
-                    `
+                profileLargeAvatar.innerHTML = `
                     <img
                         src="${currentUser.photoURL}"
                         alt="Profile Avatar"
@@ -1418,33 +2297,39 @@ if (profileButton) {
                             height:100%;
                             object-fit:cover;
                             border-radius:50%;
-                        ">
-                    `;
+                        "
+                    >
+                `;
 
             }
 
             else {
 
-                profileAvatar.textContent =
+                const initial =
                     name
                         .charAt(0)
                         .toUpperCase();
+
+
+                profileAvatar.textContent =
+                    initial;
 
 
                 profileLargeAvatar.textContent =
-                    name
-                        .charAt(0)
-                        .toUpperCase();
+                    initial;
 
             }
 
 
-            profileMessage.textContent =
-                "";
+            if (profileMessage) {
 
+                profileMessage.textContent =
+                    "";
 
-            profileMessage.style.color =
-                "";
+                profileMessage.style.color =
+                    "";
+
+            }
 
 
             selectedAvatarFile =
@@ -1452,11 +2337,15 @@ if (profileButton) {
 
 
             if (avatarInput) {
+
                 avatarInput.value =
                     "";
+
             }
 
 
+            // IMPORTANT:
+            // Modal uses inline display:none
             profileModal.style.display =
                 "flex";
 
@@ -1507,14 +2396,11 @@ if (
                 profileMessage.textContent =
                     "Please select an image.";
 
-
                 profileMessage.style.color =
                     "red";
 
-
                 avatarInput.value =
                     "";
-
 
                 return;
 
@@ -1535,8 +2421,7 @@ if (
                 );
 
 
-            profileAvatar.innerHTML =
-                `
+            profileAvatar.innerHTML = `
                 <img
                     src="${imageURL}"
                     alt="Profile Avatar"
@@ -1545,12 +2430,12 @@ if (
                         height:100%;
                         object-fit:cover;
                         border-radius:50%;
-                    ">
-                `;
+                    "
+                >
+            `;
 
 
-            profileLargeAvatar.innerHTML =
-                `
+            profileLargeAvatar.innerHTML = `
                 <img
                     src="${imageURL}"
                     alt="Profile Avatar"
@@ -1559,13 +2444,13 @@ if (
                         height:100%;
                         object-fit:cover;
                         border-radius:50%;
-                    ">
-                `;
+                    "
+                >
+            `;
 
 
             profileMessage.textContent =
                 "Avatar selected. Click Save Changes to save it.";
-
 
             profileMessage.style.color =
                 "green";
@@ -1596,8 +2481,10 @@ if (removeAvatarBtn) {
 
 
             if (avatarInput) {
+
                 avatarInput.value =
                     "";
+
             }
 
 
@@ -1626,7 +2513,6 @@ if (removeAvatarBtn) {
 
             profileMessage.textContent =
                 "Profile picture removed. Click Save Changes to confirm.";
-
 
             profileMessage.style.color =
                 "green";
@@ -1706,10 +2592,8 @@ if (saveProfile) {
                 profileMessage.textContent =
                     "Please enter your name.";
 
-
                 profileMessage.style.color =
                     "red";
-
 
                 return;
 
@@ -1718,7 +2602,6 @@ if (saveProfile) {
 
             saveProfile.disabled =
                 true;
-
 
             saveProfile.textContent =
                 "Saving...";
@@ -1729,10 +2612,6 @@ if (saveProfile) {
 
 
             try {
-
-                // ==================================
-                // CURRENT PHOTO URL
-                // ==================================
 
                 let photoURL =
                     currentUser.photoURL ||
@@ -1760,17 +2639,11 @@ if (saveProfile) {
                             oldAvatarRef
                         );
 
-
-                        console.log(
-                            "Old avatar deleted from Storage."
-                        );
-
                     }
-
                     catch (error) {
 
                         console.log(
-                            "No old avatar found in Storage."
+                            "No old avatar found."
                         );
 
                     }
@@ -1808,11 +2681,6 @@ if (saveProfile) {
                             avatarRef
                         );
 
-
-                    console.log(
-                        "Avatar uploaded successfully."
-                    );
-
                 }
 
 
@@ -1833,27 +2701,6 @@ if (saveProfile) {
 
 
                 // ==================================
-                // UPDATE REALTIME DATABASE
-                // ==================================
-
-                await update(
-                    ref(
-                        realtimeDB,
-                        "users/" +
-                        currentUser.uid
-                    ),
-                    {
-                        name:
-                            newName,
-
-                        email:
-                            currentUser.email ||
-                            ""
-                    }
-                );
-
-
-                // ==================================
                 // UPDATE UI
                 // ==================================
 
@@ -1863,8 +2710,7 @@ if (saveProfile) {
 
                 if (photoURL) {
 
-                    profileAvatar.innerHTML =
-                        `
+                    profileAvatar.innerHTML = `
                         <img
                             src="${photoURL}"
                             alt="Profile Avatar"
@@ -1873,12 +2719,12 @@ if (saveProfile) {
                                 height:100%;
                                 object-fit:cover;
                                 border-radius:50%;
-                            ">
-                        `;
+                            "
+                        >
+                    `;
 
 
-                    profileLargeAvatar.innerHTML =
-                        `
+                    profileLargeAvatar.innerHTML = `
                         <img
                             src="${photoURL}"
                             alt="Profile Avatar"
@@ -1887,30 +2733,32 @@ if (saveProfile) {
                                 height:100%;
                                 object-fit:cover;
                                 border-radius:50%;
-                            ">
-                        `;
+                            "
+                        >
+                    `;
 
                 }
 
                 else {
 
-                    profileAvatar.textContent =
+                    const initial =
                         newName
                             .charAt(0)
                             .toUpperCase();
+
+
+                    profileAvatar.textContent =
+                        initial;
 
 
                     profileLargeAvatar.textContent =
-                        newName
-                            .charAt(0)
-                            .toUpperCase();
+                        initial;
 
                 }
 
 
                 profileMessage.textContent =
                     "Profile updated successfully.";
-
 
                 profileMessage.style.color =
                     "green";
@@ -1919,14 +2767,15 @@ if (saveProfile) {
                 selectedAvatarFile =
                     null;
 
-
                 avatarRemoved =
                     false;
 
 
                 if (avatarInput) {
+
                     avatarInput.value =
                         "";
+
                 }
 
 
@@ -1941,7 +2790,6 @@ if (saveProfile) {
                 );
 
             }
-
             catch (error) {
 
                 console.error(
@@ -1953,7 +2801,6 @@ if (saveProfile) {
                 profileMessage.textContent =
                     "Unable to update profile. Please try again.";
 
-
                 profileMessage.style.color =
                     "red";
 
@@ -1962,7 +2809,6 @@ if (saveProfile) {
 
             saveProfile.disabled =
                 false;
-
 
             saveProfile.textContent =
                 "Save Changes";
@@ -2015,7 +2861,6 @@ if (logoutButton) {
                 );
 
             }
-
             catch (error) {
 
                 console.error(
@@ -2065,7 +2910,7 @@ onAuthStateChanged(
 
 
             // ==================================
-            // PROFILE INFORMATION
+            // PROFILE NAME
             // ==================================
 
             const displayName =
@@ -2089,8 +2934,7 @@ onAuthStateChanged(
 
                 if (user.photoURL) {
 
-                    profileAvatar.innerHTML =
-                        `
+                    profileAvatar.innerHTML = `
                         <img
                             src="${user.photoURL}"
                             alt="Profile Avatar"
@@ -2099,8 +2943,9 @@ onAuthStateChanged(
                                 height:100%;
                                 object-fit:cover;
                                 border-radius:50%;
-                            ">
-                        `;
+                            "
+                        >
+                    `;
 
                 }
 
@@ -2116,12 +2961,15 @@ onAuthStateChanged(
             }
 
 
+            // ==================================
+            // LARGE AVATAR
+            // ==================================
+
             if (profileLargeAvatar) {
 
                 if (user.photoURL) {
 
-                    profileLargeAvatar.innerHTML =
-                        `
+                    profileLargeAvatar.innerHTML = `
                         <img
                             src="${user.photoURL}"
                             alt="Profile Avatar"
@@ -2130,8 +2978,9 @@ onAuthStateChanged(
                                 height:100%;
                                 object-fit:cover;
                                 border-radius:50%;
-                            ">
-                        `;
+                            "
+                        >
+                    `;
 
                 }
 
@@ -2146,6 +2995,10 @@ onAuthStateChanged(
 
             }
 
+
+            // ==================================
+            // PROFILE INPUTS
+            // ==================================
 
             if (profileNameInput) {
 
@@ -2165,7 +3018,7 @@ onAuthStateChanged(
 
 
             // ==================================
-            // LOAD DASHBOARD
+            // LOAD TOTAL + CURRENCY SUMMARY
             // ==================================
 
             loadDashboardData(
@@ -2173,10 +3026,18 @@ onAuthStateChanged(
             );
 
 
+            // ==================================
+            // LOAD RECENT RECEIPTS
+            // ==================================
+
             loadRecentReceipts(
                 user
             );
 
+
+            // ==================================
+            // LOAD SPENDING CHART
+            // ==================================
 
             loadSpendingChart(
                 user
@@ -2187,7 +3048,7 @@ onAuthStateChanged(
         else {
 
             // ==================================
-            // USER NOT LOGGED IN
+            // NO USER
             // ==================================
 
             console.log(
@@ -2201,12 +3062,11 @@ onAuthStateChanged(
 
             if (receiptList) {
 
-                receiptList.innerHTML =
-                    `
+                receiptList.innerHTML = `
                     <p>
                         Please login to view your receipts.
                     </p>
-                    `;
+                `;
 
             }
 

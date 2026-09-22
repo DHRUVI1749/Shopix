@@ -16,10 +16,14 @@ import {
 console.log("Firebase connected successfully!");
 
 // ==========================================
-// ELEMENTS
+// GLOBAL DATA
 // ==========================================
 
 let currentExtractedData = null;
+
+// ==========================================
+// ELEMENTS
+// ==========================================
 
 const fileInput = document.getElementById("receiptFileInput");
 const previewImage = document.getElementById("receiptPreview");
@@ -27,6 +31,7 @@ const noPreviewText = document.getElementById("noPreviewText");
 const previewStatus = document.getElementById("previewStatus");
 const scanButton = document.getElementById("scanBtn");
 const captureButton = document.getElementById("captureBtn");
+const saveReceiptButton = document.getElementById("saveReceiptBtn");
 
 // ==========================================
 // FILE UPLOAD
@@ -83,6 +88,7 @@ function showPreview(file) {
     const imageUrl = URL.createObjectURL(file);
 
     previewImage.src = imageUrl;
+
     previewImage.style.display = "block";
 
     noPreviewText.style.display = "none";
@@ -101,6 +107,7 @@ function showPreview(file) {
 function resetPreview() {
 
     previewImage.src = "";
+
     previewImage.style.display = "none";
 
     noPreviewText.style.display = "flex";
@@ -111,418 +118,566 @@ function resetPreview() {
 }
 
 // ==========================================
+// CREATE CURRENCY FIELD
+// ==========================================
+
+function createCurrencyField() {
+
+    const totalAmountInput = document.getElementById("totalAmount");
+
+    if (!totalAmountInput) {
+        return null;
+    }
+
+    // If currency field already exists
+    let currencySelect = document.getElementById("currency");
+
+    if (currencySelect) {
+        return currencySelect;
+    }
+
+    // ==========================================
+    // WRAPPER
+    // ==========================================
+
+    const wrapper = document.createElement("div");
+
+    wrapper.className = "currency-field-wrapper";
+
+    wrapper.style.marginTop = "12px";
+
+    // ==========================================
+    // LABEL
+    // ==========================================
+
+    const label = document.createElement("label");
+
+    label.textContent = "Currency";
+
+    label.setAttribute("for", "currency");
+
+    // ==========================================
+    // SELECT
+    // ==========================================
+
+    currencySelect = document.createElement("select");
+
+    currencySelect.id = "currency";
+
+    currencySelect.name = "currency";
+
+    // ==========================================
+    // SUPPORTED CURRENCIES
+    // ==========================================
+
+    const currencies = [
+        {
+            value: "INR",
+            text: "₹ INR - Indian Rupee"
+        },
+        {
+            value: "USD",
+            text: "$ USD - US Dollar"
+        },
+        {
+            value: "EUR",
+            text: "€ EUR - Euro"
+        },
+        {
+            value: "GBP",
+            text: "£ GBP - British Pound"
+        },
+        {
+            value: "AED",
+            text: "د.إ AED - UAE Dirham"
+        },
+        {
+            value: "CAD",
+            text: "$ CAD - Canadian Dollar"
+        },
+        {
+            value: "AUD",
+            text: "$ AUD - Australian Dollar"
+        },
+        {
+            value: "Other",
+            text: "Other"
+        }
+    ];
+
+    currencies.forEach(function (currency) {
+
+        const option = document.createElement("option");
+
+        option.value = currency.value;
+
+        option.textContent = currency.text;
+
+        currencySelect.appendChild(option);
+    });
+
+    wrapper.appendChild(label);
+
+    wrapper.appendChild(currencySelect);
+
+    // ==========================================
+    // INSERT AFTER TOTAL AMOUNT
+    // ==========================================
+
+    const parent = totalAmountInput.parentElement;
+
+    if (parent) {
+        parent.appendChild(wrapper);
+    }
+
+    return currencySelect;
+}
+
+// ==========================================
 // SAVE RECEIPT TO FIRESTORE
 // ==========================================
 
-const saveReceiptButton =
-    document.getElementById("saveReceiptBtn");
+saveReceiptButton.addEventListener("click", async function () {
 
-saveReceiptButton.addEventListener(
-    "click",
-    async function () {
+    // ==========================================
+    // CHECK SCAN
+    // ==========================================
 
-        if (!currentExtractedData) {
+    if (!currentExtractedData) {
 
-            alert("Please scan the receipt first.");
+        alert("Please scan the receipt first.");
 
-            return;
-        }
+        return;
+    }
 
-        const user = auth.currentUser;
+    // ==========================================
+    // CHECK LOGIN
+    // ==========================================
 
-        if (!user) {
+    const user = auth.currentUser;
 
-            alert("Please login first.");
+    if (!user) {
 
-            return;
-        }
+        alert("Please login first.");
 
-        saveReceiptButton.disabled = true;
-        saveReceiptButton.textContent = "Saving...";
+        return;
+    }
 
-        try {
+    saveReceiptButton.disabled = true;
 
-            // Create new receipt ID
-            const receiptId = doc(
-                collection(
-                    db,
-                    "users",
-                    user.uid,
-                    "receipts"
-                )
-            ).id;
+    saveReceiptButton.textContent = "Saving...";
 
-            // ==================================
-            // GET FORM DATA
-            // ==================================
+    try {
 
-            const storeName =
-                document.getElementById(
-                    "storeName"
-                ).value;
+        // ==========================================
+        // CREATE RECEIPT ID
+        // ==========================================
 
-            const purchaseDate =
-                document.getElementById(
-                    "purchaseDate"
-                ).value;
+        const receiptId = doc(
+            collection(
+                db,
+                "users",
+                user.uid,
+                "receipts"
+            )
+        ).id;
 
-            const totalAmount =
-                Number(
-                    document.getElementById(
-                        "totalAmount"
-                    ).value
+        // ==========================================
+        // GET FORM DATA
+        // ==========================================
+
+        const storeName =
+            document.getElementById("storeName").value;
+
+        const purchaseDate =
+            document.getElementById("purchaseDate").value;
+
+        const totalAmount =
+            Number(
+                document.getElementById("totalAmount").value
+            );
+
+        const category =
+            document.getElementById("category").value;
+
+        // ==========================================
+        // GET CURRENCY
+        // ==========================================
+
+        const currencySelect =
+            document.getElementById("currency");
+
+        const currency =
+            currencySelect
+                ? currencySelect.value
+                : (
+                    currentExtractedData.currency || "INR"
                 );
 
-            const category =
-                document.getElementById(
-                    "category"
-                ).value;
+        // ==========================================
+        // SAVE TO FIRESTORE
+        // ==========================================
 
-            // ==================================
-            // SAVE DATA TO FIRESTORE
-            // ==================================
-
-            await setDoc(
-                doc(
-                    db,
-                    "users",
-                    user.uid,
-                    "receipts",
-                    receiptId
-                ),
-                {
-                    storeName: storeName,
-
-                    purchaseDate: purchaseDate,
-
-                    totalAmount: totalAmount,
-
-                    category: category,
-
-                    items:
-                        currentExtractedData.items || [],
-
-                    createdAt:
-                        serverTimestamp()
-                }
-            );
-
-            console.log(
-                "Receipt saved successfully:",
+        await setDoc(
+            doc(
+                db,
+                "users",
+                user.uid,
+                "receipts",
                 receiptId
-            );
+            ),
+            {
+                storeName: storeName,
+                purchaseDate: purchaseDate,
+                totalAmount: totalAmount,
 
-            alert(
-                "✅ Receipt saved successfully!"
-            );
+                // NEW
+                currency: currency,
 
-            // Reset button
-            saveReceiptButton.textContent =
-                "Saved ✓";
+                category: category,
 
-        } catch (error) {
+                items:
+                    currentExtractedData.items || [],
 
-            console.error(
-                "❌ Error saving receipt:",
-                error
-            );
+                createdAt:
+                    serverTimestamp()
+            }
+        );
 
-            alert(
-                "Unable to save receipt. Please try again."
-            );
+        console.log(
+            "Receipt saved successfully:",
+            receiptId
+        );
 
-            saveReceiptButton.disabled = false;
+        console.log(
+            "Saved currency:",
+            currency
+        );
 
-            saveReceiptButton.textContent =
-                "Save Receipt";
+        alert("✅ Receipt saved successfully!");
 
-        }
+        saveReceiptButton.textContent = "Saved ✓";
 
+    } catch (error) {
+
+        console.error(
+            "❌ Error saving receipt:",
+            error
+        );
+
+        alert(
+            "Unable to save receipt. Please try again."
+        );
+
+        saveReceiptButton.disabled = false;
+
+        saveReceiptButton.textContent = "Save Receipt";
     }
-);
+});
 
 // ==========================================
 // CAMERA CAPTURE
 // ==========================================
 
-captureButton.addEventListener(
-    "click",
-    async function () {
+captureButton.addEventListener("click", async function () {
 
-        // Check camera support
-        if (
-            !navigator.mediaDevices ||
-            !navigator.mediaDevices.getUserMedia
-        ) {
+    // ==========================================
+    // CHECK CAMERA SUPPORT
+    // ==========================================
 
-            alert(
-                "Camera capture is not supported by this browser."
-            );
+    if (
+        !navigator.mediaDevices ||
+        !navigator.mediaDevices.getUserMedia
+    ) {
 
-            return;
-        }
+        alert(
+            "Camera capture is not supported by this browser."
+        );
 
-        let stream;
-
-        try {
-
-            // Open camera
-            stream =
-                await navigator.mediaDevices.getUserMedia({
-                    video: {
-                        facingMode: "environment"
-                    }
-                });
-
-            // ==================================
-            // CAMERA OVERLAY
-            // ==================================
-
-            const overlay =
-                document.createElement("div");
-
-            overlay.className =
-                "camera-overlay";
-
-            // ==================================
-            // VIDEO
-            // ==================================
-
-            const video =
-                document.createElement("video");
-
-            video.autoplay = true;
-            video.playsInline = true;
-            video.srcObject = stream;
-
-            // ==================================
-            // CAPTURE BUTTON
-            // ==================================
-
-            const capturePhoto =
-                document.createElement("button");
-
-            capturePhoto.textContent =
-                "📸 Capture Photo";
-
-            capturePhoto.className =
-                "camera-capture-btn";
-
-            // ==================================
-            // CLOSE BUTTON
-            // ==================================
-
-            const closeCamera =
-                document.createElement("button");
-
-            closeCamera.textContent =
-                "✕ Close";
-
-            closeCamera.className =
-                "camera-close-btn";
-
-            // Add elements
-            overlay.appendChild(video);
-            overlay.appendChild(capturePhoto);
-            overlay.appendChild(closeCamera);
-
-            document.body.appendChild(overlay);
-
-            // ==================================
-            // CAPTURE PHOTO
-            // ==================================
-
-            capturePhoto.addEventListener(
-                "click",
-                function () {
-
-                    // Check camera readiness
-                    if (
-                        video.videoWidth === 0 ||
-                        video.videoHeight === 0
-                    ) {
-
-                        alert(
-                            "Camera is not ready yet. Please try again."
-                        );
-
-                        return;
-                    }
-
-                    // Create canvas
-                    const canvas =
-                        document.createElement("canvas");
-
-                    canvas.width =
-                        video.videoWidth;
-
-                    canvas.height =
-                        video.videoHeight;
-
-                    // Draw camera frame
-                    const context =
-                        canvas.getContext("2d");
-
-                    context.drawImage(
-                        video,
-                        0,
-                        0,
-                        canvas.width,
-                        canvas.height
-                    );
-
-                    // Convert image to file
-                    canvas.toBlob(
-                        function (blob) {
-
-                            if (!blob) {
-
-                                alert(
-                                    "Unable to capture receipt image."
-                                );
-
-                                return;
-                            }
-
-                            const capturedFile =
-                                new File(
-                                    [blob],
-                                    "captured-receipt.jpg",
-                                    {
-                                        type: "image/jpeg"
-                                    }
-                                );
-
-                            // Put captured image
-                            // into file input
-                            const dataTransfer =
-                                new DataTransfer();
-
-                            dataTransfer.items.add(
-                                capturedFile
-                            );
-
-                            fileInput.files =
-                                dataTransfer.files;
-
-                            // Stop camera
-                            stream
-                                .getTracks()
-                                .forEach(
-                                    track =>
-                                        track.stop()
-                                );
-
-                            // Remove camera overlay
-                            overlay.remove();
-
-                            // Show captured receipt
-                            showPreview(
-                                capturedFile
-                            );
-
-                            console.log(
-                                "Receipt captured successfully."
-                            );
-
-                        },
-                        "image/jpeg",
-                        0.95
-                    );
-
-                }
-            );
-
-            // ==================================
-            // CLOSE CAMERA
-            // ==================================
-
-            closeCamera.addEventListener(
-                "click",
-                function () {
-
-                    stream
-                        .getTracks()
-                        .forEach(
-                            track =>
-                                track.stop()
-                        );
-
-                    overlay.remove();
-
-                    console.log(
-                        "Camera closed."
-                    );
-                }
-            );
-
-        } catch (error) {
-
-            console.error(
-                "Camera error:",
-                error
-            );
-
-            alert(
-                "Unable to access camera. Please allow camera permission."
-            );
-        }
-
+        return;
     }
-);
+
+    let stream;
+
+    try {
+
+        // ==========================================
+        // OPEN CAMERA
+        // ==========================================
+
+        stream =
+            await navigator.mediaDevices.getUserMedia({
+                video: {
+                    facingMode: "environment"
+                }
+            });
+
+        // ==========================================
+        // CAMERA OVERLAY
+        // ==========================================
+
+        const overlay = document.createElement("div");
+
+        overlay.className = "camera-overlay";
+
+        // ==========================================
+        // VIDEO
+        // ==========================================
+
+        const video = document.createElement("video");
+
+        video.autoplay = true;
+
+        video.playsInline = true;
+
+        video.srcObject = stream;
+
+        // ==========================================
+        // CAPTURE BUTTON
+        // ==========================================
+
+        const capturePhoto =
+            document.createElement("button");
+
+        capturePhoto.textContent =
+            "📸 Capture Photo";
+
+        capturePhoto.className =
+            "camera-capture-btn";
+
+        // ==========================================
+        // CLOSE BUTTON
+        // ==========================================
+
+        const closeCamera =
+            document.createElement("button");
+
+        closeCamera.textContent =
+            "✕ Close";
+
+        closeCamera.className =
+            "camera-close-btn";
+
+        // ==========================================
+        // ADD ELEMENTS
+        // ==========================================
+
+        overlay.appendChild(video);
+
+        overlay.appendChild(capturePhoto);
+
+        overlay.appendChild(closeCamera);
+
+        document.body.appendChild(overlay);
+
+        // ==========================================
+        // CAPTURE PHOTO
+        // ==========================================
+
+        capturePhoto.addEventListener(
+            "click",
+            function () {
+
+                if (
+                    video.videoWidth === 0 ||
+                    video.videoHeight === 0
+                ) {
+
+                    alert(
+                        "Camera is not ready yet. Please try again."
+                    );
+
+                    return;
+                }
+
+                // ==========================================
+                // CREATE CANVAS
+                // ==========================================
+
+                const canvas =
+                    document.createElement("canvas");
+
+                canvas.width =
+                    video.videoWidth;
+
+                canvas.height =
+                    video.videoHeight;
+
+                // ==========================================
+                // DRAW IMAGE
+                // ==========================================
+
+                const context =
+                    canvas.getContext("2d");
+
+                context.drawImage(
+                    video,
+                    0,
+                    0,
+                    canvas.width,
+                    canvas.height
+                );
+
+                // ==========================================
+                // CONVERT TO FILE
+                // ==========================================
+
+                canvas.toBlob(
+                    function (blob) {
+
+                        if (!blob) {
+
+                            alert(
+                                "Unable to capture receipt image."
+                            );
+
+                            return;
+                        }
+
+                        const capturedFile =
+                            new File(
+                                [blob],
+                                "captured-receipt.jpg",
+                                {
+                                    type: "image/jpeg"
+                                }
+                            );
+
+                        // ==========================================
+                        // PUT FILE INTO INPUT
+                        // ==========================================
+
+                        const dataTransfer =
+                            new DataTransfer();
+
+                        dataTransfer.items.add(
+                            capturedFile
+                        );
+
+                        fileInput.files =
+                            dataTransfer.files;
+
+                        // ==========================================
+                        // STOP CAMERA
+                        // ==========================================
+
+                        stream
+                            .getTracks()
+                            .forEach(
+                                function (track) {
+                                    track.stop();
+                                }
+                            );
+
+                        // ==========================================
+                        // REMOVE OVERLAY
+                        // ==========================================
+
+                        overlay.remove();
+
+                        // ==========================================
+                        // SHOW PREVIEW
+                        // ==========================================
+
+                        showPreview(capturedFile);
+
+                        console.log(
+                            "Receipt captured successfully."
+                        );
+                    },
+                    "image/jpeg",
+                    0.95
+                );
+            }
+        );
+
+        // ==========================================
+        // CLOSE CAMERA
+        // ==========================================
+
+        closeCamera.addEventListener(
+            "click",
+            function () {
+
+                stream
+                    .getTracks()
+                    .forEach(
+                        function (track) {
+                            track.stop();
+                        }
+                    );
+
+                overlay.remove();
+
+                console.log("Camera closed.");
+            }
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Camera error:",
+            error
+        );
+
+        alert(
+            "Unable to access camera. Please allow camera permission."
+        );
+    }
+});
 
 // ==========================================
 // AI RECEIPT SCANNING
 // ==========================================
 
-scanButton.addEventListener(
-    "click",
-    async function () {
+scanButton.addEventListener("click", async function () {
 
-        const file =
-            fileInput.files[0];
+    const file = fileInput.files[0];
 
-        if (!file) {
+    if (!file) {
 
-            alert(
-                "Please upload or capture a receipt first."
-            );
+        alert(
+            "Please upload or capture a receipt first."
+        );
 
-            return;
-        }
+        return;
+    }
 
-        // Disable button while AI is working
-        scanButton.disabled = true;
+    // ==========================================
+    // DISABLE BUTTON
+    // ==========================================
 
-        const originalText =
-            scanButton.textContent;
+    scanButton.disabled = true;
 
-        scanButton.textContent =
-            "✨ Scanning Receipt...";
+    const originalText =
+        scanButton.textContent;
 
-        try {
+    scanButton.textContent =
+        "✨ Scanning Receipt...";
 
-            console.log(
-                "Starting AI receipt scan:",
-                file.name
-            );
+    try {
 
-            // ==================================
-            // CONVERT IMAGE TO BASE64
-            // ==================================
+        console.log(
+            "Starting AI receipt scan:",
+            file.name
+        );
 
-            const base64Image =
-                await fileToBase64(file);
+        // ==========================================
+        // CONVERT IMAGE TO BASE64
+        // ==========================================
 
-            console.log(
-                "Receipt image converted successfully."
-            );
+        const base64Image =
+            await fileToBase64(file);
 
-            // ==================================
-            // AI PROMPT
-            // ==================================
+        console.log(
+            "Receipt image converted successfully."
+        );
 
-            const prompt = `
+        // ==========================================
+        // AI PROMPT
+        // ==========================================
+
+        const prompt = `
 You are SHOPIX, an AI receipt scanner.
 
 Analyze the attached receipt image carefully.
@@ -532,135 +687,211 @@ Extract the following information:
 1. Store Name
 2. Purchase Date
 3. Total Amount
-4. Category
-5. Items purchased
+4. Currency
+5. Category
+6. Items purchased
 
 For Category, choose ONLY one of:
+
 Electronics
 Grocery
 Clothing
 Travel
 Other
 
+For Currency:
+
+Identify the actual currency printed on the receipt.
+
+Examples:
+
+₹ or Rs or INR = INR
+$ or USD = USD
+€ or EUR = EUR
+£ or GBP = GBP
+AED or د.إ = AED
+CAD = CAD
+AUD = AUD
+
+IMPORTANT:
+
+Do NOT convert currencies.
+
+If the receipt says $78, return:
+
+"totalAmount": 78,
+"currency": "USD"
+
+Do NOT return:
+
+"totalAmount": 78,
+"currency": "INR"
+
+The totalAmount must represent the original amount printed on the receipt.
+
 Return ONLY valid JSON.
 
 Use this exact format:
 
 {
-  "storeName": "",
-  "purchaseDate": "",
-  "totalAmount": 0,
-  "category": "",
-  "items": [
-    {
-      "name": "",
-      "quantity": 1,
-      "price": 0
-    }
-  ]
+    "storeName": "",
+    "purchaseDate": "",
+    "totalAmount": 0,
+    "currency": "INR",
+    "category": "",
+    "items": [
+        {
+            "name": "",
+            "quantity": 1,
+            "price": 0
+        }
+    ]
 }
 
 Rules:
+
 - Do not add explanations.
 - Do not use markdown.
 - totalAmount must be a number.
 - quantity must be a number.
 - price must be a number.
+- currency must be a currency code such as INR, USD, EUR, GBP, AED, CAD or AUD.
+- Do not convert the amount to another currency.
+- Read the receipt carefully.
+- Do not invent information.
+- If currency cannot be identified, use "Other".
 - If a value cannot be identified, use an empty string or 0.
-- Read the receipt carefully and do not invent information.
 `;
 
-            // ==================================
-            // SEND IMAGE + PROMPT TO GEMINI
-            // ==================================
+        // ==========================================
+        // IMAGE PART
+        // ==========================================
 
-            const imagePart = {
+        const imagePart = {
+            inlineData: {
+                data: base64Image,
+                mimeType: file.type
+            }
+        };
 
-                inlineData: {
+        // ==========================================
+        // SEND TO GEMINI
+        // ==========================================
 
-                    data: base64Image,
+        const result =
+            await model.generateContent([
+                prompt,
+                imagePart
+            ]);
 
-                    mimeType: file.type
+        const response =
+            result.response;
 
-                }
+        const text =
+            response.text();
 
-            };
+        console.log(
+            "Gemini raw response:",
+            text
+        );
 
-            const result =
-                await model.generateContent([
-                    prompt,
-                    imagePart
-                ]);
+        // ==========================================
+        // CLEAN AI RESPONSE
+        // ==========================================
 
-            const response =
-                result.response;
+        const cleanedText =
+            text
+                .replace(/```json/gi, "")
+                .replace(/```/g, "")
+                .trim();
 
-            const text =
-                response.text();
+        // ==========================================
+        // PARSE JSON
+        // ==========================================
 
-            console.log(
-                "Gemini raw response:",
-                text
-            );
+        const data =
+            JSON.parse(cleanedText);
 
-            // ==================================
-            // CLEAN AI RESPONSE
-            // ==================================
+        // ==========================================
+        // NORMALIZE CURRENCY
+        // ==========================================
 
-            const cleanedText =
-                text
-                    .replace(/```json/gi, "")
-                    .replace(/```/g, "")
-                    .trim();
+        if (
+            !data.currency ||
+            typeof data.currency !== "string"
+        ) {
 
-            // ==================================
-            // CONVERT RESPONSE TO JSON
-            // ==================================
-
-            const data =
-                JSON.parse(cleanedText);
-
-            // Store extracted data
-            currentExtractedData =
-                data;
-
-            console.log(
-                "Extracted receipt data:",
-                data
-            );
-
-            // ==================================
-            // SHOW EXTRACTED DATA
-            // ==================================
-
-            showExtractedData(data);
-
-            alert(
-                "✅ Receipt scanned successfully!"
-            );
-
-        } catch (error) {
-
-            console.error(
-                "❌ AI receipt scanning failed:",
-                error
-            );
-
-            alert(
-                "Unable to scan the receipt. Please try again."
-            );
-
-        } finally {
-
-            scanButton.disabled = false;
-
-            scanButton.textContent =
-                originalText;
-
+            data.currency = "INR";
         }
 
+        data.currency =
+            data.currency
+                .trim()
+                .toUpperCase();
+
+        // ==========================================
+        // NORMALIZE TOTAL AMOUNT
+        // ==========================================
+
+        if (
+            data.totalAmount === undefined ||
+            data.totalAmount === null ||
+            isNaN(Number(data.totalAmount))
+        ) {
+
+            data.totalAmount = 0;
+        }
+
+        data.totalAmount =
+            Number(data.totalAmount);
+
+        // ==========================================
+        // NORMALIZE ITEMS
+        // ==========================================
+
+        if (!Array.isArray(data.items)) {
+            data.items = [];
+        }
+
+        // ==========================================
+        // STORE EXTRACTED DATA
+        // ==========================================
+
+        currentExtractedData = data;
+
+        console.log(
+            "Extracted receipt data:",
+            data
+        );
+
+        // ==========================================
+        // SHOW DATA
+        // ==========================================
+
+        showExtractedData(data);
+
+        alert(
+            "✅ Receipt scanned successfully!"
+        );
+
+    } catch (error) {
+
+        console.error(
+            "❌ AI receipt scanning failed:",
+            error
+        );
+
+        alert(
+            "Unable to scan the receipt. Please try again."
+        );
+
+    } finally {
+
+        scanButton.disabled = false;
+
+        scanButton.textContent = originalText;
     }
-);
+});
 
 // ==========================================
 // FILE TO BASE64
@@ -684,7 +915,6 @@ function fileToBase64(file) {
                         result.split(",")[1];
 
                     resolve(base64);
-
                 };
 
             reader.onerror =
@@ -695,14 +925,40 @@ function fileToBase64(file) {
                             "Unable to read receipt image."
                         )
                     );
-
                 };
 
             reader.readAsDataURL(file);
-
         }
     );
+}
 
+// ==========================================
+// CURRENCY SYMBOL
+// ==========================================
+
+function getCurrencySymbol(currency) {
+
+    const symbols = {
+
+        INR: "₹",
+
+        USD: "$",
+
+        EUR: "€",
+
+        GBP: "£",
+
+        AED: "د.إ",
+
+        CAD: "C$",
+
+        AUD: "A$"
+    };
+
+    return (
+        symbols[currency] ||
+        currency
+    );
 }
 
 // ==========================================
@@ -717,33 +973,23 @@ function showExtractedData(data) {
     );
 
     // ==========================================
-    // GET FORM ELEMENTS
+    // FORM ELEMENTS
     // ==========================================
 
     const storeNameInput =
-        document.getElementById(
-            "storeName"
-        );
+        document.getElementById("storeName");
 
     const purchaseDateInput =
-        document.getElementById(
-            "purchaseDate"
-        );
+        document.getElementById("purchaseDate");
 
     const totalAmountInput =
-        document.getElementById(
-            "totalAmount"
-        );
+        document.getElementById("totalAmount");
 
     const categoryInput =
-        document.getElementById(
-            "category"
-        );
+        document.getElementById("category");
 
     const itemsList =
-        document.getElementById(
-            "itemsList"
-        );
+        document.getElementById("itemsList");
 
     // ==========================================
     // STORE NAME
@@ -753,7 +999,6 @@ function showExtractedData(data) {
 
         storeNameInput.value =
             data.storeName || "";
-
     }
 
     // ==========================================
@@ -766,12 +1011,8 @@ function showExtractedData(data) {
             data.purchaseDate || "";
 
         // Convert DD-MM-YYYY
-        // to YYYY-MM-DD
-
         if (
-            /^\d{2}-\d{2}-\d{4}$/.test(
-                date
-            )
+            /^\d{2}-\d{2}-\d{4}$/.test(date)
         ) {
 
             const parts =
@@ -783,16 +1024,11 @@ function showExtractedData(data) {
                 parts[1] +
                 "-" +
                 parts[0];
-
         }
 
         // Convert DD/MM/YYYY
-        // to YYYY-MM-DD
-
         if (
-            /^\d{2}\/\d{2}\/\d{4}$/.test(
-                date
-            )
+            /^\d{2}\/\d{2}\/\d{4}$/.test(date)
         ) {
 
             const parts =
@@ -804,12 +1040,10 @@ function showExtractedData(data) {
                 parts[1] +
                 "-" +
                 parts[0];
-
         }
 
         purchaseDateInput.value =
             date;
-
     }
 
     // ==========================================
@@ -820,7 +1054,56 @@ function showExtractedData(data) {
 
         totalAmountInput.value =
             data.totalAmount || 0;
+    }
 
+    // ==========================================
+    // CURRENCY
+    // ==========================================
+
+    const currencySelect =
+        createCurrencyField();
+
+    if (currencySelect) {
+
+        const validCurrencies = [
+            "INR",
+            "USD",
+            "EUR",
+            "GBP",
+            "AED",
+            "CAD",
+            "AUD",
+            "Other"
+        ];
+
+        if (
+            validCurrencies.includes(
+                data.currency
+            )
+        ) {
+
+            currencySelect.value =
+                data.currency;
+
+        } else {
+
+            currencySelect.value =
+                "Other";
+        }
+
+        // ==========================================
+        // MANUAL CURRENCY CHANGE
+        // ==========================================
+
+        currencySelect.onchange =
+            function () {
+
+                if (currentExtractedData) {
+
+                    currentExtractedData.currency =
+                        this.value;
+                }
+            };
     }
 
     // ==========================================
@@ -830,7 +1113,6 @@ function showExtractedData(data) {
     if (categoryInput) {
 
         const allowedCategories = [
-
             "Food",
             "Grocery",
             "Shopping",
@@ -839,7 +1121,6 @@ function showExtractedData(data) {
             "Travel",
             "Medical",
             "Other"
-
         ];
 
         if (
@@ -855,9 +1136,7 @@ function showExtractedData(data) {
 
             categoryInput.value =
                 "Other";
-
         }
-
     }
 
     // ==========================================
@@ -866,7 +1145,6 @@ function showExtractedData(data) {
 
     if (itemsList) {
 
-        // Clear old items
         itemsList.innerHTML = "";
 
         if (
@@ -874,21 +1152,22 @@ function showExtractedData(data) {
             data.items.length > 0
         ) {
 
+            const currencySymbol =
+                getCurrencySymbol(
+                    data.currency
+                );
+
             data.items.forEach(
                 function (item) {
 
                     const itemRow =
-                        document.createElement(
-                            "div"
-                        );
+                        document.createElement("div");
 
                     itemRow.className =
                         "extracted-item";
 
                     const itemName =
-                        document.createElement(
-                            "span"
-                        );
+                        document.createElement("span");
 
                     itemName.className =
                         "item-name";
@@ -898,9 +1177,7 @@ function showExtractedData(data) {
                         "Unknown item";
 
                     const itemDetails =
-                        document.createElement(
-                            "span"
-                        );
+                        document.createElement("span");
 
                     itemDetails.className =
                         "item-details";
@@ -908,7 +1185,8 @@ function showExtractedData(data) {
                     itemDetails.textContent =
                         "Qty: " +
                         (item.quantity || 1) +
-                        " • ₹" +
+                        " • " +
+                        currencySymbol +
                         (item.price || 0);
 
                     itemRow.appendChild(
@@ -922,7 +1200,6 @@ function showExtractedData(data) {
                     itemsList.appendChild(
                         itemRow
                     );
-
                 }
             );
 
@@ -930,9 +1207,7 @@ function showExtractedData(data) {
 
             itemsList.textContent =
                 "No items detected.";
-
         }
-
     }
 
     // ==========================================
@@ -950,11 +1225,8 @@ function showExtractedData(data) {
             "block";
 
         extractedSection.scrollIntoView({
-
             behavior: "smooth",
-
             block: "start"
-
         });
 
     } else {
@@ -962,13 +1234,11 @@ function showExtractedData(data) {
         console.error(
             "❌ extractedDataSection not found in HTML."
         );
-
     }
 
     console.log(
         "✅ Extracted data displayed successfully."
     );
-
 }
 
 // ==========================================

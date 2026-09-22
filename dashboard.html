@@ -5,29 +5,39 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
     <title>SHOPIX | Dashboard</title>
 
-    <meta name="description"
+    <meta
+        name="description"
         content="SHOPIX Smart Receipt and Shopping Assistant Dashboard">
 
-    <!-- Google Font -->
+
+    <!-- =========================
+         GOOGLE FONT
+    ========================== -->
 
     <link rel="preconnect"
         href="https://fonts.googleapis.com">
 
     <link rel="preconnect"
-        href="https://fonts.googleapis.com"
+        href="https://fonts.gstatic.com"
         crossorigin>
 
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
 
-    <!-- Dashboard CSS -->
 
-    <link rel="stylesheet"
+    <!-- =========================
+         DASHBOARD CSS
+    ========================== -->
+
+    <link
+        rel="stylesheet"
         href="css/dashboard.css">
 
 </head>
@@ -52,7 +62,8 @@
 
             <!-- LOGO -->
 
-            <a href="index.html"
+            <a
+                href="index.html"
                 class="sidebar-logo">
 
                 <span class="logo-icon">
@@ -66,10 +77,11 @@
             </a>
 
 
-            <!-- NAVIGATION -->
+            <!-- =========================
+                 NAVIGATION
+            ========================== -->
 
             <nav class="sidebar-nav">
-
 
                 <p class="nav-title">
                     MAIN MENU
@@ -78,7 +90,8 @@
 
                 <!-- Dashboard -->
 
-                <a href="dashboard.html"
+                <a
+                    href="dashboard.html"
                     class="nav-item active">
 
                     <span class="nav-icon">
@@ -92,7 +105,8 @@
 
                 <!-- Receipts -->
 
-                <a href="receiptHistory.html"
+                <a
+                    href="receiptHistory.html"
                     class="nav-item">
 
                     <span class="nav-icon">
@@ -106,7 +120,8 @@
 
                 <!-- Upload Receipt -->
 
-                <a href="receiptScanner.html"
+                <a
+                    href="receiptScanner.html"
                     class="nav-item">
 
                     <span class="nav-icon">
@@ -120,7 +135,8 @@
 
                 <!-- Expenses -->
 
-                <a href="expenseAnalytics.html"
+                <a
+                    href="expenseAnalytics.html"
                     class="nav-item">
 
                     <span class="nav-icon">
@@ -134,7 +150,8 @@
 
                 <!-- Warranties -->
 
-                <a href="warranties.html"
+                <a
+                    href="warranties.html"
                     class="nav-item">
 
                     <span class="nav-icon">
@@ -148,7 +165,8 @@
 
                 <!-- Settings -->
 
-                <a href="#"
+                <a
+                    href="#"
                     class="nav-item">
 
                     <span class="nav-icon">
@@ -159,14 +177,17 @@
 
                 </a>
 
-
             </nav>
 
 
-            <!-- SIDEBAR BOTTOM -->
+            <!-- =========================
+                 SIDEBAR BOTTOM
+            ========================== -->
 
             <div class="sidebar-bottom">
 
+
+                <!-- HELP -->
 
                 <div class="help-box">
 
@@ -189,7 +210,10 @@
                 </div>
 
 
-                <a href="index.html"
+                <!-- LOGOUT -->
+
+                <a
+                    href="index.html"
                     class="logout-btn">
 
                     <span>
@@ -200,9 +224,7 @@
 
                 </a>
 
-
             </div>
-
 
         </aside>
 
@@ -225,6 +247,8 @@
                 <div class="header-left">
 
 
+                    <!-- MOBILE MENU -->
+
                     <button
                         class="mobile-menu-btn"
                         type="button">
@@ -246,12 +270,17 @@
 
                     </div>
 
-
                 </div>
 
 
+                <!-- =========================
+                     HEADER RIGHT
+                ========================== -->
+
                 <div class="header-right">
 
+
+                    <!-- NOTIFICATION -->
 
                     <button
                         class="notification-btn"
@@ -294,7 +323,6 @@
 
                     </div>
 
-
                 </div>
 
             </header>
@@ -309,7 +337,7 @@
 
 
                 <!-- =========================
-                     WELCOME
+                     WELCOME SECTION
                 ========================== -->
 
                 <div class="welcome-section">
@@ -321,9 +349,11 @@
                             Welcome back 👋
                         </p>
 
+
                         <h1>
                             Your Shopping Overview
                         </h1>
+
 
                         <p class="welcome-description">
                             Manage your receipts, expenses and warranties
@@ -347,7 +377,6 @@
 
                     </a>
 
-
                 </div>
 
 
@@ -356,7 +385,12 @@
                      STAT CARDS
                 ========================== -->
 
-                <div class="stats-grid">
+                <div
+                    class="stats-grid"
+                    style="
+                        grid-template-columns:
+                        repeat(2, minmax(0, 1fr));
+                    ">
 
 
                     <!-- TOTAL EXPENSE -->
@@ -368,7 +402,7 @@
 
 
                             <div class="stat-icon blue">
-                                ₹
+                                ¤
                             </div>
 
 
@@ -380,20 +414,16 @@
                         </div>
 
 
-                        <!-- DYNAMIC TOTAL EXPENSE -->
-
                         <h2 id="totalExpense">
-                            ₹0
+                            --
                         </h2>
 
 
-                        <p class="stat-change positive">
+                        <p
+                            class="stat-change positive"
+                            id="totalExpenseNote">
 
-                            ↑ 8.2%
-
-                            <span>
-                                vs last month
-                            </span>
+                            Based on saved receipts
 
                         </p>
 
@@ -402,42 +432,7 @@
 
 
 
-                    <!-- BUDGET -->
-
-                    <div class="stat-card">
-
-
-                        <div class="stat-top">
-
-
-                            <div class="stat-icon purple">
-                                ◫
-                            </div>
-
-
-                            <span class="stat-label">
-                                MONTHLY BUDGET
-                            </span>
-
-
-                        </div>
-
-
-                        <h2>
-                            ₹50,000
-                        </h2>
-
-
-                        <p class="stat-change">
-                            ₹5,000 remaining
-                        </p>
-
-
-                    </div>
-
-
-
-                    <!-- WARRANTY -->
+                    <!-- WARRANTIES -->
 
                     <div class="stat-card">
 
@@ -458,57 +453,16 @@
                         </div>
 
 
-                       <h2 id="dashboardWarrantyTotal">
-    0
-</h2>
-
-<p
-    class="stat-change warning"
-    id="dashboardWarrantyExpiring"
->
-    0 expiring soon
-</p>
-
-
-                    </div>
-
-
-
-                    <!-- THIS MONTH -->
-
-                    <div class="stat-card">
-
-
-                        <div class="stat-top">
-
-
-                            <div class="stat-icon orange">
-                                ↗
-                            </div>
-
-
-                            <span class="stat-label">
-                                THIS MONTH
-                            </span>
-
-
-                        </div>
-
-
-                        <!-- DYNAMIC THIS MONTH -->
-
-                        <h2 id="thisMonthExpense">
-                            ₹0
+                        <h2 id="dashboardWarrantyTotal">
+                            0
                         </h2>
 
 
-                        <p class="stat-change positive">
+                        <p
+                            class="stat-change warning"
+                            id="dashboardWarrantyExpiring">
 
-                            ↓ 4.2%
-
-                            <span>
-                                vs last month
-                            </span>
+                            0 expiring soon
 
                         </p>
 
@@ -521,15 +475,18 @@
 
 
                 <!-- =========================
-                     CHART + AI CARD
+                     CHART + CURRENCY SUMMARY
                 ========================== -->
 
                 <div class="middle-grid">
 
 
-                    <!-- SPENDING CHART -->
+                    <!-- =========================
+                         SPENDING OVERVIEW
+                    ========================== -->
 
-                    <div class="dashboard-card spending-card">
+                    <div
+                        class="dashboard-card spending-card">
 
 
                         <div class="card-header">
@@ -541,61 +498,96 @@
                                     Spending Overview
                                 </h3>
 
-                                <p>
+
+                                <p id="chartDescription">
                                     Your monthly spending activity
                                 </p>
 
                             </div>
 
 
-                            <select id="chartPeriod">
+                            <!-- CHART CONTROLS -->
 
-                                <option value="6">
-                                    Last 6 months
-                                </option>
+                            <div
+                                style="
+                                    display:flex;
+                                    gap:8px;
+                                    align-items:center;
+                                    flex-wrap:wrap;
+                                ">
 
-                                <option value="12">
-                                    This year
-                                </option>
 
-                            </select>
+                                <!-- CURRENCY -->
+
+                                <select id="chartCurrency">
+
+                                    <option value="all">
+                                        All currencies
+                                    </option>
+
+                                </select>
+
+
+                                <!-- PERIOD -->
+
+                                <select id="chartPeriod">
+
+                                    <option value="6">
+                                        Last 6 months
+                                    </option>
+
+                                    <option value="12">
+                                        This year
+                                    </option>
+
+                                    <option value="all">
+                                        All time
+                                    </option>
+
+                                </select>
+
+                            </div>
 
 
                         </div>
 
 
 
-                        <!-- SIMPLE CHART -->
+                        <!-- CHART -->
 
                         <div class="chart">
 
 
+                            <!-- Y AXIS -->
+
                             <div class="chart-values">
 
-                                <span>
-                                    ₹15k
+                                <span id="chartY1">
+                                    0
                                 </span>
 
-                                <span>
-                                    ₹10k
+                                <span id="chartY2">
+                                    0
                                 </span>
 
-                                <span>
-                                    ₹5k
+                                <span id="chartY3">
+                                    0
                                 </span>
 
-                                <span>
-                                    ₹0
+                                <span id="chartY4">
+                                    0
                                 </span>
 
                             </div>
 
 
+
+                            <!-- CHART AREA -->
 
                             <div class="chart-area">
 
 
-                                <div class="chart-grid-line"></div>
+                                <!-- GRID LINES -->
 
                                 <div class="chart-grid-line"></div>
 
@@ -603,85 +595,20 @@
 
                                 <div class="chart-grid-line"></div>
 
-
-
-                                <div class="bars">
-
-
-                                    <div class="bar-wrapper">
-
-                                        <div class="bar"></div>
-
-                                        <span>
-                                            —
-                                        </span>
-
-                                    </div>
+                                <div class="chart-grid-line"></div>
 
 
 
-                                    <div class="bar-wrapper">
+                                <!-- DYNAMIC BARS -->
 
-                                        <div class="bar"></div>
-
-                                        <span>
-                                            —
-                                        </span>
-
-                                    </div>
-
-
-
-                                    <div class="bar-wrapper">
-
-                                        <div class="bar"></div>
-
-                                        <span>
-                                            —
-                                        </span>
-
-                                    </div>
-
-
-
-                                    <div class="bar-wrapper">
-
-                                        <div class="bar"></div>
-
-                                        <span>
-                                            —
-                                        </span>
-
-                                    </div>
-
-
-
-                                    <div class="bar-wrapper">
-
-                                        <div class="bar"></div>
-
-                                        <span>
-                                            —
-                                        </span>
-
-                                    </div>
-
-
-
-                                    <div class="bar-wrapper">
-
-                                        <div class="bar"></div>
-
-                                        <span>
-                                            —
-                                        </span>
-
-                                    </div>
-
-
+                                <div
+                                    class="bars"
+                                    id="spendingBars">
                                 </div>
 
+
                             </div>
+
 
                         </div>
 
@@ -690,46 +617,61 @@
 
 
 
-                    <!-- AI INSIGHT -->
+                    <!-- =========================
+                         CURRENCY SUMMARY
+                    ========================== -->
 
-                    <div class="dashboard-card ai-card">
+                    <div
+                        class="dashboard-card ai-card currency-summary-card">
 
+
+                        <!-- TOP -->
 
                         <div class="ai-card-top">
 
 
                             <div class="ai-icon">
-                                ✦
+                                ¤
                             </div>
 
 
                             <span>
-                                AI INSIGHT
+                                CURRENCY SUMMARY
                             </span>
 
 
                         </div>
 
 
-                        <h3>
-                            Smart Spending Insight
-                        </h3>
+                        <!-- HEADING -->
+
+                        <div class="currency-summary-heading">
+
+                            <h3>
+                                Currency Summary
+                            </h3>
 
 
-                        <p>
-                            Your spending on Electronics is higher
-                            this month. Consider reviewing your recent
-                            purchases before your next shopping trip.
-                        </p>
+                            <p id="currencySummaryText">
+                                Your spending grouped by original currency
+                            </p>
+
+                        </div>
 
 
-                        <a
-                            href="#"
-                            class="ai-link">
+                        <!-- CURRENCY LIST -->
 
-                            View AI Insights →
+                        <div
+                            id="currencySummaryList"
+                            class="currency-summary-list">
 
-                        </a>
+                            <div class="currency-summary-loading">
+
+                                Loading currency data...
+
+                            </div>
+
+                        </div>
 
 
                     </div>
@@ -743,8 +685,11 @@
                      RECENT RECEIPTS
                 ========================== -->
 
-                <div class="dashboard-card receipts-card">
+                <div
+                    class="dashboard-card receipts-card">
 
+
+                    <!-- HEADER -->
 
                     <div class="card-header">
 
@@ -755,6 +700,7 @@
                                 Recent Receipts
                             </h3>
 
+
                             <p>
                                 Your latest uploaded receipts
                             </p>
@@ -764,8 +710,12 @@
 
                         <!-- VIEW ALL -->
 
-                        <a href="receiptHistory.html">
+                        <a
+                            href="receiptHistory.html"
+                            class="view-all-link">
+
                             View All →
+
                         </a>
 
 
@@ -773,14 +723,14 @@
 
 
 
-                    <!-- DYNAMIC RECEIPT LIST -->
+                    <!-- RECEIPT LIST -->
 
                     <div
                         class="receipt-list"
                         id="dashboardReceiptList">
 
 
-                        <!-- Loading state -->
+                        <!-- LOADING -->
 
                         <div class="receipt-row">
 
@@ -792,13 +742,16 @@
 
                             <div class="receipt-info">
 
+
                                 <strong>
                                     Loading receipts...
                                 </strong>
 
+
                                 <span>
                                     Please wait
                                 </span>
+
 
                             </div>
 
@@ -819,10 +772,11 @@
 
 
                 <!-- =========================
-                     WARRANTY ALERT
+                     WARRANTY ALERTS
                 ========================== -->
 
-                <div class="dashboard-card warranty-card">
+                <div
+                    class="dashboard-card warranty-card">
 
 
                     <div class="card-header">
@@ -834,15 +788,19 @@
                                 Warranty Alerts
                             </h3>
 
+
                             <p>
-                                Keep track of your upcoming warranty expirations
+                                Keep track of your upcoming warranty
+                                expirations
                             </p>
 
                         </div>
 
 
                         <a href="warranties.html">
+
                             View All →
+
                         </a>
 
 
@@ -850,32 +808,41 @@
 
 
 
-<div
-    class="warranty-list"
-    id="dashboardWarrantyList"
->
+                    <!-- WARRANTY LIST -->
 
-    <div class="warranty-row">
+                    <div
+                        class="warranty-list"
+                        id="dashboardWarrantyList">
 
-        <div class="warranty-icon">
-            ♢
-        </div>
 
-        <div class="warranty-info">
+                        <div class="warranty-row">
 
-            <strong>
-                Loading warranties...
-            </strong>
 
-            <span>
-                Please wait
-            </span>
+                            <div class="warranty-icon">
+                                ♢
+                            </div>
 
-        </div>
 
-    </div>
+                            <div class="warranty-info">
 
-</div>                    
+
+                                <strong>
+                                    Loading warranties...
+                                </strong>
+
+
+                                <span>
+                                    Please wait
+                                </span>
+
+
+                            </div>
+
+
+                        </div>
+
+
+                    </div>
 
 
                 </div>
@@ -913,6 +880,8 @@
                     ">
 
 
+                    <!-- MODAL HEADER -->
+
                     <div
                         style="
                             display:flex;
@@ -920,6 +889,7 @@
                             align-items:center;
                             margin-bottom:20px;
                         ">
+
 
                         <h2 style="margin:0;">
                             My Profile
@@ -976,8 +946,6 @@
                         </div>
 
 
-                        <!-- CHANGE AVATAR -->
-
                         <button
                             type="button"
                             id="changeAvatarBtn"
@@ -994,8 +962,6 @@
 
                         </button>
 
-
-                        <!-- REMOVE AVATAR -->
 
                         <button
                             type="button"
@@ -1015,8 +981,6 @@
 
                         </button>
 
-
-                        <!-- HIDDEN IMAGE INPUT -->
 
                         <input
                             type="file"
@@ -1089,7 +1053,7 @@
 
 
 
-                    <!-- MESSAGE -->
+                    <!-- PROFILE MESSAGE -->
 
                     <div
                         id="profileMessage"
@@ -1098,12 +1062,11 @@
                             margin-bottom:12px;
                             font-size:14px;
                         ">
-
                     </div>
 
 
 
-                    <!-- SAVE BUTTON -->
+                    <!-- SAVE PROFILE -->
 
                     <button
                         id="saveProfile"
@@ -1124,6 +1087,7 @@
 
                 </div>
 
+
             </div>
 
 
@@ -1134,13 +1098,16 @@
 
             <footer class="dashboard-footer">
 
+
                 <span>
                     © 2026 SHOPIX
                 </span>
 
+
                 <span>
                     AI Powered Smart Receipt & Shopping Assistant
                 </span>
+
 
             </footer>
 
@@ -1153,17 +1120,24 @@
 
 
     <!-- =========================
-         DASHBOARD SCRIPT
+         DASHBOARD JAVASCRIPT
     ========================== -->
 
     <script
         type="module"
         src="js/dashboard.js">
     </script>
+
+
+    <!-- =========================
+         WARRANTY JAVASCRIPT
+    ========================== -->
+
     <script
-    type="module"
-    src="js/dashboard-warranty.js">
+        type="module"
+        src="js/dashboard-warranty.js">
     </script>
+
 
 </body>
 

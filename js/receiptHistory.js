@@ -15,14 +15,168 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
 
+// ==========================================
+// HTML ELEMENTS
+// ==========================================
+
 const receiptList =
-    document.getElementById("receiptList");
+    document.getElementById(
+        "receiptList"
+    );
 
 const loadingMessage =
-    document.getElementById("loadingMessage");
+    document.getElementById(
+        "loadingMessage"
+    );
 
 const emptyMessage =
-    document.getElementById("emptyMessage");
+    document.getElementById(
+        "emptyMessage"
+    );
+
+
+// ==========================================
+// FORMAT CURRENCY
+// ==========================================
+
+function formatCurrency(
+    amount,
+    currency = "INR"
+) {
+
+    const numericAmount =
+        Number(amount) || 0;
+
+
+    try {
+
+        return new Intl.NumberFormat(
+            "en-IN",
+            {
+                style:
+                    "currency",
+
+                currency:
+                    currency
+            }
+        ).format(
+            numericAmount
+        );
+
+    } catch (error) {
+
+        return (
+            currency +
+            " " +
+            numericAmount
+        );
+
+    }
+
+}
+
+
+// ==========================================
+// NORMALIZE CURRENCY
+// ==========================================
+
+function normalizeCurrency(currency) {
+
+    if (!currency) {
+        return "INR";
+    }
+
+
+    const value =
+        String(currency)
+            .trim()
+            .toUpperCase();
+
+
+    if (
+        value === "₹" ||
+        value === "RS" ||
+        value === "RS." ||
+        value === "INR"
+    ) {
+
+        return "INR";
+
+    }
+
+
+    if (
+        value === "$" ||
+        value === "US$" ||
+        value === "USD"
+    ) {
+
+        return "USD";
+
+    }
+
+
+    if (
+        value === "€" ||
+        value === "EUR"
+    ) {
+
+        return "EUR";
+
+    }
+
+
+    if (
+        value === "£" ||
+        value === "GBP"
+    ) {
+
+        return "GBP";
+
+    }
+
+
+    if (
+        value === "AED" ||
+        value === "د.إ"
+    ) {
+
+        return "AED";
+
+    }
+
+
+    if (
+        value === "AUD"
+    ) {
+
+        return "AUD";
+
+    }
+
+
+    if (
+        value === "CAD"
+    ) {
+
+        return "CAD";
+
+    }
+
+
+    if (
+        value === "JPY" ||
+        value === "¥"
+    ) {
+
+        return "JPY";
+
+    }
+
+
+    return value;
+
+}
 
 
 // ==========================================
@@ -38,6 +192,7 @@ async function loadReceipts(user) {
             user.uid
         );
 
+
         const receiptsRef =
             collection(
                 db,
@@ -48,13 +203,16 @@ async function loadReceipts(user) {
 
 
         // Get all receipts
-        // No orderBy for now
         const receiptsQuery =
-            query(receiptsRef);
+            query(
+                receiptsRef
+            );
 
 
         const snapshot =
-            await getDocs(receiptsQuery);
+            await getDocs(
+                receiptsQuery
+            );
 
 
         console.log(
@@ -78,6 +236,7 @@ async function loadReceipts(user) {
                 "block";
 
             return;
+
         }
 
 
@@ -87,7 +246,8 @@ async function loadReceipts(user) {
 
 
         // Clear old list
-        receiptList.innerHTML = "";
+        receiptList.innerHTML =
+            "";
 
 
         // ==================================
@@ -101,7 +261,10 @@ async function loadReceipts(user) {
                     docSnapshot.data();
 
 
-                // Receipt Card
+                // ==================================
+                // RECEIPT CARD
+                // ==================================
+
                 const card =
                     document.createElement(
                         "div"
@@ -124,7 +287,10 @@ async function loadReceipts(user) {
                     "receipt-info";
 
 
-                // Store Name
+                // ==================================
+                // STORE NAME
+                // ==================================
+
                 const store =
                     document.createElement(
                         "div"
@@ -173,8 +339,13 @@ async function loadReceipts(user) {
                     "Other";
 
 
-                meta.appendChild(date);
-                meta.appendChild(category);
+                meta.appendChild(
+                    date
+                );
+
+                meta.appendChild(
+                    category
+                );
 
 
                 // ==================================
@@ -189,17 +360,35 @@ async function loadReceipts(user) {
                 amount.className =
                     "receipt-amount";
 
-                amount.textContent =
-                    "₹" +
-                    (
-                        receipt.totalAmount || 0
+
+                const currency =
+                    normalizeCurrency(
+                        receipt.currency
                     );
 
 
-                // Add information
-                info.appendChild(store);
-                info.appendChild(meta);
-                info.appendChild(amount);
+                amount.textContent =
+                    formatCurrency(
+                        receipt.totalAmount || 0,
+                        currency
+                    );
+
+
+                // ==================================
+                // ADD INFORMATION
+                // ==================================
+
+                info.appendChild(
+                    store
+                );
+
+                info.appendChild(
+                    meta
+                );
+
+                info.appendChild(
+                    amount
+                );
 
 
                 // ==================================
@@ -227,6 +416,7 @@ async function loadReceipts(user) {
                             docSnapshot.id
                         );
 
+
                         window.location.href =
                             "receiptDetails.html";
 
@@ -238,7 +428,9 @@ async function loadReceipts(user) {
                 // ADD CARD TO PAGE
                 // ==================================
 
-                card.appendChild(info);
+                card.appendChild(
+                    info
+                );
 
                 card.appendChild(
                     viewButton
@@ -262,6 +454,7 @@ async function loadReceipts(user) {
 
         loadingMessage.style.display =
             "block";
+
 
         loadingMessage.textContent =
             "Unable to load receipts. Please try again.";
@@ -289,8 +482,9 @@ onAuthStateChanged(
 
         if (user) {
 
-            // User is logged in
-            loadReceipts(user);
+            loadReceipts(
+                user
+            );
 
         } else {
 
