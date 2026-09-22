@@ -1,49 +1,35 @@
-import { auth, db } from "./firebase.js";
+import {
+    auth,
+    db
+} from "./firebase.js";
 
 import {
     onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 import {
     collection,
     getDocs,
     addDoc,
     serverTimestamp
-} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 
-/* =========================
-   FORM ELEMENTS
-========================= */
+// ===============================
+// DOM ELEMENTS
+// ===============================
 
-const warrantyForm =
-    document.getElementById("warrantyForm");
+const warrantyForm = document.getElementById("warrantyForm");
 
-const productName =
-    document.getElementById("productName");
+const productName = document.getElementById("productName");
+const storeName = document.getElementById("storeName");
+const purchaseDate = document.getElementById("purchaseDate");
+const warrantyDuration = document.getElementById("warrantyDuration");
+const expiryDate = document.getElementById("expiryDate");
+const warrantyStatus = document.getElementById("warrantyStatus");
 
-const storeName =
-    document.getElementById("storeName");
-
-const purchaseDate =
-    document.getElementById("purchaseDate");
-
-const warrantyDuration =
-    document.getElementById("warrantyDuration");
-
-const expiryDate =
-    document.getElementById("expiryDate");
-
-const warrantyStatus =
-    document.getElementById("warrantyStatus");
-
-const cancelWarrantyBtn =
-    document.getElementById("cancelWarrantyBtn");
-
-
-/* =========================
-   RECEIPT ELEMENTS
-========================= */
+const saveWarrantyBtn = document.getElementById("saveWarrantyBtn");
+const cancelWarrantyBtn = document.getElementById("cancelWarrantyBtn");
 
 const receiptProductSelect =
     document.getElementById("receiptProductSelect");
@@ -51,242 +37,185 @@ const receiptProductSelect =
 const selectedReceiptInfo =
     document.getElementById("selectedReceiptInfo");
 
-const selectedStoreName =
-    document.getElementById("selectedStoreName");
+const selectedReceiptStore =
+    document.getElementById("selectedReceiptStore");
 
-const selectedPurchaseDate =
-    document.getElementById("selectedPurchaseDate");
-
-
-/* =========================
-   DASHBOARD ELEMENTS
-========================= */
-
-const activeWarrantyCount =
-    document.getElementById("activeWarrantyCount");
-
-const expiringWarrantyCount =
-    document.getElementById("expiringWarrantyCount");
-
-const expiredWarrantyCount =
-    document.getElementById("expiredWarrantyCount");
-
-const totalWarrantyCount =
-    document.getElementById("totalWarrantyCount");
-
-const upcomingWarrantyBody =
-    document.getElementById("upcomingWarrantyBody");
-
-const upcomingWarrantyCount =
-    document.getElementById("upcomingWarrantyCount");
-
-const warrantyReminderText =
-    document.getElementById("warrantyReminderText");
-
-const warrantyHistoryBody =
-    document.getElementById("warrantyHistoryBody");
+const selectedReceiptDate =
+    document.getElementById("selectedReceiptDate");
 
 
-/* =========================
-   VARIABLES
-========================= */
+// ===============================
+// VARIABLES
+// ===============================
 
 let currentUser = null;
-
-let receiptProducts = [];
-
 let selectedReceiptId = null;
+let receipts = [];
 
-let allWarranties = [];
 
+// ===============================
+// DATE FUNCTIONS
+// ===============================
 
-/* =========================
-   CALCULATE EXPIRY DATE
-========================= */
+function normalizeDate(value) {
+    if (!value) return "";
 
-function calculateExpiryDate() {
+    value = String(value).trim();
 
-    if (
-        !purchaseDate ||
-        !warrantyDuration ||
-        !expiryDate
-    ) {
-        return;
+    // YYYY-MM-DD
+    if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+        return value;
     }
 
-
-    if (
-        !purchaseDate.value ||
-        !warrantyDuration.value
-    ) {
-
-        expiryDate.value = "";
-
-        if (warrantyStatus) {
-            warrantyStatus.value = "";
-        }
-
-        return;
+    // DD-MM-YYYY
+    if (/^\d{2}-\d{2}-\d{4}$/.test(value)) {
+        const [day, month, year] = value.split("-");
+        return `${year}-${month}-${day}`;
     }
 
-
-    const purchase =
-        new Date(purchaseDate.value);
-
-    const months =
-        parseInt(
-            warrantyDuration.value,
-            10
-        );
-
-
-    if (
-        Number.isNaN(months) ||
-        months <= 0
-    ) {
-
-        expiryDate.value = "";
-
-        if (warrantyStatus) {
-            warrantyStatus.value = "";
-        }
-
-        return;
+    // DD/MM/YYYY
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(value)) {
+        const [day, month, year] = value.split("/");
+        return `${year}-${month}-${day}`;
     }
 
-
-    purchase.setMonth(
-        purchase.getMonth() + months
-    );
-
-
-    const year =
-        purchase.getFullYear();
-
-    const month =
-        String(
-            purchase.getMonth() + 1
-        ).padStart(2, "0");
-
-    const day =
-        String(
-            purchase.getDate()
-        ).padStart(2, "0");
-
-
-    expiryDate.value =
-        `${year}-${month}-${day}`;
-
-
-    updateWarrantyStatus();
+    return "";
 }
 
 
-/* =========================
-   GET WARRANTY STATUS
-========================= */
+function formatDate(value) {
+    const iso = normalizeDate(value);
+
+    if (!iso) return "";
+
+    const [year, month, day] = iso.split("-");
+
+    return `${day}-${month}-${year}`;
+}
+
+
+function dateFromISO(value) {
+    const iso = normalizeDate(value);
+
+    if (!iso) return null;
+
+    const [year, month, day] = iso.split("-").map(Number);
+
+    return new Date(year, month - 1, day);
+}
+
+
+// ===============================
+// CALCULATE EXPIRY DATE
+// ===============================
+
+function calculateExpiryDate() {
+
+    if (!purchaseDate || !warrantyDuration || !expiryDate) {
+        return;
+    }
+
+    const purchaseISO = normalizeDate(purchaseDate.value);
+    const duration = parseInt(warrantyDuration.value, 10);
+
+    if (!purchaseISO || isNaN(duration)) {
+        expiryDate.value = "";
+
+        if (warrantyStatus) {
+            warrantyStatus.value = "";
+        }
+
+        return;
+    }
+
+    const purchase = dateFromISO(purchaseISO);
+
+    if (!purchase) {
+        expiryDate.value = "";
+        warrantyStatus.value = "";
+        return;
+    }
+
+    const expiry = new Date(purchase);
+
+    expiry.setMonth(expiry.getMonth() + duration);
+
+    const year = expiry.getFullYear();
+    const month = String(expiry.getMonth() + 1).padStart(2, "0");
+    const day = String(expiry.getDate()).padStart(2, "0");
+
+    const expiryISO = `${year}-${month}-${day}`;
+
+    // Display DD-MM-YYYY
+    expiryDate.value = formatDate(expiryISO);
+
+    updateWarrantyStatus(expiryISO);
+}
+
+
+// ===============================
+// WARRANTY STATUS
+// ===============================
 
 function getWarrantyStatus(expiry) {
 
-    if (!expiry) {
-        return "Unknown";
-    }
+    const expiryDateObj = dateFromISO(expiry);
 
+    if (!expiryDateObj) {
+        return "";
+    }
 
     const today = new Date();
 
-    today.setHours(
-        0,
-        0,
-        0,
-        0
-    );
-
-
-    const expiryDateObject =
-        new Date(expiry);
-
-    expiryDateObject.setHours(
-        0,
-        0,
-        0,
-        0
-    );
-
+    today.setHours(0, 0, 0, 0);
+    expiryDateObj.setHours(0, 0, 0, 0);
 
     const difference =
-        expiryDateObject.getTime() -
-        today.getTime();
+        expiryDateObj.getTime() - today.getTime();
 
+    const daysLeft =
+        Math.ceil(difference / (1000 * 60 * 60 * 24));
 
-    const daysRemaining =
-        Math.ceil(
-            difference /
-            (1000 * 60 * 60 * 24)
-        );
-
-
-    if (daysRemaining < 0) {
+    if (daysLeft < 0) {
         return "Expired";
     }
 
-
-    if (daysRemaining <= 30) {
+    if (daysLeft <= 30) {
         return "Expiring Soon";
     }
-
 
     return "Active";
 }
 
 
-/* =========================
-   UPDATE FORM STATUS
-========================= */
+function updateWarrantyStatus(expiryISO = null) {
 
-function updateWarrantyStatus() {
+    if (!warrantyStatus) return;
 
-    if (
-        !expiryDate ||
-        !warrantyStatus
-    ) {
-        return;
+    let expiry = expiryISO;
+
+    if (!expiry) {
+        expiry = normalizeDate(expiryDate.value);
     }
 
-
-    if (!expiryDate.value) {
-
+    if (!expiry) {
         warrantyStatus.value = "";
-
         return;
     }
 
-
-    warrantyStatus.value =
-        getWarrantyStatus(
-            expiryDate.value
-        );
+    warrantyStatus.value = getWarrantyStatus(expiry);
 }
 
 
-/* =========================
-   LOAD PRODUCTS FROM RECEIPTS
-========================= */
+// ===============================
+// LOAD RECEIPTS
+// ===============================
 
-async function loadReceiptProducts() {
+async function loadReceipts() {
 
     if (!currentUser || !receiptProductSelect) {
         return;
     }
-
-
-    receiptProducts = [];
-
-    receiptProductSelect.innerHTML =
-        `<option value="">
-            Select a product
-        </option>`;
-
 
     try {
 
@@ -298,137 +227,55 @@ async function loadReceiptProducts() {
                 "receipts"
             );
 
+        const snapshot = await getDocs(receiptsRef);
 
-        const snapshot =
-            await getDocs(
-                receiptsRef
-            );
+        receipts = [];
 
+        receiptProductSelect.innerHTML =
+            `<option value="">Select a product</option>`;
 
         snapshot.forEach((doc) => {
 
-            const receipt =
-                doc.data();
+            const data = doc.data();
 
+            const receipt = {
+                id: doc.id,
+                ...data
+            };
 
-            const items =
-                Array.isArray(
-                    receipt.items
-                )
-                    ? receipt.items
-                    : [];
+            receipts.push(receipt);
 
+            if (Array.isArray(data.items)) {
 
-            items.forEach((item) => {
+                data.items.forEach((item, index) => {
 
-                let itemName = "";
+                    const option =
+                        document.createElement("option");
 
+                    option.value =
+                        `${doc.id}|${index}`;
 
-                if (
-                    typeof item === "string"
-                ) {
+                    option.textContent =
+                        item.name || `Product ${index + 1}`;
 
-                    itemName = item;
-
-                } else if (
-                    item &&
-                    item.name
-                ) {
-
-                    itemName = item.name;
-
-                }
-
-
-                if (!itemName) {
-                    return;
-                }
-
-
-                receiptProducts.push({
-
-                    receiptId: doc.id,
-
-                    productName: itemName,
-
-                    storeName:
-                        receipt.storeName ||
-                        "Unknown Store",
-
-                    purchaseDate:
-                        receipt.purchaseDate ||
-                        ""
-
+                    receiptProductSelect.appendChild(option);
                 });
-
-            });
-
-        });
-
-
-        if (
-            receiptProducts.length === 0
-        ) {
-
-            const option =
-                document.createElement(
-                    "option"
-                );
-
-
-            option.value = "";
-
-            option.textContent =
-                "No receipt products found";
-
-
-            receiptProductSelect.appendChild(
-                option
-            );
-
-
-            return;
-        }
-
-
-        receiptProducts.forEach(
-            (product, index) => {
-
-                const option =
-                    document.createElement(
-                        "option"
-                    );
-
-
-                option.value = index;
-
-
-                option.textContent =
-                    `${product.productName} — ${product.storeName}`;
-
-
-                receiptProductSelect.appendChild(
-                    option
-                );
-
             }
-        );
-
+        });
 
     } catch (error) {
 
         console.error(
-            "Error loading receipt products:",
+            "Error loading receipts:",
             error
         );
-
     }
 }
 
 
-/* =========================
-   RECEIPT PRODUCT SELECTION
-========================= */
+// ===============================
+// RECEIPT PRODUCT SELECT
+// ===============================
 
 if (receiptProductSelect) {
 
@@ -436,89 +283,81 @@ if (receiptProductSelect) {
         "change",
         () => {
 
-            const selectedIndex =
+            const value =
                 receiptProductSelect.value;
 
-
-            if (
-                selectedIndex === ""
-            ) {
+            if (!value) {
 
                 selectedReceiptId = null;
 
-
                 if (selectedReceiptInfo) {
-                    selectedReceiptInfo.style.display =
-                        "none";
+                    selectedReceiptInfo.style.display = "none";
                 }
 
-
                 return;
             }
 
+            const [receiptId, itemIndex] =
+                value.split("|");
 
-            const product =
-                receiptProducts[
-                    Number(selectedIndex)
-                ];
+            const receipt =
+                receipts.find(
+                    r => r.id === receiptId
+                );
 
+            if (!receipt) return;
 
-            if (!product) {
-                return;
-            }
+            selectedReceiptId = receiptId;
 
+            const item =
+                receipt.items?.[Number(itemIndex)];
 
-            selectedReceiptId =
-                product.receiptId;
-
-
-            if (productName) {
+            if (productName && item) {
                 productName.value =
-                    product.productName;
+                    item.name || "";
             }
-
 
             if (storeName) {
                 storeName.value =
-                    product.storeName;
+                    receipt.storeName || "";
             }
-
 
             if (purchaseDate) {
-                purchaseDate.value =
-                    product.purchaseDate;
+
+                const date =
+                    normalizeDate(
+                        receipt.purchaseDate
+                    );
+
+                purchaseDate.value = date;
             }
 
-
-            if (selectedStoreName) {
-                selectedStoreName.textContent =
-                    product.storeName;
+            if (selectedReceiptStore) {
+                selectedReceiptStore.textContent =
+                    receipt.storeName || "-";
             }
 
-
-            if (selectedPurchaseDate) {
-                selectedPurchaseDate.textContent =
-                    product.purchaseDate || "-";
+            if (selectedReceiptDate) {
+                selectedReceiptDate.textContent =
+                    formatDate(
+                        receipt.purchaseDate
+                    ) || "-";
             }
-
 
             if (selectedReceiptInfo) {
                 selectedReceiptInfo.style.display =
                     "block";
             }
 
-
             calculateExpiryDate();
-
         }
     );
-
 }
 
 
-/* =========================
-   FORM INPUT EVENTS
-========================= */
+// ===============================
+// PURCHASE DATE CHANGE
+// ===============================
 
 if (purchaseDate) {
 
@@ -526,9 +365,12 @@ if (purchaseDate) {
         "change",
         calculateExpiryDate
     );
-
 }
 
+
+// ===============================
+// WARRANTY DURATION CHANGE
+// ===============================
 
 if (warrantyDuration) {
 
@@ -536,57 +378,64 @@ if (warrantyDuration) {
         "change",
         calculateExpiryDate
     );
-
 }
 
 
-/* =========================
-   CANCEL BUTTON
-========================= */
+// ===============================
+// EXPIRY DATE CHANGE
+// ===============================
+
+if (expiryDate) {
+
+    expiryDate.addEventListener(
+        "input",
+        () => updateWarrantyStatus()
+    );
+}
+
+
+// ===============================
+// CANCEL BUTTON
+// ===============================
 
 if (cancelWarrantyBtn) {
 
     cancelWarrantyBtn.addEventListener(
         "click",
-        () => {
+        (event) => {
+
+            event.preventDefault();
 
             if (warrantyForm) {
                 warrantyForm.reset();
             }
 
-
             if (expiryDate) {
                 expiryDate.value = "";
             }
-
 
             if (warrantyStatus) {
                 warrantyStatus.value = "";
             }
 
-
             selectedReceiptId = null;
-
 
             if (selectedReceiptInfo) {
                 selectedReceiptInfo.style.display =
                     "none";
             }
 
-
             if (receiptProductSelect) {
                 receiptProductSelect.value = "";
             }
-
         }
     );
-
 }
 
 
-/* =========================
-   SAVE WARRANTY
-========================= */
+// ===============================
+// SAVE WARRANTY
+// ===============================
 
 if (warrantyForm) {
 
@@ -595,7 +444,6 @@ if (warrantyForm) {
         async (event) => {
 
             event.preventDefault();
-
 
             if (!currentUser) {
 
@@ -606,114 +454,78 @@ if (warrantyForm) {
                 return;
             }
 
-
-            if (
-                !expiryDate ||
-                !expiryDate.value
-            ) {
-
-                alert(
-                    "Please enter the purchase date and warranty duration."
+            const purchaseISO =
+                normalizeDate(
+                    purchaseDate?.value
                 );
 
-                return;
-            }
+            const expiryISO =
+                normalizeDate(
+                    expiryDate?.value
+                );
 
+            const warrantyData = {
+
+                productName:
+                    productName?.value.trim() || "",
+
+                storeName:
+                    storeName?.value.trim() || "",
+
+                purchaseDate:
+                    purchaseISO,
+
+                warrantyDuration:
+                    parseInt(
+                        warrantyDuration?.value || "0",
+                        10
+                    ),
+
+                warrantyExpiryDate:
+                    expiryISO,
+
+                status:
+                    getWarrantyStatus(expiryISO),
+
+                receiptId:
+                    selectedReceiptId || null,
+
+                createdAt:
+                    serverTimestamp()
+            };
 
             try {
 
-                const warrantyData = {
-
-                    productName:
-                        productName
-                            ? productName.value.trim()
-                            : "",
-
-                    storeName:
-                        storeName
-                            ? storeName.value.trim()
-                            : "",
-
-                    purchaseDate:
-                        purchaseDate
-                            ? purchaseDate.value
-                            : "",
-
-                    warrantyDurationMonths:
-                        warrantyDuration
-                            ? parseInt(
-                                warrantyDuration.value,
-                                10
-                            )
-                            : 0,
-
-                    warrantyExpiryDate:
-                        expiryDate.value,
-
-                    status:
-                        warrantyStatus
-                            ? warrantyStatus.value
-                            : getWarrantyStatus(
-                                expiryDate.value
-                            ),
-
-                    receiptId:
-                        selectedReceiptId || null,
-
-                    createdAt:
-                        serverTimestamp()
-
-                };
-
-
                 await addDoc(
-
                     collection(
                         db,
                         "users",
                         currentUser.uid,
                         "warranties"
                     ),
-
                     warrantyData
-
                 );
-
 
                 alert(
                     "Warranty saved successfully!"
                 );
 
-
                 warrantyForm.reset();
-
 
                 if (expiryDate) {
                     expiryDate.value = "";
                 }
 
-
                 if (warrantyStatus) {
                     warrantyStatus.value = "";
                 }
 
-
                 selectedReceiptId = null;
-
 
                 if (selectedReceiptInfo) {
                     selectedReceiptInfo.style.display =
                         "none";
                 }
-
-
-                if (receiptProductSelect) {
-                    receiptProductSelect.value = "";
-                }
-
-
-                await loadWarranties();
-
 
             } catch (error) {
 
@@ -722,361 +534,27 @@ if (warrantyForm) {
                     error
                 );
 
-
                 alert(
-                    "Unable to save warranty. Check the console for details."
+                    "Unable to save warranty. Please try again."
                 );
-
             }
-
         }
     );
-
 }
 
 
-/* =========================
-   LOAD SAVED WARRANTIES
-========================= */
-
-async function loadWarranties() {
-
-    if (!currentUser) {
-        return;
-    }
-
-
-    try {
-
-        const warrantiesRef =
-            collection(
-                db,
-                "users",
-                currentUser.uid,
-                "warranties"
-            );
-
-
-        const snapshot =
-            await getDocs(
-                warrantiesRef
-            );
-
-
-        allWarranties = [];
-
-
-        snapshot.forEach((doc) => {
-
-            allWarranties.push({
-
-                id: doc.id,
-
-                ...doc.data()
-
-            });
-
-        });
-
-
-        updateDashboard();
-
-
-    } catch (error) {
-
-        console.error(
-            "Error loading warranties:",
-            error
-        );
-
-    }
-}
-
-
-/* =========================
-   UPDATE WARRANTY DASHBOARD
-========================= */
-
-function updateDashboard() {
-
-    const active = [];
-
-    const expiring = [];
-
-    const expired = [];
-
-
-    allWarranties.forEach(
-        (warranty) => {
-
-            const status =
-                getWarrantyStatus(
-                    warranty.warrantyExpiryDate
-                );
-
-
-            if (status === "Active") {
-
-                active.push(warranty);
-
-            } else if (
-                status === "Expiring Soon"
-            ) {
-
-                expiring.push(warranty);
-
-            } else if (
-                status === "Expired"
-            ) {
-
-                expired.push(warranty);
-
-            }
-
-        }
-    );
-
-
-    if (activeWarrantyCount) {
-        activeWarrantyCount.textContent =
-            active.length;
-    }
-
-
-    if (expiringWarrantyCount) {
-        expiringWarrantyCount.textContent =
-            expiring.length;
-    }
-
-
-    if (expiredWarrantyCount) {
-        expiredWarrantyCount.textContent =
-            expired.length;
-    }
-
-
-    if (totalWarrantyCount) {
-        totalWarrantyCount.textContent =
-            allWarranties.length;
-    }
-
-
-    renderUpcomingWarranties(
-        expiring
-    );
-
-
-    if (warrantyReminderText) {
-
-        if (expiring.length === 0) {
-
-            warrantyReminderText.textContent =
-                "No warranties are currently expiring soon.";
-
-        } else {
-
-            warrantyReminderText.textContent =
-                `${expiring.length} product` +
-                `${expiring.length > 1 ? "s are" : " is"}` +
-                " expiring soon.";
-
-        }
-
-    }
-
-
-    renderWarrantyHistory(
-        expired
-    );
-
-}
-
-
-/* =========================
-   UPCOMING WARRANTIES
-========================= */
-
-function renderUpcomingWarranties(
-    warranties
-) {
-
-    if (!upcomingWarrantyBody) {
-        return;
-    }
-
-
-    upcomingWarrantyBody.innerHTML =
-        "";
-
-
-    if (upcomingWarrantyCount) {
-
-        upcomingWarrantyCount.textContent =
-            `${warranties.length} product` +
-            `${warranties.length !== 1 ? "s" : ""}`;
-
-    }
-
-
-    if (warranties.length === 0) {
-
-        upcomingWarrantyBody.innerHTML = `
-            <tr>
-                <td colspan="4">
-                    No warranties are expiring within 30 days.
-                </td>
-            </tr>
-        `;
-
-        return;
-    }
-
-
-    warranties.forEach(
-        (warranty) => {
-
-            const row =
-                document.createElement(
-                    "tr"
-                );
-
-
-            row.innerHTML = `
-
-                <td>
-                    ${warranty.productName || "-"}
-                </td>
-
-                <td>
-                    ${warranty.storeName || "-"}
-                </td>
-
-                <td>
-                    ${warranty.warrantyExpiryDate || "-"}
-                </td>
-
-                <td>
-                    <span class="warranty-status">
-                        Expiring Soon
-                    </span>
-                </td>
-
-            `;
-
-
-            upcomingWarrantyBody.appendChild(
-                row
-            );
-
-        }
-    );
-
-}
-
-
-/* =========================
-   WARRANTY HISTORY
-========================= */
-
-function renderWarrantyHistory(
-    warranties
-) {
-
-    if (!warrantyHistoryBody) {
-        return;
-    }
-
-
-    warrantyHistoryBody.innerHTML =
-        "";
-
-
-    if (warranties.length === 0) {
-
-        warrantyHistoryBody.innerHTML = `
-            <tr>
-                <td colspan="4">
-                    No expired warranties found.
-                </td>
-            </tr>
-        `;
-
-        return;
-    }
-
-
-    warranties.forEach(
-        (warranty) => {
-
-            const row =
-                document.createElement(
-                    "tr"
-                );
-
-
-            row.innerHTML = `
-
-                <td>
-                    ${warranty.productName || "-"}
-                </td>
-
-                <td>
-                    ${warranty.storeName || "-"}
-                </td>
-
-                <td>
-                    ${warranty.purchaseDate || "-"}
-                </td>
-
-                <td>
-                    ${warranty.warrantyExpiryDate || "-"}
-                </td>
-
-            `;
-
-
-            warrantyHistoryBody.appendChild(
-                row
-            );
-
-        }
-    );
-
-}
-
-
-/* =========================
-   AUTH STATE
-========================= */
+// ===============================
+// AUTH STATE
+// ===============================
 
 onAuthStateChanged(
     auth,
     async (user) => {
 
-        if (!user) {
-
-            currentUser = null;
-
-            console.log(
-                "No user is currently logged in."
-            );
-
-            return;
-        }
-
-
         currentUser = user;
 
-
-        console.log(
-            "Logged-in User UID:",
-            user.uid
-        );
-
-
-        await loadReceiptProducts();
-
-        await loadWarranties();
-
+        if (currentUser) {
+            await loadReceipts();
+        }
     }
 );

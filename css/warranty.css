@@ -183,7 +183,18 @@
 
 .form-group input[readonly] {
     background: #f6f8fc;
-    cursor: not-allowed;
+    cursor: default;
+}
+
+/* Remove calendar icon from Purchase Date */
+.form-group input[type="date"]::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
+}
+
+.form-group input[type="date"] {
+    appearance: none;
+    -webkit-appearance: none;
 }
 
 
