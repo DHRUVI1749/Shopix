@@ -458,14 +458,16 @@
                         </div>
 
 
-                        <h2>
-                            5
-                        </h2>
+                       <h2 id="dashboardWarrantyTotal">
+    0
+</h2>
 
-
-                        <p class="stat-change warning">
-                            2 expiring soon
-                        </p>
+<p
+    class="stat-change warning"
+    id="dashboardWarrantyExpiring"
+>
+    0 expiring soon
+</p>
 
 
                     </div>
@@ -839,7 +841,7 @@
                         </div>
 
 
-                        <a href="#">
+                        <a href="warranties.html">
                             View All →
                         </a>
 
@@ -848,69 +850,32 @@
 
 
 
-                    <div class="warranty-list">
+<div
+    class="warranty-list"
+    id="dashboardWarrantyList"
+>
 
+    <div class="warranty-row">
 
-                        <div class="warranty-row">
+        <div class="warranty-icon">
+            ♢
+        </div>
 
+        <div class="warranty-info">
 
-                            <div class="warranty-icon">
-                                ♢
-                            </div>
+            <strong>
+                Loading warranties...
+            </strong>
 
+            <span>
+                Please wait
+            </span>
 
-                            <div class="warranty-info">
+        </div>
 
-                                <strong>
-                                    Laptop
-                                </strong>
+    </div>
 
-                                <span>
-                                    Warranty expires in 12 days
-                                </span>
-
-                            </div>
-
-
-                            <span class="warranty-status">
-                                Expiring Soon
-                            </span>
-
-
-                        </div>
-
-
-
-                        <div class="warranty-row">
-
-
-                            <div class="warranty-icon">
-                                ♢
-                            </div>
-
-
-                            <div class="warranty-info">
-
-                                <strong>
-                                    Wireless Headphones
-                                </strong>
-
-                                <span>
-                                    Warranty expires in 28 days
-                                </span>
-
-                            </div>
-
-
-                            <span class="warranty-status">
-                                Active
-                            </span>
-
-
-                        </div>
-
-
-                    </div>
+</div>                    
 
 
                 </div>
@@ -1195,7 +1160,10 @@
         type="module"
         src="js/dashboard.js">
     </script>
-
+    <script
+    type="module"
+    src="js/dashboard-warranty.js">
+    </script>
 
 </body>
 
