@@ -1,9 +1,10 @@
 // ==========================================
 // SHOPIX - RECEIPT SCANNER
-// UPLOAD + PREVIEW + CAMERA + AI + FIRESTORE
+// UPLOAD + PREVIEW + CAMERA + AI + MANUAL + FIRESTORE
 // ==========================================
 
 import { auth, db } from "./firebase.js";
+
 import { model } from "./ai.js";
 
 import {
@@ -13,7 +14,9 @@ import {
     serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
+
 console.log("Firebase connected successfully!");
+
 
 // ==========================================
 // GLOBAL DATA
@@ -21,17 +24,49 @@ console.log("Firebase connected successfully!");
 
 let currentExtractedData = null;
 
+let isManualMode = false;
+
+
 // ==========================================
 // ELEMENTS
 // ==========================================
 
-const fileInput = document.getElementById("receiptFileInput");
-const previewImage = document.getElementById("receiptPreview");
-const noPreviewText = document.getElementById("noPreviewText");
-const previewStatus = document.getElementById("previewStatus");
-const scanButton = document.getElementById("scanBtn");
-const captureButton = document.getElementById("captureBtn");
-const saveReceiptButton = document.getElementById("saveReceiptBtn");
+const fileInput =
+    document.getElementById("receiptFileInput");
+
+const previewImage =
+    document.getElementById("receiptPreview");
+
+const noPreviewText =
+    document.getElementById("noPreviewText");
+
+const manualPreviewText =
+    document.getElementById("manualPreviewText");
+
+const previewStatus =
+    document.getElementById("previewStatus");
+
+const scanButton =
+    document.getElementById("scanBtn");
+
+const captureButton =
+    document.getElementById("captureBtn");
+
+const manualReceiptButton =
+    document.getElementById("manualReceiptBtn");
+
+const saveReceiptButton =
+    document.getElementById("saveReceiptBtn");
+
+const addItemButton =
+    document.getElementById("addItemBtn");
+
+const itemsList =
+    document.getElementById("itemsList");
+
+const noItemsMessage =
+    document.getElementById("noItemsMessage");
+
 
 // ==========================================
 // FILE UPLOAD
@@ -42,14 +77,20 @@ fileInput.addEventListener("change", function () {
     const file = fileInput.files[0];
 
     if (!file) {
+
         resetPreview();
+
         return;
     }
 
-    // Maximum file size: 10 MB
+
+    // Maximum 10 MB
+
     if (file.size > 10 * 1024 * 1024) {
 
-        alert("Receipt image must be less than 10 MB.");
+        alert(
+            "Receipt image must be less than 10 MB."
+        );
 
         fileInput.value = "";
 
@@ -58,16 +99,21 @@ fileInput.addEventListener("change", function () {
         return;
     }
 
+
     // Allowed image formats
+
     const allowedTypes = [
         "image/jpeg",
         "image/png",
         "image/webp"
     ];
 
+
     if (!allowedTypes.includes(file.type)) {
 
-        alert("Please select a JPG, PNG or WEBP image.");
+        alert(
+            "Please select a JPG, PNG or WEBP image."
+        );
 
         fileInput.value = "";
 
@@ -76,8 +122,13 @@ fileInput.addEventListener("change", function () {
         return;
     }
 
+
+    isManualMode = false;
+
     showPreview(file);
+
 });
+
 
 // ==========================================
 // SHOW RECEIPT PREVIEW
@@ -85,20 +136,41 @@ fileInput.addEventListener("change", function () {
 
 function showPreview(file) {
 
-    const imageUrl = URL.createObjectURL(file);
+    const imageUrl =
+        URL.createObjectURL(file);
 
-    previewImage.src = imageUrl;
 
-    previewImage.style.display = "block";
+    previewImage.src =
+        imageUrl;
 
-    noPreviewText.style.display = "none";
 
-    previewStatus.textContent = "Receipt selected";
+    previewImage.style.display =
+        "block";
 
-    scanButton.disabled = false;
 
-    console.log("Receipt selected:", file.name);
+    noPreviewText.style.display =
+        "none";
+
+
+    manualPreviewText.style.display =
+        "none";
+
+
+    previewStatus.textContent =
+        "Receipt selected";
+
+
+    scanButton.disabled =
+        false;
+
+
+    console.log(
+        "Receipt selected:",
+        file.name
+    );
+
 }
+
 
 // ==========================================
 // RESET PREVIEW
@@ -108,576 +180,1076 @@ function resetPreview() {
 
     previewImage.src = "";
 
-    previewImage.style.display = "none";
+    previewImage.style.display =
+        "none";
 
-    noPreviewText.style.display = "flex";
 
-    previewStatus.textContent = "No receipt";
+    noPreviewText.style.display =
+        "flex";
 
-    scanButton.disabled = true;
+
+    manualPreviewText.style.display =
+        "none";
+
+
+    previewStatus.textContent =
+        "No receipt";
+
+
+    scanButton.disabled =
+        true;
+
+
+    isManualMode = false;
+
 }
 
+
 // ==========================================
-// CREATE CURRENCY FIELD
+// MANUAL RECEIPT
 // ==========================================
 
-function createCurrencyField() {
+manualReceiptButton.addEventListener(
+    "click",
+    function () {
 
-    const totalAmountInput = document.getElementById("totalAmount");
+        isManualMode = true;
 
-    if (!totalAmountInput) {
-        return null;
+
+        // No image required
+
+        fileInput.value = "";
+
+
+        previewImage.src = "";
+
+        previewImage.style.display =
+            "none";
+
+
+        noPreviewText.style.display =
+            "none";
+
+
+        manualPreviewText.style.display =
+            "flex";
+
+
+        previewStatus.textContent =
+            "Manual entry";
+
+
+        scanButton.disabled =
+            true;
+
+
+        // Create empty receipt data
+
+        currentExtractedData = {
+
+            storeName: "",
+
+            purchaseDate: "",
+
+            totalAmount: 0,
+
+            currency: "INR",
+
+            category: "",
+
+            items: []
+
+        };
+
+
+        showManualForm();
+
+
+        console.log(
+            "Manual receipt mode enabled."
+        );
+
+    }
+);
+
+
+// ==========================================
+// SHOW MANUAL FORM
+// ==========================================
+
+function showManualForm() {
+
+    const section =
+        document.getElementById(
+            "extractedDataSection"
+        );
+
+
+    const title =
+        document.getElementById(
+            "dataSectionTitle"
+        );
+
+
+    const description =
+        document.getElementById(
+            "dataSectionDescription"
+        );
+
+
+    if (title) {
+
+        title.textContent =
+            "Add Receipt Manually";
+
     }
 
-    // If currency field already exists
-    let currencySelect = document.getElementById("currency");
 
-    if (currencySelect) {
-        return currencySelect;
+    if (description) {
+
+        description.textContent =
+            "Enter your receipt details and save them to SHOPIX.";
+
     }
 
-    // ==========================================
-    // WRAPPER
-    // ==========================================
 
-    const wrapper = document.createElement("div");
+    // Reset fields
 
-    wrapper.className = "currency-field-wrapper";
+    document.getElementById(
+        "storeName"
+    ).value = "";
 
-    wrapper.style.marginTop = "12px";
 
-    // ==========================================
-    // LABEL
-    // ==========================================
+    document.getElementById(
+        "purchaseDate"
+    ).value = "";
 
-    const label = document.createElement("label");
 
-    label.textContent = "Currency";
+    document.getElementById(
+        "totalAmount"
+    ).value = "";
 
-    label.setAttribute("for", "currency");
 
-    // ==========================================
-    // SELECT
-    // ==========================================
+    document.getElementById(
+        "currency"
+    ).value = "INR";
 
-    currencySelect = document.createElement("select");
 
-    currencySelect.id = "currency";
+    document.getElementById(
+        "category"
+    ).value = "";
 
-    currencySelect.name = "currency";
 
-    // ==========================================
-    // SUPPORTED CURRENCIES
-    // ==========================================
+    itemsList.innerHTML = "";
 
-    const currencies = [
-        {
-            value: "INR",
-            text: "₹ INR - Indian Rupee"
-        },
-        {
-            value: "USD",
-            text: "$ USD - US Dollar"
-        },
-        {
-            value: "EUR",
-            text: "€ EUR - Euro"
-        },
-        {
-            value: "GBP",
-            text: "£ GBP - British Pound"
-        },
-        {
-            value: "AED",
-            text: "د.إ AED - UAE Dirham"
-        },
-        {
-            value: "CAD",
-            text: "$ CAD - Canadian Dollar"
-        },
-        {
-            value: "AUD",
-            text: "$ AUD - Australian Dollar"
-        },
-        {
-            value: "Other",
-            text: "Other"
+
+    noItemsMessage.style.display =
+        "block";
+
+
+    if (section) {
+
+        section.style.display =
+            "block";
+
+
+        section.scrollIntoView({
+
+            behavior: "smooth",
+
+            block: "start"
+
+        });
+
+    }
+
+}
+
+
+// ==========================================
+// ADD MANUAL ITEM
+// ==========================================
+
+addItemButton.addEventListener(
+    "click",
+    function () {
+
+        addManualItemRow();
+
+    }
+);
+
+
+// ==========================================
+// CREATE MANUAL ITEM ROW
+// ==========================================
+
+function addManualItemRow(
+    item = {}
+) {
+
+    noItemsMessage.style.display =
+        "none";
+
+
+    const row =
+        document.createElement("div");
+
+
+    row.className =
+        "manual-item-row";
+
+
+    // Item name
+
+    const nameInput =
+        document.createElement("input");
+
+    nameInput.type =
+        "text";
+
+    nameInput.placeholder =
+        "Item name";
+
+    nameInput.className =
+        "manual-item-name";
+
+    nameInput.value =
+        item.name || "";
+
+
+    // Quantity
+
+    const quantityInput =
+        document.createElement("input");
+
+    quantityInput.type =
+        "number";
+
+    quantityInput.min =
+        "1";
+
+    quantityInput.step =
+        "1";
+
+    quantityInput.placeholder =
+        "Qty";
+
+    quantityInput.className =
+        "manual-item-quantity";
+
+    quantityInput.value =
+        item.quantity || 1;
+
+
+    // Price
+
+    const priceInput =
+        document.createElement("input");
+
+    priceInput.type =
+        "number";
+
+    priceInput.min =
+        "0";
+
+    priceInput.step =
+        "0.01";
+
+    priceInput.placeholder =
+        "Price";
+
+    priceInput.className =
+        "manual-item-price";
+
+    priceInput.value =
+        item.price || "";
+
+
+    // Remove button
+
+    const removeButton =
+        document.createElement("button");
+
+    removeButton.type =
+        "button";
+
+    removeButton.className =
+        "remove-item-btn";
+
+    removeButton.textContent =
+        "×";
+
+
+    removeButton.addEventListener(
+        "click",
+        function () {
+
+            row.remove();
+
+            if (
+                itemsList.children.length === 0
+            ) {
+
+                noItemsMessage.style.display =
+                    "block";
+
+            }
+
         }
-    ];
+    );
 
-    currencies.forEach(function (currency) {
 
-        const option = document.createElement("option");
+    row.appendChild(
+        nameInput
+    );
 
-        option.value = currency.value;
+    row.appendChild(
+        quantityInput
+    );
 
-        option.textContent = currency.text;
+    row.appendChild(
+        priceInput
+    );
 
-        currencySelect.appendChild(option);
-    });
+    row.appendChild(
+        removeButton
+    );
 
-    wrapper.appendChild(label);
 
-    wrapper.appendChild(currencySelect);
+    itemsList.appendChild(
+        row
+    );
 
-    // ==========================================
-    // INSERT AFTER TOTAL AMOUNT
-    // ==========================================
-
-    const parent = totalAmountInput.parentElement;
-
-    if (parent) {
-        parent.appendChild(wrapper);
-    }
-
-    return currencySelect;
 }
+
+
+// ==========================================
+// GET MANUAL ITEMS
+// ==========================================
+
+function getManualItems() {
+
+    const rows =
+        itemsList.querySelectorAll(
+            ".manual-item-row"
+        );
+
+
+    const items = [];
+
+
+    rows.forEach(
+        function (row) {
+
+            const name =
+                row.querySelector(
+                    ".manual-item-name"
+                ).value.trim();
+
+
+            const quantity =
+                Number(
+                    row.querySelector(
+                        ".manual-item-quantity"
+                    ).value
+                ) || 1;
+
+
+            const price =
+                Number(
+                    row.querySelector(
+                        ".manual-item-price"
+                    ).value
+                ) || 0;
+
+
+            // Only save if item name exists
+
+            if (name) {
+
+                items.push({
+
+                    name: name,
+
+                    quantity: quantity,
+
+                    price: price
+
+                });
+
+            }
+
+        }
+    );
+
+
+    return items;
+
+}
+
 
 // ==========================================
 // SAVE RECEIPT TO FIRESTORE
 // ==========================================
 
-saveReceiptButton.addEventListener("click", async function () {
-
-    // ==========================================
-    // CHECK SCAN
-    // ==========================================
-
-    if (!currentExtractedData) {
-
-        alert("Please scan the receipt first.");
-
-        return;
-    }
-
-    // ==========================================
-    // CHECK LOGIN
-    // ==========================================
-
-    const user = auth.currentUser;
-
-    if (!user) {
-
-        alert("Please login first.");
-
-        return;
-    }
-
-    saveReceiptButton.disabled = true;
-
-    saveReceiptButton.textContent = "Saving...";
-
-    try {
+saveReceiptButton.addEventListener(
+    "click",
+    async function () {
 
         // ==========================================
-        // CREATE RECEIPT ID
+        // CHECK LOGIN
         // ==========================================
 
-        const receiptId = doc(
-            collection(
-                db,
-                "users",
-                user.uid,
-                "receipts"
-            )
-        ).id;
+        const user =
+            auth.currentUser;
+
+
+        if (!user) {
+
+            alert(
+                "Please login first."
+            );
+
+            return;
+        }
+
 
         // ==========================================
         // GET FORM DATA
         // ==========================================
 
         const storeName =
-            document.getElementById("storeName").value;
+            document.getElementById(
+                "storeName"
+            ).value.trim();
+
 
         const purchaseDate =
-            document.getElementById("purchaseDate").value;
+            document.getElementById(
+                "purchaseDate"
+            ).value;
+
 
         const totalAmount =
             Number(
-                document.getElementById("totalAmount").value
+                document.getElementById(
+                    "totalAmount"
+                ).value
             );
 
+
         const category =
-            document.getElementById("category").value;
+            document.getElementById(
+                "category"
+            ).value;
 
-        // ==========================================
-        // GET CURRENCY
-        // ==========================================
-
-        const currencySelect =
-            document.getElementById("currency");
 
         const currency =
-            currencySelect
-                ? currencySelect.value
-                : (
-                    currentExtractedData.currency || "INR"
+            document.getElementById(
+                "currency"
+            ).value;
+
+
+        // ==========================================
+        // VALIDATION
+        // ==========================================
+
+        if (!storeName) {
+
+            alert(
+                "Please enter the store name."
+            );
+
+            return;
+        }
+
+
+        if (!purchaseDate) {
+
+            alert(
+                "Please select the purchase date."
+            );
+
+            return;
+        }
+
+
+        if (
+            isNaN(totalAmount) ||
+            totalAmount <= 0
+        ) {
+
+            alert(
+                "Please enter a valid total amount."
+            );
+
+            return;
+        }
+
+
+        if (!currency) {
+
+            alert(
+                "Please select a currency."
+            );
+
+            return;
+        }
+
+
+        if (!category) {
+
+            alert(
+                "Please select a category."
+            );
+
+            return;
+        }
+
+
+        // ==========================================
+        // GET ITEMS
+        // ==========================================
+
+        let items = [];
+
+
+        if (isManualMode) {
+
+            items =
+                getManualItems();
+
+        } else {
+
+            items =
+                currentExtractedData?.items || [];
+
+        }
+
+
+        // ==========================================
+        // DISABLE BUTTON
+        // ==========================================
+
+        saveReceiptButton.disabled =
+            true;
+
+        saveReceiptButton.textContent =
+            "Saving...";
+
+
+        try {
+
+            // ==========================================
+            // CREATE RECEIPT ID
+            // ==========================================
+
+            const receiptRef =
+                doc(
+                    collection(
+                        db,
+                        "users",
+                        user.uid,
+                        "receipts"
+                    )
                 );
 
-        // ==========================================
-        // SAVE TO FIRESTORE
-        // ==========================================
 
-        await setDoc(
-            doc(
-                db,
-                "users",
-                user.uid,
-                "receipts",
+            const receiptId =
+                receiptRef.id;
+
+
+            // ==========================================
+            // SAVE RECEIPT
+            // ==========================================
+
+            await setDoc(
+
+                receiptRef,
+
+                {
+
+                    storeName:
+                        storeName,
+
+                    purchaseDate:
+                        purchaseDate,
+
+                    totalAmount:
+                        totalAmount,
+
+                    currency:
+                        currency,
+
+                    category:
+                        category,
+
+                    items:
+                        items,
+
+                    createdAt:
+                        serverTimestamp()
+
+                }
+
+            );
+
+
+            console.log(
+                "Receipt saved successfully:",
                 receiptId
-            ),
-            {
-                storeName: storeName,
-                purchaseDate: purchaseDate,
-                totalAmount: totalAmount,
+            );
 
-                // NEW
-                currency: currency,
 
-                category: category,
+            console.log(
+                "Saved currency:",
+                currency
+            );
 
-                items:
-                    currentExtractedData.items || [],
 
-                createdAt:
-                    serverTimestamp()
-            }
-        );
+            // ==========================================
+            // SUCCESS
+            // ==========================================
 
-        console.log(
-            "Receipt saved successfully:",
-            receiptId
-        );
+            alert(
+                "✅ Receipt saved successfully!"
+            );
 
-        console.log(
-            "Saved currency:",
-            currency
-        );
 
-        alert("✅ Receipt saved successfully!");
+            saveReceiptButton.textContent =
+                "Saved ✓";
 
-        saveReceiptButton.textContent = "Saved ✓";
 
-    } catch (error) {
+            // Keep button disabled after save
 
-        console.error(
-            "❌ Error saving receipt:",
-            error
-        );
+            saveReceiptButton.disabled =
+                true;
 
-        alert(
-            "Unable to save receipt. Please try again."
-        );
 
-        saveReceiptButton.disabled = false;
+        } catch (error) {
 
-        saveReceiptButton.textContent = "Save Receipt";
+            console.error(
+                "❌ Error saving receipt:",
+                error
+            );
+
+
+            alert(
+                "Unable to save receipt. Please try again."
+            );
+
+
+            saveReceiptButton.disabled =
+                false;
+
+
+            saveReceiptButton.textContent =
+                "✓ Save Receipt";
+
+        }
+
     }
-});
+);
+
 
 // ==========================================
 // CAMERA CAPTURE
 // ==========================================
 
-captureButton.addEventListener("click", async function () {
-
-    // ==========================================
-    // CHECK CAMERA SUPPORT
-    // ==========================================
-
-    if (
-        !navigator.mediaDevices ||
-        !navigator.mediaDevices.getUserMedia
-    ) {
-
-        alert(
-            "Camera capture is not supported by this browser."
-        );
-
-        return;
-    }
-
-    let stream;
-
-    try {
+captureButton.addEventListener(
+    "click",
+    async function () {
 
         // ==========================================
-        // OPEN CAMERA
+        // CHECK CAMERA SUPPORT
         // ==========================================
 
-        stream =
-            await navigator.mediaDevices.getUserMedia({
-                video: {
-                    facingMode: "environment"
-                }
-            });
+        if (
+            !navigator.mediaDevices ||
+            !navigator.mediaDevices.getUserMedia
+        ) {
 
-        // ==========================================
-        // CAMERA OVERLAY
-        // ==========================================
+            alert(
+                "Camera capture is not supported by this browser."
+            );
 
-        const overlay = document.createElement("div");
+            return;
+        }
 
-        overlay.className = "camera-overlay";
 
-        // ==========================================
-        // VIDEO
-        // ==========================================
+        let stream;
 
-        const video = document.createElement("video");
 
-        video.autoplay = true;
+        try {
 
-        video.playsInline = true;
+            // ==========================================
+            // OPEN CAMERA
+            // ==========================================
 
-        video.srcObject = stream;
+            stream =
+                await navigator.mediaDevices.getUserMedia({
 
-        // ==========================================
-        // CAPTURE BUTTON
-        // ==========================================
+                    video: {
+                        facingMode: "environment"
+                    }
 
-        const capturePhoto =
-            document.createElement("button");
+                });
 
-        capturePhoto.textContent =
-            "📸 Capture Photo";
 
-        capturePhoto.className =
-            "camera-capture-btn";
+            // ==========================================
+            // CAMERA OVERLAY
+            // ==========================================
 
-        // ==========================================
-        // CLOSE BUTTON
-        // ==========================================
-
-        const closeCamera =
-            document.createElement("button");
-
-        closeCamera.textContent =
-            "✕ Close";
-
-        closeCamera.className =
-            "camera-close-btn";
-
-        // ==========================================
-        // ADD ELEMENTS
-        // ==========================================
-
-        overlay.appendChild(video);
-
-        overlay.appendChild(capturePhoto);
-
-        overlay.appendChild(closeCamera);
-
-        document.body.appendChild(overlay);
-
-        // ==========================================
-        // CAPTURE PHOTO
-        // ==========================================
-
-        capturePhoto.addEventListener(
-            "click",
-            function () {
-
-                if (
-                    video.videoWidth === 0 ||
-                    video.videoHeight === 0
-                ) {
-
-                    alert(
-                        "Camera is not ready yet. Please try again."
-                    );
-
-                    return;
-                }
-
-                // ==========================================
-                // CREATE CANVAS
-                // ==========================================
-
-                const canvas =
-                    document.createElement("canvas");
-
-                canvas.width =
-                    video.videoWidth;
-
-                canvas.height =
-                    video.videoHeight;
-
-                // ==========================================
-                // DRAW IMAGE
-                // ==========================================
-
-                const context =
-                    canvas.getContext("2d");
-
-                context.drawImage(
-                    video,
-                    0,
-                    0,
-                    canvas.width,
-                    canvas.height
+            const overlay =
+                document.createElement(
+                    "div"
                 );
 
-                // ==========================================
-                // CONVERT TO FILE
-                // ==========================================
 
-                canvas.toBlob(
-                    function (blob) {
+            overlay.className =
+                "camera-overlay";
 
-                        if (!blob) {
 
-                            alert(
-                                "Unable to capture receipt image."
-                            );
+            // ==========================================
+            // VIDEO
+            // ==========================================
 
-                            return;
-                        }
-
-                        const capturedFile =
-                            new File(
-                                [blob],
-                                "captured-receipt.jpg",
-                                {
-                                    type: "image/jpeg"
-                                }
-                            );
-
-                        // ==========================================
-                        // PUT FILE INTO INPUT
-                        // ==========================================
-
-                        const dataTransfer =
-                            new DataTransfer();
-
-                        dataTransfer.items.add(
-                            capturedFile
-                        );
-
-                        fileInput.files =
-                            dataTransfer.files;
-
-                        // ==========================================
-                        // STOP CAMERA
-                        // ==========================================
-
-                        stream
-                            .getTracks()
-                            .forEach(
-                                function (track) {
-                                    track.stop();
-                                }
-                            );
-
-                        // ==========================================
-                        // REMOVE OVERLAY
-                        // ==========================================
-
-                        overlay.remove();
-
-                        // ==========================================
-                        // SHOW PREVIEW
-                        // ==========================================
-
-                        showPreview(capturedFile);
-
-                        console.log(
-                            "Receipt captured successfully."
-                        );
-                    },
-                    "image/jpeg",
-                    0.95
+            const video =
+                document.createElement(
+                    "video"
                 );
-            }
-        );
 
-        // ==========================================
-        // CLOSE CAMERA
-        // ==========================================
 
-        closeCamera.addEventListener(
-            "click",
-            function () {
+            video.autoplay =
+                true;
 
-                stream
-                    .getTracks()
-                    .forEach(
-                        function (track) {
-                            track.stop();
-                        }
+            video.playsInline =
+                true;
+
+            video.srcObject =
+                stream;
+
+
+            // ==========================================
+            // CAPTURE BUTTON
+            // ==========================================
+
+            const capturePhoto =
+                document.createElement(
+                    "button"
+                );
+
+
+            capturePhoto.textContent =
+                "📸 Capture Photo";
+
+
+            capturePhoto.className =
+                "camera-capture-btn";
+
+
+            // ==========================================
+            // CLOSE BUTTON
+            // ==========================================
+
+            const closeCamera =
+                document.createElement(
+                    "button"
+                );
+
+
+            closeCamera.textContent =
+                "✕ Close";
+
+
+            closeCamera.className =
+                "camera-close-btn";
+
+
+            // ==========================================
+            // ADD ELEMENTS
+            // ==========================================
+
+            overlay.appendChild(
+                video
+            );
+
+            overlay.appendChild(
+                capturePhoto
+            );
+
+            overlay.appendChild(
+                closeCamera
+            );
+
+
+            document.body.appendChild(
+                overlay
+            );
+
+
+            // ==========================================
+            // CAPTURE PHOTO
+            // ==========================================
+
+            capturePhoto.addEventListener(
+                "click",
+                function () {
+
+                    if (
+                        video.videoWidth === 0 ||
+                        video.videoHeight === 0
+                    ) {
+
+                        alert(
+                            "Camera is not ready yet. Please try again."
+                        );
+
+                        return;
+                    }
+
+
+                    // Canvas
+
+                    const canvas =
+                        document.createElement(
+                            "canvas"
+                        );
+
+
+                    canvas.width =
+                        video.videoWidth;
+
+
+                    canvas.height =
+                        video.videoHeight;
+
+
+                    const context =
+                        canvas.getContext(
+                            "2d"
+                        );
+
+
+                    context.drawImage(
+
+                        video,
+
+                        0,
+
+                        0,
+
+                        canvas.width,
+
+                        canvas.height
+
                     );
 
-                overlay.remove();
 
-                console.log("Camera closed.");
-            }
-        );
+                    // Convert to file
 
-    } catch (error) {
+                    canvas.toBlob(
 
-        console.error(
-            "Camera error:",
-            error
-        );
+                        function (blob) {
 
-        alert(
-            "Unable to access camera. Please allow camera permission."
-        );
+                            if (!blob) {
+
+                                alert(
+                                    "Unable to capture receipt image."
+                                );
+
+                                return;
+                            }
+
+
+                            const capturedFile =
+                                new File(
+
+                                    [blob],
+
+                                    "captured-receipt.jpg",
+
+                                    {
+                                        type: "image/jpeg"
+                                    }
+
+                                );
+
+
+                            // Put file into input
+
+                            const dataTransfer =
+                                new DataTransfer();
+
+
+                            dataTransfer.items.add(
+                                capturedFile
+                            );
+
+
+                            fileInput.files =
+                                dataTransfer.files;
+
+
+                            // Stop camera
+
+                            stream
+                                .getTracks()
+                                .forEach(
+                                    function (track) {
+                                        track.stop();
+                                    }
+                                );
+
+
+                            // Remove overlay
+
+                            overlay.remove();
+
+
+                            // AI mode
+
+                            isManualMode =
+                                false;
+
+
+                            // Show preview
+
+                            showPreview(
+                                capturedFile
+                            );
+
+
+                            console.log(
+                                "Receipt captured successfully."
+                            );
+
+                        },
+
+                        "image/jpeg",
+
+                        0.95
+
+                    );
+
+                }
+            );
+
+
+            // ==========================================
+            // CLOSE CAMERA
+            // ==========================================
+
+            closeCamera.addEventListener(
+                "click",
+                function () {
+
+                    stream
+                        .getTracks()
+                        .forEach(
+                            function (track) {
+                                track.stop();
+                            }
+                        );
+
+
+                    overlay.remove();
+
+
+                    console.log(
+                        "Camera closed."
+                    );
+
+                }
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "Camera error:",
+                error
+            );
+
+
+            alert(
+                "Unable to access camera. Please allow camera permission."
+            );
+
+        }
+
     }
-});
+);
+
 
 // ==========================================
 // AI RECEIPT SCANNING
 // ==========================================
 
-scanButton.addEventListener("click", async function () {
+scanButton.addEventListener(
+    "click",
+    async function () {
 
-    const file = fileInput.files[0];
+        const file =
+            fileInput.files[0];
 
-    if (!file) {
 
-        alert(
-            "Please upload or capture a receipt first."
-        );
+        if (!file) {
 
-        return;
-    }
+            alert(
+                "Please upload or capture a receipt first."
+            );
 
-    // ==========================================
-    // DISABLE BUTTON
-    // ==========================================
+            return;
+        }
 
-    scanButton.disabled = true;
-
-    const originalText =
-        scanButton.textContent;
-
-    scanButton.textContent =
-        "✨ Scanning Receipt...";
-
-    try {
-
-        console.log(
-            "Starting AI receipt scan:",
-            file.name
-        );
 
         // ==========================================
-        // CONVERT IMAGE TO BASE64
+        // DISABLE BUTTON
         // ==========================================
 
-        const base64Image =
-            await fileToBase64(file);
+        scanButton.disabled =
+            true;
 
-        console.log(
-            "Receipt image converted successfully."
-        );
 
-        // ==========================================
-        // AI PROMPT
-        // ==========================================
+        const originalText =
+            scanButton.textContent;
 
-        const prompt = `
+
+        scanButton.textContent =
+            "✨ Scanning Receipt...";
+
+
+        try {
+
+            console.log(
+                "Starting AI receipt scan:",
+                file.name
+            );
+
+
+            // ==========================================
+            // CONVERT IMAGE TO BASE64
+            // ==========================================
+
+            const base64Image =
+                await fileToBase64(
+                    file
+                );
+
+
+            console.log(
+                "Receipt image converted successfully."
+            );
+
+
+            // ==========================================
+            // AI PROMPT
+            // ==========================================
+
+            const prompt = `
+
 You are SHOPIX, an AI receipt scanner.
 
 Analyze the attached receipt image carefully.
@@ -693,10 +1265,13 @@ Extract the following information:
 
 For Category, choose ONLY one of:
 
-Electronics
+Food
 Grocery
+Shopping
+Electronics
 Clothing
 Travel
+Medical
 Other
 
 For Currency:
@@ -761,137 +1336,197 @@ Rules:
 - Do not invent information.
 - If currency cannot be identified, use "Other".
 - If a value cannot be identified, use an empty string or 0.
+
 `;
 
-        // ==========================================
-        // IMAGE PART
-        // ==========================================
 
-        const imagePart = {
-            inlineData: {
-                data: base64Image,
-                mimeType: file.type
+            // ==========================================
+            // IMAGE PART
+            // ==========================================
+
+            const imagePart = {
+
+                inlineData: {
+
+                    data: base64Image,
+
+                    mimeType: file.type
+
+                }
+
+            };
+
+
+            // ==========================================
+            // SEND TO GEMINI
+            // ==========================================
+
+            const result =
+                await model.generateContent([
+
+                    prompt,
+
+                    imagePart
+
+                ]);
+
+
+            const response =
+                result.response;
+
+
+            const text =
+                response.text();
+
+
+            console.log(
+                "Gemini raw response:",
+                text
+            );
+
+
+            // ==========================================
+            // CLEAN AI RESPONSE
+            // ==========================================
+
+            const cleanedText =
+                text
+                    .replace(/```json/gi, "")
+                    .replace(/```/g, "")
+                    .trim();
+
+
+            // ==========================================
+            // PARSE JSON
+            // ==========================================
+
+            const data =
+                JSON.parse(
+                    cleanedText
+                );
+
+
+            // ==========================================
+            // NORMALIZE CURRENCY
+            // ==========================================
+
+            if (
+                !data.currency ||
+                typeof data.currency !== "string"
+            ) {
+
+                data.currency =
+                    "INR";
+
             }
-        };
 
-        // ==========================================
-        // SEND TO GEMINI
-        // ==========================================
 
-        const result =
-            await model.generateContent([
-                prompt,
-                imagePart
-            ]);
+            data.currency =
+                data.currency
+                    .trim()
+                    .toUpperCase();
 
-        const response =
-            result.response;
 
-        const text =
-            response.text();
+            // ==========================================
+            // NORMALIZE TOTAL
+            // ==========================================
 
-        console.log(
-            "Gemini raw response:",
-            text
-        );
+            if (
+                data.totalAmount === undefined ||
+                data.totalAmount === null ||
+                isNaN(
+                    Number(
+                        data.totalAmount
+                    )
+                )
+            ) {
 
-        // ==========================================
-        // CLEAN AI RESPONSE
-        // ==========================================
+                data.totalAmount =
+                    0;
 
-        const cleanedText =
-            text
-                .replace(/```json/gi, "")
-                .replace(/```/g, "")
-                .trim();
+            }
 
-        // ==========================================
-        // PARSE JSON
-        // ==========================================
 
-        const data =
-            JSON.parse(cleanedText);
+            data.totalAmount =
+                Number(
+                    data.totalAmount
+                );
 
-        // ==========================================
-        // NORMALIZE CURRENCY
-        // ==========================================
 
-        if (
-            !data.currency ||
-            typeof data.currency !== "string"
-        ) {
+            // ==========================================
+            // NORMALIZE ITEMS
+            // ==========================================
 
-            data.currency = "INR";
+            if (
+                !Array.isArray(
+                    data.items
+                )
+            ) {
+
+                data.items = [];
+
+            }
+
+
+            // ==========================================
+            // STORE DATA
+            // ==========================================
+
+            currentExtractedData =
+                data;
+
+
+            isManualMode =
+                false;
+
+
+            console.log(
+                "Extracted receipt data:",
+                data
+            );
+
+
+            // ==========================================
+            // SHOW DATA
+            // ==========================================
+
+            showExtractedData(
+                data
+            );
+
+
+            alert(
+                "✅ Receipt scanned successfully!"
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "❌ AI receipt scanning failed:",
+                error
+            );
+
+
+            alert(
+                "Unable to scan the receipt. Please try again."
+            );
+
+
+        } finally {
+
+            scanButton.disabled =
+                false;
+
+
+            scanButton.textContent =
+                originalText;
+
         }
 
-        data.currency =
-            data.currency
-                .trim()
-                .toUpperCase();
-
-        // ==========================================
-        // NORMALIZE TOTAL AMOUNT
-        // ==========================================
-
-        if (
-            data.totalAmount === undefined ||
-            data.totalAmount === null ||
-            isNaN(Number(data.totalAmount))
-        ) {
-
-            data.totalAmount = 0;
-        }
-
-        data.totalAmount =
-            Number(data.totalAmount);
-
-        // ==========================================
-        // NORMALIZE ITEMS
-        // ==========================================
-
-        if (!Array.isArray(data.items)) {
-            data.items = [];
-        }
-
-        // ==========================================
-        // STORE EXTRACTED DATA
-        // ==========================================
-
-        currentExtractedData = data;
-
-        console.log(
-            "Extracted receipt data:",
-            data
-        );
-
-        // ==========================================
-        // SHOW DATA
-        // ==========================================
-
-        showExtractedData(data);
-
-        alert(
-            "✅ Receipt scanned successfully!"
-        );
-
-    } catch (error) {
-
-        console.error(
-            "❌ AI receipt scanning failed:",
-            error
-        );
-
-        alert(
-            "Unable to scan the receipt. Please try again."
-        );
-
-    } finally {
-
-        scanButton.disabled = false;
-
-        scanButton.textContent = originalText;
     }
-});
+);
+
 
 // ==========================================
 // FILE TO BASE64
@@ -900,10 +1535,12 @@ Rules:
 function fileToBase64(file) {
 
     return new Promise(
+
         function (resolve, reject) {
 
             const reader =
                 new FileReader();
+
 
             reader.onload =
                 function () {
@@ -911,32 +1548,50 @@ function fileToBase64(file) {
                     const result =
                         reader.result;
 
+
                     const base64 =
                         result.split(",")[1];
 
-                    resolve(base64);
+
+                    resolve(
+                        base64
+                    );
+
                 };
+
 
             reader.onerror =
                 function () {
 
                     reject(
+
                         new Error(
                             "Unable to read receipt image."
                         )
+
                     );
+
                 };
 
-            reader.readAsDataURL(file);
+
+            reader.readAsDataURL(
+                file
+            );
+
         }
+
     );
+
 }
+
 
 // ==========================================
 // CURRENCY SYMBOL
 // ==========================================
 
-function getCurrencySymbol(currency) {
+function getCurrencySymbol(
+    currency
+) {
 
     const symbols = {
 
@@ -953,56 +1608,76 @@ function getCurrencySymbol(currency) {
         CAD: "C$",
 
         AUD: "A$"
+
     };
+
 
     return (
         symbols[currency] ||
         currency
     );
+
 }
 
+
 // ==========================================
-// SHOW EXTRACTED RECEIPT DATA
+// SHOW EXTRACTED DATA
 // ==========================================
 
-function showExtractedData(data) {
+function showExtractedData(
+    data
+) {
 
     console.log(
         "Showing extracted receipt data:",
         data
     );
 
-    // ==========================================
-    // FORM ELEMENTS
-    // ==========================================
 
     const storeNameInput =
-        document.getElementById("storeName");
+        document.getElementById(
+            "storeName"
+        );
+
 
     const purchaseDateInput =
-        document.getElementById("purchaseDate");
+        document.getElementById(
+            "purchaseDate"
+        );
+
 
     const totalAmountInput =
-        document.getElementById("totalAmount");
+        document.getElementById(
+            "totalAmount"
+        );
+
 
     const categoryInput =
-        document.getElementById("category");
+        document.getElementById(
+            "category"
+        );
 
-    const itemsList =
-        document.getElementById("itemsList");
+
+    const currencyInput =
+        document.getElementById(
+            "currency"
+        );
+
 
     // ==========================================
-    // STORE NAME
+    // STORE
     // ==========================================
 
     if (storeNameInput) {
 
         storeNameInput.value =
             data.storeName || "";
+
     }
 
+
     // ==========================================
-    // PURCHASE DATE
+    // DATE
     // ==========================================
 
     if (purchaseDateInput) {
@@ -1010,62 +1685,77 @@ function showExtractedData(data) {
         let date =
             data.purchaseDate || "";
 
-        // Convert DD-MM-YYYY
+
+        // DD-MM-YYYY
+
         if (
-            /^\d{2}-\d{2}-\d{4}$/.test(date)
+            /^\d{2}-\d{2}-\d{4}$/.test(
+                date
+            )
         ) {
 
             const parts =
                 date.split("-");
 
+
             date =
                 parts[2] +
                 "-" +
                 parts[1] +
                 "-" +
                 parts[0];
+
         }
 
-        // Convert DD/MM/YYYY
+
+        // DD/MM/YYYY
+
         if (
-            /^\d{2}\/\d{2}\/\d{4}$/.test(date)
+            /^\d{2}\/\d{2}\/\d{4}$/.test(
+                date
+            )
         ) {
 
             const parts =
                 date.split("/");
 
+
             date =
                 parts[2] +
                 "-" +
                 parts[1] +
                 "-" +
                 parts[0];
+
         }
+
 
         purchaseDateInput.value =
             date;
+
     }
 
+
     // ==========================================
-    // TOTAL AMOUNT
+    // TOTAL
     // ==========================================
 
     if (totalAmountInput) {
 
         totalAmountInput.value =
-            data.totalAmount || 0;
+            data.totalAmount || "";
+
     }
+
 
     // ==========================================
     // CURRENCY
     // ==========================================
 
-    const currencySelect =
-        createCurrencyField();
-
-    if (currencySelect) {
+    if (currencyInput) {
 
         const validCurrencies = [
+
             "INR",
             "USD",
             "EUR",
@@ -1074,7 +1764,9 @@ function showExtractedData(data) {
             "CAD",
             "AUD",
             "Other"
+
         ];
+
 
         if (
             validCurrencies.includes(
@@ -1082,29 +1774,18 @@ function showExtractedData(data) {
             )
         ) {
 
-            currencySelect.value =
+            currencyInput.value =
                 data.currency;
 
         } else {
 
-            currencySelect.value =
+            currencyInput.value =
                 "Other";
+
         }
 
-        // ==========================================
-        // MANUAL CURRENCY CHANGE
-        // ==========================================
-
-        currencySelect.onchange =
-            function () {
-
-                if (currentExtractedData) {
-
-                    currentExtractedData.currency =
-                        this.value;
-                }
-            };
     }
+
 
     // ==========================================
     // CATEGORY
@@ -1113,6 +1794,7 @@ function showExtractedData(data) {
     if (categoryInput) {
 
         const allowedCategories = [
+
             "Food",
             "Grocery",
             "Shopping",
@@ -1121,7 +1803,9 @@ function showExtractedData(data) {
             "Travel",
             "Medical",
             "Other"
+
         ];
+
 
         if (
             allowedCategories.includes(
@@ -1136,51 +1820,73 @@ function showExtractedData(data) {
 
             categoryInput.value =
                 "Other";
+
         }
+
     }
 
+
     // ==========================================
-    // PURCHASED ITEMS
+    // ITEMS
     // ==========================================
 
     if (itemsList) {
 
         itemsList.innerHTML = "";
 
+
         if (
             Array.isArray(data.items) &&
             data.items.length > 0
         ) {
+
+            noItemsMessage.style.display =
+                "none";
+
 
             const currencySymbol =
                 getCurrencySymbol(
                     data.currency
                 );
 
+
             data.items.forEach(
                 function (item) {
 
                     const itemRow =
-                        document.createElement("div");
+                        document.createElement(
+                            "div"
+                        );
+
 
                     itemRow.className =
                         "extracted-item";
 
+
                     const itemName =
-                        document.createElement("span");
+                        document.createElement(
+                            "span"
+                        );
+
 
                     itemName.className =
                         "item-name";
+
 
                     itemName.textContent =
                         item.name ||
                         "Unknown item";
 
+
                     const itemDetails =
-                        document.createElement("span");
+                        document.createElement(
+                            "span"
+                        );
+
 
                     itemDetails.className =
                         "item-details";
+
 
                     itemDetails.textContent =
                         "Qty: " +
@@ -1189,29 +1895,69 @@ function showExtractedData(data) {
                         currencySymbol +
                         (item.price || 0);
 
+
                     itemRow.appendChild(
                         itemName
                     );
+
 
                     itemRow.appendChild(
                         itemDetails
                     );
 
+
                     itemsList.appendChild(
                         itemRow
                     );
+
                 }
             );
 
+
         } else {
 
-            itemsList.textContent =
-                "No items detected.";
+            noItemsMessage.style.display =
+                "block";
+
         }
+
     }
 
+
     // ==========================================
-    // SHOW EXTRACTED DATA SECTION
+    // SECTION TITLE
+    // ==========================================
+
+    const title =
+        document.getElementById(
+            "dataSectionTitle"
+        );
+
+
+    const description =
+        document.getElementById(
+            "dataSectionDescription"
+        );
+
+
+    if (title) {
+
+        title.textContent =
+            "Extracted Receipt Information";
+
+    }
+
+
+    if (description) {
+
+        description.textContent =
+            "Review and edit the information extracted by SHOPIX AI before saving.";
+
+    }
+
+
+    // ==========================================
+    // SHOW SECTION
     // ==========================================
 
     const extractedSection =
@@ -1219,27 +1965,30 @@ function showExtractedData(data) {
             "extractedDataSection"
         );
 
+
     if (extractedSection) {
 
         extractedSection.style.display =
             "block";
 
+
         extractedSection.scrollIntoView({
+
             behavior: "smooth",
+
             block: "start"
+
         });
 
-    } else {
-
-        console.error(
-            "❌ extractedDataSection not found in HTML."
-        );
     }
+
 
     console.log(
         "✅ Extracted data displayed successfully."
     );
+
 }
+
 
 // ==========================================
 // INITIAL STATE
