@@ -5,217 +5,523 @@ import {
 
 import {
     onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
 import {
     collection,
     getDocs,
     addDoc,
+    doc,
+    updateDoc,
+    deleteDoc,
     serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
 
-// ===============================
-// DOM ELEMENTS
-// ===============================
 
-const warrantyForm = document.getElementById("warrantyForm");
+/* =========================================================
+   DOM
+========================================================= */
 
-const productName = document.getElementById("productName");
-const storeName = document.getElementById("storeName");
-const purchaseDate = document.getElementById("purchaseDate");
-const warrantyDuration = document.getElementById("warrantyDuration");
-const expiryDate = document.getElementById("expiryDate");
-const warrantyStatus = document.getElementById("warrantyStatus");
+const receiptSelect =
+    document.getElementById("receiptSelect");
 
-const saveWarrantyBtn = document.getElementById("saveWarrantyBtn");
-const cancelWarrantyBtn = document.getElementById("cancelWarrantyBtn");
+const receiptInfo =
+    document.getElementById("receiptInfo");
 
-const receiptProductSelect =
-    document.getElementById("receiptProductSelect");
+const receiptStore =
+    document.getElementById("receiptStore");
 
-const selectedReceiptInfo =
-    document.getElementById("selectedReceiptInfo");
+const receiptPurchaseDate =
+    document.getElementById("receiptPurchaseDate");
 
-const selectedReceiptStore =
-    document.getElementById("selectedReceiptStore");
+const receiptItemCount =
+    document.getElementById("receiptItemCount");
 
-const selectedReceiptDate =
-    document.getElementById("selectedReceiptDate");
+const itemStep =
+    document.getElementById("itemStep");
+
+const receiptItems =
+    document.getElementById("receiptItems");
+
+const durationStep =
+    document.getElementById("durationStep");
+
+const selectedProductName =
+    document.getElementById("selectedProductName");
+
+const warrantyDuration =
+    document.getElementById("warrantyDuration");
+
+const customDurationBox =
+    document.getElementById("customDurationBox");
+
+const customDurationValue =
+    document.getElementById("customDurationValue");
+
+const customDurationUnit =
+    document.getElementById("customDurationUnit");
+
+const expiryPreview =
+    document.getElementById("expiryPreview");
+
+const calculatedExpiry =
+    document.getElementById("calculatedExpiry");
+
+const addWarrantyBtn =
+    document.getElementById("addWarrantyBtn");
+
+const anotherItemBox =
+    document.getElementById("anotherItemBox");
+
+const anotherItemQuestion =
+    document.getElementById("anotherItemQuestion");
+
+const yesAnotherItemBtn =
+    document.getElementById("yesAnotherItemBtn");
+
+const noAnotherItemBtn =
+    document.getElementById("noAnotherItemBtn");
+
+const noReceiptItems =
+    document.getElementById("noReceiptItems");
+
+const warrantyTableBody =
+    document.getElementById("warrantyTableBody");
+
+const warrantyEmpty =
+    document.getElementById("warrantyEmpty");
+
+const warrantyFilter =
+    document.getElementById("warrantyFilter");
+
+const activeWarrantyCount =
+    document.getElementById("activeWarrantyCount");
+
+const expiringWarrantyCount =
+    document.getElementById("expiringWarrantyCount");
+
+const expiredWarrantyCount =
+    document.getElementById("expiredWarrantyCount");
+
+const totalWarrantyCount =
+    document.getElementById("totalWarrantyCount");
+
+const warrantyReminderText =
+    document.getElementById("warrantyReminderText");
 
 
-// ===============================
-// VARIABLES
-// ===============================
+
+/* =========================================================
+   PROFILE
+========================================================= */
+
+const profileButton =
+    document.getElementById("profileButton");
+
+const profileModal =
+    document.getElementById("profileModal");
+
+const closeProfileModal =
+    document.getElementById("closeProfileModal");
+
+const profileAvatar =
+    document.getElementById("profileAvatar");
+
+const profileLargeAvatar =
+    document.getElementById("profileLargeAvatar");
+
+const profileName =
+    document.getElementById("profileName");
+
+const profileNameInput =
+    document.getElementById("profileNameInput");
+
+const profileEmailInput =
+    document.getElementById("profileEmailInput");
+
+const profileMessage =
+    document.getElementById("profileMessage");
+
+const saveProfile =
+    document.getElementById("saveProfile");
+
+
+
+/* =========================================================
+   STATE
+========================================================= */
 
 let currentUser = null;
-let selectedReceiptId = null;
+
 let receipts = [];
 
+let warranties = [];
 
-// ===============================
-// DATE FUNCTIONS
-// ===============================
+let selectedReceipt = null;
+
+let selectedItem = null;
+
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
 
 function normalizeDate(value) {
-    if (!value) return "";
 
-    value = String(value).trim();
-
-    // YYYY-MM-DD
-    if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
-        return value;
+    if (!value) {
+        return null;
     }
 
-    // DD-MM-YYYY
-    if (/^\d{2}-\d{2}-\d{4}$/.test(value)) {
-        const [day, month, year] = value.split("-");
-        return `${year}-${month}-${day}`;
+
+    if (
+        typeof value === "object" &&
+        typeof value.toDate === "function"
+    ) {
+
+        return value.toDate();
+
     }
 
-    // DD/MM/YYYY
-    if (/^\d{2}\/\d{2}\/\d{4}$/.test(value)) {
-        const [day, month, year] = value.split("/");
-        return `${year}-${month}-${day}`;
+
+    if (
+        typeof value === "object" &&
+        typeof value.seconds === "number"
+    ) {
+
+        return new Date(
+            value.seconds * 1000
+        );
+
     }
 
-    return "";
+
+    if (value instanceof Date) {
+        return new Date(value);
+    }
+
+
+    /*
+       Handle YYYY-MM-DD
+    */
+
+    if (
+        typeof value === "string" &&
+        /^\d{4}-\d{2}-\d{2}$/.test(value)
+    ) {
+
+        const [
+            year,
+            month,
+            day
+        ] = value.split("-").map(Number);
+
+        return new Date(
+            year,
+            month - 1,
+            day
+        );
+
+    }
+
+
+    /*
+       Handle DD-MM-YYYY
+    */
+
+    if (
+        typeof value === "string" &&
+        /^\d{2}-\d{2}-\d{4}$/.test(value)
+    ) {
+
+        const [
+            day,
+            month,
+            year
+        ] = value.split("-").map(Number);
+
+        return new Date(
+            year,
+            month - 1,
+            day
+        );
+
+    }
+
+
+    const date =
+        new Date(value);
+
+
+    if (isNaN(date.getTime())) {
+        return null;
+    }
+
+
+    return date;
+
 }
 
 
-function formatDate(value) {
-    const iso = normalizeDate(value);
 
-    if (!iso) return "";
+function toISODate(date) {
 
-    const [year, month, day] = iso.split("-");
-
-    return `${day}-${month}-${year}`;
-}
+    const d =
+        normalizeDate(date);
 
 
-function dateFromISO(value) {
-    const iso = normalizeDate(value);
-
-    if (!iso) return null;
-
-    const [year, month, day] = iso.split("-").map(Number);
-
-    return new Date(year, month - 1, day);
-}
-
-
-// ===============================
-// CALCULATE EXPIRY DATE
-// ===============================
-
-function calculateExpiryDate() {
-
-    if (!purchaseDate || !warrantyDuration || !expiryDate) {
-        return;
-    }
-
-    const purchaseISO = normalizeDate(purchaseDate.value);
-    const duration = parseInt(warrantyDuration.value, 10);
-
-    if (!purchaseISO || isNaN(duration)) {
-        expiryDate.value = "";
-
-        if (warrantyStatus) {
-            warrantyStatus.value = "";
-        }
-
-        return;
-    }
-
-    const purchase = dateFromISO(purchaseISO);
-
-    if (!purchase) {
-        expiryDate.value = "";
-        warrantyStatus.value = "";
-        return;
-    }
-
-    const expiry = new Date(purchase);
-
-    expiry.setMonth(expiry.getMonth() + duration);
-
-    const year = expiry.getFullYear();
-    const month = String(expiry.getMonth() + 1).padStart(2, "0");
-    const day = String(expiry.getDate()).padStart(2, "0");
-
-    const expiryISO = `${year}-${month}-${day}`;
-
-    // Display DD-MM-YYYY
-    expiryDate.value = formatDate(expiryISO);
-
-    updateWarrantyStatus(expiryISO);
-}
-
-
-// ===============================
-// WARRANTY STATUS
-// ===============================
-
-function getWarrantyStatus(expiry) {
-
-    const expiryDateObj = dateFromISO(expiry);
-
-    if (!expiryDateObj) {
+    if (!d) {
         return "";
     }
 
-    const today = new Date();
 
-    today.setHours(0, 0, 0, 0);
-    expiryDateObj.setHours(0, 0, 0, 0);
+    return [
+        d.getFullYear(),
+        String(
+            d.getMonth() + 1
+        ).padStart(2, "0"),
+        String(
+            d.getDate()
+        ).padStart(2, "0")
+    ].join("-");
 
-    const difference =
-        expiryDateObj.getTime() - today.getTime();
+}
 
-    const daysLeft =
-        Math.ceil(difference / (1000 * 60 * 60 * 24));
 
-    if (daysLeft < 0) {
+
+function formatDate(value) {
+
+    const date =
+        normalizeDate(value);
+
+
+    if (!date) {
+        return "—";
+    }
+
+
+    return date.toLocaleDateString(
+        "en-IN",
+        {
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
+        }
+    );
+
+}
+
+
+
+function escapeHTML(value) {
+
+    return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+}
+
+
+
+/* =========================================================
+   WARRANTY STATUS
+========================================================= */
+
+function calculateDaysLeft(expiryDate) {
+
+    const expiry =
+        normalizeDate(expiryDate);
+
+
+    if (!expiry) {
+        return null;
+    }
+
+
+    const today =
+        new Date();
+
+
+    today.setHours(
+        0, 0, 0, 0
+    );
+
+    expiry.setHours(
+        0, 0, 0, 0
+    );
+
+
+    return Math.ceil(
+        (
+            expiry.getTime() -
+            today.getTime()
+        ) /
+        (
+            1000 *
+            60 *
+            60 *
+            24
+        )
+    );
+
+}
+
+
+
+function getWarrantyStatus(expiryDate) {
+
+    const days =
+        calculateDaysLeft(
+            expiryDate
+        );
+
+
+    if (days === null) {
+        return "Active";
+    }
+
+
+    if (days < 0) {
         return "Expired";
     }
 
-    if (daysLeft <= 30) {
+
+    if (days <= 30) {
         return "Expiring Soon";
     }
 
+
     return "Active";
+
 }
 
 
-function updateWarrantyStatus(expiryISO = null) {
 
-    if (!warrantyStatus) return;
+/* =========================================================
+   CALCULATE EXPIRY
+========================================================= */
 
-    let expiry = expiryISO;
+function calculateExpiry(
+    purchaseDate,
+    duration
+) {
 
-    if (!expiry) {
-        expiry = normalizeDate(expiryDate.value);
+    const date =
+        normalizeDate(
+            purchaseDate
+        );
+
+
+    if (!date || !duration) {
+        return null;
     }
 
-    if (!expiry) {
-        warrantyStatus.value = "";
-        return;
+
+    const result =
+        new Date(date);
+
+
+    const match =
+        duration.match(
+            /^(\d+)\s+(Month|Months|Year|Years)$/
+        );
+
+
+    if (!match) {
+        return null;
     }
 
-    warrantyStatus.value = getWarrantyStatus(expiry);
+
+    const amount =
+        Number(match[1]);
+
+    const unit =
+        match[2].toLowerCase();
+
+
+    if (
+        unit === "month" ||
+        unit === "months"
+    ) {
+
+        result.setMonth(
+            result.getMonth() + amount
+        );
+
+    }
+
+    else {
+
+        result.setFullYear(
+            result.getFullYear() + amount
+        );
+
+    }
+
+
+    return result;
+
 }
 
 
-// ===============================
-// LOAD RECEIPTS
-// ===============================
+
+/* =========================================================
+   GET CUSTOM DURATION
+========================================================= */
+
+function getSelectedDuration() {
+
+    const selected =
+        warrantyDuration.value;
+
+
+    if (selected !== "CUSTOM") {
+        return selected;
+    }
+
+
+    const amount =
+        Number(
+            customDurationValue.value
+        );
+
+
+    const unit =
+        customDurationUnit.value;
+
+
+    if (
+        !amount ||
+        amount < 1
+    ) {
+
+        return "";
+
+    }
+
+
+    return `${amount} ${unit}`;
+
+}
+
+
+
+/* =========================================================
+   LOAD RECEIPTS
+========================================================= */
 
 async function loadReceipts() {
 
-    if (!currentUser || !receiptProductSelect) {
-        return;
-    }
+    receiptSelect.innerHTML = `
+        <option value="">
+            Loading receipts...
+        </option>
+    `;
+
 
     try {
 
@@ -227,334 +533,1737 @@ async function loadReceipts() {
                 "receipts"
             );
 
-        const snapshot = await getDocs(receiptsRef);
+
+        const snapshot =
+            await getDocs(
+                receiptsRef
+            );
+
 
         receipts = [];
 
-        receiptProductSelect.innerHTML =
-            `<option value="">Select a product</option>`;
 
-        snapshot.forEach((doc) => {
+        snapshot.forEach(
+            receiptDoc => {
 
-            const data = doc.data();
-
-            const receipt = {
-                id: doc.id,
-                ...data
-            };
-
-            receipts.push(receipt);
-
-            if (Array.isArray(data.items)) {
-
-                data.items.forEach((item, index) => {
-
-                    const option =
-                        document.createElement("option");
-
-                    option.value =
-                        `${doc.id}|${index}`;
-
-                    option.textContent =
-                        item.name || `Product ${index + 1}`;
-
-                    receiptProductSelect.appendChild(option);
+                receipts.push({
+                    id: receiptDoc.id,
+                    ...receiptDoc.data()
                 });
+
             }
-        });
-
-    } catch (error) {
-
-        console.error(
-            "Error loading receipts:",
-            error
         );
-    }
-}
 
 
-// ===============================
-// RECEIPT PRODUCT SELECT
-// ===============================
+        receiptSelect.innerHTML = `
+            <option value="">
+                Select a saved receipt
+            </option>
+        `;
 
-if (receiptProductSelect) {
 
-    receiptProductSelect.addEventListener(
-        "change",
-        () => {
+        if (receipts.length === 0) {
 
-            const value =
-                receiptProductSelect.value;
+            receiptSelect.innerHTML = `
+                <option value="">
+                    No saved receipts found
+                </option>
+            `;
 
-            if (!value) {
+            return;
 
-                selectedReceiptId = null;
+        }
 
-                if (selectedReceiptInfo) {
-                    selectedReceiptInfo.style.display = "none";
-                }
 
-                return;
-            }
+        receipts.forEach(
+            receipt => {
 
-            const [receiptId, itemIndex] =
-                value.split("|");
+                const option =
+                    document.createElement(
+                        "option"
+                    );
 
-            const receipt =
-                receipts.find(
-                    r => r.id === receiptId
-                );
 
-            if (!receipt) return;
+                option.value =
+                    receipt.id;
 
-            selectedReceiptId = receiptId;
 
-            const item =
-                receipt.items?.[Number(itemIndex)];
+                const store =
+                    receipt.storeName ||
+                    "Unknown Store";
 
-            if (productName && item) {
-                productName.value =
-                    item.name || "";
-            }
-
-            if (storeName) {
-                storeName.value =
-                    receipt.storeName || "";
-            }
-
-            if (purchaseDate) {
 
                 const date =
-                    normalizeDate(
+                    formatDate(
                         receipt.purchaseDate
                     );
 
-                purchaseDate.value = date;
+
+                option.textContent =
+                    `${store} • ${date}`;
+
+
+                receiptSelect.appendChild(
+                    option
+                );
+
+            }
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Receipt loading error:",
+            error
+        );
+
+
+        receiptSelect.innerHTML = `
+            <option value="">
+                Unable to load receipts
+            </option>
+        `;
+
+    }
+
+}
+
+
+
+/* =========================================================
+   RECEIPT SELECT
+========================================================= */
+
+receiptSelect.addEventListener(
+    "change",
+    async () => {
+
+        const receiptId =
+            receiptSelect.value;
+
+
+        selectedReceipt =
+            receipts.find(
+                receipt =>
+                    receipt.id ===
+                    receiptId
+            ) || null;
+
+
+        resetItemSelection();
+
+
+        if (!selectedReceipt) {
+
+            receiptInfo.style.display =
+                "none";
+
+            itemStep.style.display =
+                "none";
+
+            noReceiptItems.style.display =
+                "none";
+
+            return;
+
+        }
+
+
+        receiptInfo.style.display =
+            "grid";
+
+
+        receiptStore.textContent =
+            selectedReceipt.storeName ||
+            "Unknown Store";
+
+
+        receiptPurchaseDate.textContent =
+            formatDate(
+                selectedReceipt.purchaseDate
+            );
+
+
+        const items =
+            getReceiptItems(
+                selectedReceipt
+            );
+
+
+        receiptItemCount.textContent =
+            items.length;
+
+
+        if (items.length === 0) {
+
+            itemStep.style.display =
+                "none";
+
+            noReceiptItems.style.display =
+                "flex";
+
+            return;
+
+        }
+
+
+        noReceiptItems.style.display =
+            "none";
+
+
+        itemStep.style.display =
+            "flex";
+
+
+        await renderReceiptItems();
+
+    }
+);
+
+
+
+/* =========================================================
+   GET RECEIPT ITEMS
+========================================================= */
+
+function getReceiptItems(receipt) {
+
+    if (
+        !Array.isArray(
+            receipt.items
+        )
+    ) {
+
+        return [];
+
+    }
+
+
+    return receipt.items
+        .map(
+            (item, index) => ({
+
+                index,
+
+                name:
+                    item.name ||
+                    item.productName ||
+                    `Product ${index + 1}`,
+
+                quantity:
+                    Number(
+                        item.quantity
+                    ) || 1,
+
+                price:
+                    Number(
+                        item.price
+                    ) || 0
+
+            })
+        );
+
+}
+
+
+
+/* =========================================================
+   CHECK IF WARRANTY ALREADY EXISTS
+========================================================= */
+
+function hasExistingWarranty(
+    itemName
+) {
+
+    if (!selectedReceipt) {
+        return false;
+    }
+
+
+    return warranties.some(
+        warranty =>
+            warranty.receiptId ===
+                selectedReceipt.id &&
+            warranty.productName
+                .trim()
+                .toLowerCase() ===
+                itemName
+                    .trim()
+                    .toLowerCase()
+    );
+
+}
+
+
+
+/* =========================================================
+   RENDER ITEMS
+========================================================= */
+
+async function renderReceiptItems() {
+
+    const items =
+        getReceiptItems(
+            selectedReceipt
+        );
+
+
+    receiptItems.innerHTML =
+        "";
+
+
+    items.forEach(
+        item => {
+
+            const alreadyAdded =
+                hasExistingWarranty(
+                    item.name
+                );
+
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+
+            card.className =
+                "receipt-item-card";
+
+
+            if (alreadyAdded) {
+                card.classList.add(
+                    "already-added"
+                );
             }
 
-            if (selectedReceiptStore) {
-                selectedReceiptStore.textContent =
-                    receipt.storeName || "-";
+
+            const price =
+                item.price > 0
+                    ? `₹${item.price.toLocaleString("en-IN")}`
+                    : "Price not available";
+
+
+            card.innerHTML = `
+
+                <div class="receipt-item-icon">
+
+                    ${
+                        alreadyAdded
+                            ? "✓"
+                            : "♢"
+                    }
+
+                </div>
+
+
+                <div class="receipt-item-details">
+
+                    <strong>
+                        ${escapeHTML(
+                            item.name
+                        )}
+                    </strong>
+
+                    <span>
+                        Qty: ${item.quantity}
+                        &nbsp; • &nbsp;
+                        ${price}
+                    </span>
+
+                </div>
+
+
+                ${
+                    alreadyAdded
+                        ? `
+                            <div class="receipt-item-status">
+                                Added
+                            </div>
+                          `
+                        : `
+                            <div class="receipt-item-status"
+                                 style="color:#2853b8;">
+                                Select
+                            </div>
+                          `
+                }
+
+            `;
+
+
+            if (!alreadyAdded) {
+
+                card.addEventListener(
+                    "click",
+                    () => {
+
+                        selectItem(item);
+
+                    }
+                );
+
             }
 
-            if (selectedReceiptDate) {
-                selectedReceiptDate.textContent =
-                    formatDate(
-                        receipt.purchaseDate
-                    ) || "-";
-            }
 
-            if (selectedReceiptInfo) {
-                selectedReceiptInfo.style.display =
-                    "block";
-            }
+            receiptItems.appendChild(
+                card
+            );
 
-            calculateExpiryDate();
         }
     );
+
 }
 
 
-// ===============================
-// PURCHASE DATE CHANGE
-// ===============================
 
-if (purchaseDate) {
+/* =========================================================
+   SELECT ITEM
+========================================================= */
 
-    purchaseDate.addEventListener(
-        "change",
-        calculateExpiryDate
-    );
-}
+function selectItem(item) {
+
+    selectedItem =
+        item;
 
 
-// ===============================
-// WARRANTY DURATION CHANGE
-// ===============================
+    document
+        .querySelectorAll(
+            ".receipt-item-card"
+        )
+        .forEach(
+            card => {
 
-if (warrantyDuration) {
+                card.classList.remove(
+                    "selected"
+                );
 
-    warrantyDuration.addEventListener(
-        "change",
-        calculateExpiryDate
-    );
-}
-
-
-// ===============================
-// EXPIRY DATE CHANGE
-// ===============================
-
-if (expiryDate) {
-
-    expiryDate.addEventListener(
-        "input",
-        () => updateWarrantyStatus()
-    );
-}
+            }
+        );
 
 
-// ===============================
-// CANCEL BUTTON
-// ===============================
+    /*
+       Find matching card by product name.
+    */
 
-if (cancelWarrantyBtn) {
+    [
+        ...document.querySelectorAll(
+            ".receipt-item-card"
+        )
+    ].forEach(
+        card => {
 
-    cancelWarrantyBtn.addEventListener(
-        "click",
-        (event) => {
+            const name =
+                card
+                    .querySelector(
+                        ".receipt-item-details strong"
+                    )
+                    ?.textContent
+                    ?.trim();
 
-            event.preventDefault();
 
-            if (warrantyForm) {
-                warrantyForm.reset();
+            if (
+                name ===
+                item.name
+            ) {
+
+                card.classList.add(
+                    "selected"
+                );
+
             }
 
-            if (expiryDate) {
-                expiryDate.value = "";
-            }
-
-            if (warrantyStatus) {
-                warrantyStatus.value = "";
-            }
-
-            selectedReceiptId = null;
-
-            if (selectedReceiptInfo) {
-                selectedReceiptInfo.style.display =
-                    "none";
-            }
-
-            if (receiptProductSelect) {
-                receiptProductSelect.value = "";
-            }
         }
     );
+
+
+    selectedProductName.textContent =
+        item.name;
+
+
+    warrantyDuration.value =
+        "";
+
+
+    customDurationBox.style.display =
+        "none";
+
+
+    customDurationValue.value =
+        "";
+
+
+    expiryPreview.style.display =
+        "none";
+
+
+    /*
+       If AI had already detected warranty
+       information in the receipt, use it
+       as a suggestion.
+    */
+
+    const detected =
+        getDetectedWarranty(
+            selectedReceipt,
+            item.name
+        );
+
+
+    if (
+        detected &&
+        detected.warrantyDuration
+    ) {
+
+        const duration =
+            detected.warrantyDuration;
+
+
+        const standardOptions = [
+            "6 Months",
+            "1 Year",
+            "2 Years",
+            "3 Years",
+            "5 Years"
+        ];
+
+
+        if (
+            standardOptions.includes(
+                duration
+            )
+        ) {
+
+            warrantyDuration.value =
+                duration;
+
+        }
+
+        else {
+
+            warrantyDuration.value =
+                "CUSTOM";
+
+
+            const match =
+                duration.match(
+                    /^(\d+)\s+(Months?|Years?)$/i
+                );
+
+
+            if (match) {
+
+                customDurationValue.value =
+                    match[1];
+
+                customDurationUnit.value =
+                    match[2]
+                        .toLowerCase()
+                        .startsWith("year")
+                        ? "Years"
+                        : "Months";
+
+
+                customDurationBox.style.display =
+                    "flex";
+
+            }
+
+        }
+
+
+        updateExpiryPreview();
+
+    }
+
+
+    durationStep.style.display =
+        "flex";
+
+
+    durationStep.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest"
+    });
+
 }
 
 
-// ===============================
-// SAVE WARRANTY
-// ===============================
 
-if (warrantyForm) {
+/* =========================================================
+   DETECTED WARRANTY FROM RECEIPT
+========================================================= */
 
-    warrantyForm.addEventListener(
-        "submit",
-        async (event) => {
+function getDetectedWarranty(
+    receipt,
+    itemName
+) {
 
-            event.preventDefault();
+    const details =
+        Array.isArray(
+            receipt.warrantyDetails
+        )
+            ? receipt.warrantyDetails
+            : [];
 
-            if (!currentUser) {
 
-                alert(
-                    "Please log in before saving a warranty."
-                );
+    return details.find(
+        item => {
 
-                return;
-            }
+            const name =
+                item.productName ||
+                item.name ||
+                "";
 
-            const purchaseISO =
-                normalizeDate(
-                    purchaseDate?.value
-                );
 
-            const expiryISO =
-                normalizeDate(
-                    expiryDate?.value
-                );
+            return (
+                name
+                    .trim()
+                    .toLowerCase() ===
+                itemName
+                    .trim()
+                    .toLowerCase()
+            );
+
+        }
+    ) || null;
+
+}
+
+
+
+/* =========================================================
+   DURATION CHANGE
+========================================================= */
+
+warrantyDuration.addEventListener(
+    "change",
+    () => {
+
+        if (
+            warrantyDuration.value ===
+            "CUSTOM"
+        ) {
+
+            customDurationBox.style.display =
+                "flex";
+
+        }
+
+        else {
+
+            customDurationBox.style.display =
+                "none";
+
+            customDurationValue.value =
+                "";
+
+        }
+
+
+        updateExpiryPreview();
+
+    }
+);
+
+
+
+customDurationValue.addEventListener(
+    "input",
+    updateExpiryPreview
+);
+
+
+customDurationUnit.addEventListener(
+    "change",
+    updateExpiryPreview
+);
+
+
+
+function updateExpiryPreview() {
+
+    if (
+        !selectedReceipt ||
+        !selectedItem
+    ) {
+
+        expiryPreview.style.display =
+            "none";
+
+        return;
+
+    }
+
+
+    const duration =
+        getSelectedDuration();
+
+
+    if (!duration) {
+
+        expiryPreview.style.display =
+            "none";
+
+        return;
+
+    }
+
+
+    const expiry =
+        calculateExpiry(
+            selectedReceipt.purchaseDate,
+            duration
+        );
+
+
+    if (!expiry) {
+
+        expiryPreview.style.display =
+            "none";
+
+        return;
+
+    }
+
+
+    calculatedExpiry.textContent =
+        formatDate(
+            expiry
+        );
+
+
+    expiryPreview.style.display =
+        "flex";
+
+}
+
+
+
+/* =========================================================
+   ADD WARRANTY
+========================================================= */
+
+addWarrantyBtn.addEventListener(
+    "click",
+    async () => {
+
+        if (
+            !selectedReceipt ||
+            !selectedItem
+        ) {
+
+            alert(
+                "Please select a product first."
+            );
+
+            return;
+
+        }
+
+
+        const duration =
+            getSelectedDuration();
+
+
+        if (!duration) {
+
+            alert(
+                "Please select a warranty duration."
+            );
+
+            return;
+
+        }
+
+
+        const expiry =
+            calculateExpiry(
+                selectedReceipt.purchaseDate,
+                duration
+            );
+
+
+        if (!expiry) {
+
+            alert(
+                "Unable to calculate warranty expiry date."
+            );
+
+            return;
+
+        }
+
+
+        addWarrantyBtn.disabled =
+            true;
+
+        addWarrantyBtn.textContent =
+            "Saving...";
+
+
+        try {
 
             const warrantyData = {
 
                 productName:
-                    productName?.value.trim() || "",
+                    selectedItem.name,
 
                 storeName:
-                    storeName?.value.trim() || "",
+                    selectedReceipt.storeName ||
+                    "",
 
                 purchaseDate:
-                    purchaseISO,
-
-                warrantyDuration:
-                    parseInt(
-                        warrantyDuration?.value || "0",
-                        10
+                    toISODate(
+                        selectedReceipt.purchaseDate
                     ),
 
+                warrantyDuration:
+                    duration,
+
                 warrantyExpiryDate:
-                    expiryISO,
+                    toISODate(
+                        expiry
+                    ),
 
                 status:
-                    getWarrantyStatus(expiryISO),
+                    getWarrantyStatus(
+                        expiry
+                    ),
 
                 receiptId:
-                    selectedReceiptId || null,
+                    selectedReceipt.id,
 
                 createdAt:
                     serverTimestamp()
+
             };
 
-            try {
 
-                await addDoc(
-                    collection(
-                        db,
-                        "users",
-                        currentUser.uid,
-                        "warranties"
-                    ),
-                    warrantyData
-                );
+            await addDoc(
+                collection(
+                    db,
+                    "users",
+                    currentUser.uid,
+                    "warranties"
+                ),
+                warrantyData
+            );
 
-                alert(
-                    "Warranty saved successfully!"
-                );
 
-                warrantyForm.reset();
+            await loadWarranties();
 
-                if (expiryDate) {
-                    expiryDate.value = "";
-                }
 
-                if (warrantyStatus) {
-                    warrantyStatus.value = "";
-                }
+            /*
+               Ask whether another item should
+               be added from the same receipt.
+            */
 
-                selectedReceiptId = null;
+            anotherItemQuestion.textContent =
+                `Do you want to add warranty for another item from ${selectedReceipt.storeName || "this store"}?`;
 
-                if (selectedReceiptInfo) {
-                    selectedReceiptInfo.style.display =
-                        "none";
-                }
 
-            } catch (error) {
+            anotherItemBox.style.display =
+                "flex";
 
-                console.error(
-                    "Error saving warranty:",
-                    error
-                );
 
-                alert(
-                    "Unable to save warranty. Please try again."
-                );
-            }
+            durationStep.style.display =
+                "none";
+
+
+            selectedItem = null;
+
+
+            await renderReceiptItems();
+
+
         }
-    );
+
+        catch (error) {
+
+            console.error(
+                "Warranty save error:",
+                error
+            );
+
+
+            alert(
+                "Unable to save warranty.\n\n" +
+                error.message
+            );
+
+        }
+
+        finally {
+
+            addWarrantyBtn.disabled =
+                false;
+
+            addWarrantyBtn.textContent =
+                "Add Warranty";
+
+        }
+
+    }
+);
+
+
+
+/* =========================================================
+   YES - ADD ANOTHER
+========================================================= */
+
+yesAnotherItemBtn.addEventListener(
+    "click",
+    async () => {
+
+        anotherItemBox.style.display =
+            "none";
+
+
+        await renderReceiptItems();
+
+
+        itemStep.style.display =
+            "flex";
+
+
+        itemStep.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest"
+        });
+
+    }
+);
+
+
+
+/* =========================================================
+   NO - DONE
+========================================================= */
+
+noAnotherItemBtn.addEventListener(
+    "click",
+    () => {
+
+        anotherItemBox.style.display =
+            "none";
+
+
+        resetItemSelection();
+
+
+        renderReceiptItems();
+
+
+        warrantyRecords.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+    }
+);
+
+
+
+/* =========================================================
+   RESET ITEM SELECTION
+========================================================= */
+
+function resetItemSelection() {
+
+    selectedItem = null;
+
+
+    durationStep.style.display =
+        "none";
+
+
+    warrantyDuration.value =
+        "";
+
+
+    customDurationValue.value =
+        "";
+
+
+    customDurationBox.style.display =
+        "none";
+
+
+    expiryPreview.style.display =
+        "none";
+
+
+    document
+        .querySelectorAll(
+            ".receipt-item-card"
+        )
+        .forEach(
+            card =>
+                card.classList.remove(
+                    "selected"
+                )
+        );
+
 }
 
 
-// ===============================
-// AUTH STATE
-// ===============================
+
+/* =========================================================
+   LOAD WARRANTIES
+========================================================= */
+
+async function loadWarranties() {
+
+    try {
+
+        const warrantiesRef =
+            collection(
+                db,
+                "users",
+                currentUser.uid,
+                "warranties"
+            );
+
+
+        const snapshot =
+            await getDocs(
+                warrantiesRef
+            );
+
+
+        warranties = [];
+
+
+        snapshot.forEach(
+            warrantyDoc => {
+
+                const data =
+                    warrantyDoc.data();
+
+
+                warranties.push({
+
+                    id:
+                        warrantyDoc.id,
+
+                    ...data,
+
+                    status:
+                        getWarrantyStatus(
+                            data.warrantyExpiryDate
+                        )
+
+                });
+
+            }
+        );
+
+
+        renderStats();
+
+        renderWarrantyTable();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Warranty loading error:",
+            error
+        );
+
+    }
+
+}
+
+
+
+/* =========================================================
+   STATS
+========================================================= */
+
+function renderStats() {
+
+    let active = 0;
+
+    let expiring = 0;
+
+    let expired = 0;
+
+
+    warranties.forEach(
+        warranty => {
+
+            if (
+                warranty.status ===
+                "Active"
+            ) {
+
+                active++;
+
+            }
+
+            else if (
+                warranty.status ===
+                "Expiring Soon"
+            ) {
+
+                expiring++;
+
+            }
+
+            else if (
+                warranty.status ===
+                "Expired"
+            ) {
+
+                expired++;
+
+            }
+
+        }
+    );
+
+
+    activeWarrantyCount.textContent =
+        active;
+
+    expiringWarrantyCount.textContent =
+        expiring;
+
+    expiredWarrantyCount.textContent =
+        expired;
+
+    totalWarrantyCount.textContent =
+        warranties.length;
+
+
+    if (expiring > 0) {
+
+        warrantyReminderText.textContent =
+            `${expiring} warranty ${
+                expiring === 1
+                    ? "is"
+                    : "are"
+            } expiring within the next 30 days.`;
+
+    }
+
+    else {
+
+        warrantyReminderText.textContent =
+            "No warranties are currently expiring soon.";
+
+    }
+
+}
+
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+function renderWarrantyTable() {
+
+    const filter =
+        warrantyFilter.value;
+
+
+    let filtered =
+        [...warranties];
+
+
+    if (filter !== "all") {
+
+        const statusMap = {
+
+            active:
+                "Active",
+
+            expiring:
+                "Expiring Soon",
+
+            expired:
+                "Expired"
+
+        };
+
+
+        filtered =
+            filtered.filter(
+                warranty =>
+                    warranty.status ===
+                    statusMap[filter]
+            );
+
+    }
+
+
+    filtered.sort(
+        (a, b) => {
+
+            const first =
+                normalizeDate(
+                    a.warrantyExpiryDate
+                );
+
+            const second =
+                normalizeDate(
+                    b.warrantyExpiryDate
+                );
+
+
+            return (
+                (first?.getTime() || 0) -
+                (second?.getTime() || 0)
+            );
+
+        }
+    );
+
+
+    warrantyTableBody.innerHTML =
+        "";
+
+
+    if (filtered.length === 0) {
+
+        warrantyEmpty.style.display =
+            "block";
+
+        return;
+
+    }
+
+
+    warrantyEmpty.style.display =
+        "none";
+
+
+    filtered.forEach(
+        warranty => {
+
+            const row =
+                document.createElement(
+                    "tr"
+                );
+
+
+            row.innerHTML = `
+
+                <td>
+
+                    <div class="warranty-product-cell">
+
+                        <div class="warranty-product-icon">
+                            ♢
+                        </div>
+
+                        <div class="warranty-product-info">
+
+                            <strong>
+                                ${escapeHTML(
+                                    warranty.productName
+                                )}
+                            </strong>
+
+                            <small>
+                                ${escapeHTML(
+                                    warranty.warrantyDuration ||
+                                    "Warranty"
+                                )}
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </td>
+
+
+                <td>
+                    ${escapeHTML(
+                        warranty.storeName ||
+                        "—"
+                    )}
+                </td>
+
+
+                <td>
+                    ${formatDate(
+                        warranty.purchaseDate
+                    )}
+                </td>
+
+
+                <td>
+                    ${formatDate(
+                        warranty.warrantyExpiryDate
+                    )}
+                </td>
+
+
+                <td>
+                    ${getStatusBadge(
+                        warranty.status
+                    )}
+                </td>
+
+
+                <td>
+
+                    <div class="warranty-action-group">
+
+                        <button
+                            type="button"
+                            class="warranty-edit-btn"
+                            data-edit="${warranty.id}">
+                            Edit
+                        </button>
+
+                        <button
+                            type="button"
+                            class="warranty-delete-btn"
+                            data-delete="${warranty.id}">
+                            Delete
+                        </button>
+
+                    </div>
+
+                </td>
+
+            `;
+
+
+            warrantyTableBody.appendChild(
+                row
+            );
+
+        }
+    );
+
+}
+
+
+
+/* =========================================================
+   STATUS BADGE
+========================================================= */
+
+function getStatusBadge(status) {
+
+    let className =
+        "warranty-status-active";
+
+
+    if (
+        status === "Expiring Soon"
+    ) {
+
+        className =
+            "warranty-status-expiring";
+
+    }
+
+    else if (
+        status === "Expired"
+    ) {
+
+        className =
+            "warranty-status-expired";
+
+    }
+
+
+    return `
+        <span class="warranty-status-badge ${className}">
+            ${escapeHTML(status)}
+        </span>
+    `;
+
+}
+
+
+
+/* =========================================================
+   TABLE ACTIONS
+========================================================= */
+
+document.addEventListener(
+    "click",
+    async event => {
+
+        const editButton =
+            event.target.closest(
+                "[data-edit]"
+            );
+
+
+        const deleteButton =
+            event.target.closest(
+                "[data-delete]"
+            );
+
+
+        if (editButton) {
+
+            editWarranty(
+                editButton.dataset.edit
+            );
+
+        }
+
+
+        if (deleteButton) {
+
+            await deleteWarranty(
+                deleteButton.dataset.delete
+            );
+
+        }
+
+    }
+);
+
+
+
+/* =========================================================
+   EDIT
+========================================================= */
+
+function editWarranty(id) {
+
+    const warranty =
+        warranties.find(
+            item =>
+                item.id === id
+        );
+
+
+    if (!warranty) {
+        return;
+    }
+
+
+    /*
+       Existing records can still be edited,
+       but editing is done through a simple
+       browser prompt so the main new flow
+       stays clean.
+    */
+
+    const newDuration =
+        prompt(
+            "Enter new warranty duration:",
+            warranty.warrantyDuration || ""
+        );
+
+
+    if (!newDuration) {
+        return;
+    }
+
+
+    const expiry =
+        calculateExpiry(
+            warranty.purchaseDate,
+            newDuration
+        );
+
+
+    if (!expiry) {
+
+        alert(
+            "Please use a valid duration such as 1 Year or 6 Months."
+        );
+
+        return;
+
+    }
+
+
+    updateExistingWarranty(
+        id,
+        newDuration,
+        expiry
+    );
+
+}
+
+
+
+/* =========================================================
+   UPDATE
+========================================================= */
+
+async function updateExistingWarranty(
+    id,
+    duration,
+    expiry
+) {
+
+    try {
+
+        await updateDoc(
+            doc(
+                db,
+                "users",
+                currentUser.uid,
+                "warranties",
+                id
+            ),
+            {
+
+                warrantyDuration:
+                    duration,
+
+                warrantyExpiryDate:
+                    toISODate(expiry),
+
+                status:
+                    getWarrantyStatus(expiry)
+
+            }
+        );
+
+
+        await loadWarranties();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Warranty update error:",
+            error
+        );
+
+
+        alert(
+            "Unable to update warranty.\n\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+
+/* =========================================================
+   DELETE
+========================================================= */
+
+async function deleteWarranty(id) {
+
+    const confirmed =
+        confirm(
+            "Are you sure you want to delete this warranty?"
+        );
+
+
+    if (!confirmed) {
+        return;
+    }
+
+
+    try {
+
+        await deleteDoc(
+            doc(
+                db,
+                "users",
+                currentUser.uid,
+                "warranties",
+                id
+            )
+        );
+
+
+        await loadWarranties();
+
+
+        /*
+           Refresh item status if a receipt
+           is currently selected.
+        */
+
+        if (selectedReceipt) {
+            await renderReceiptItems();
+        }
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Warranty delete error:",
+            error
+        );
+
+
+        alert(
+            "Unable to delete warranty.\n\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+
+/* =========================================================
+   FILTER
+========================================================= */
+
+warrantyFilter.addEventListener(
+    "change",
+    renderWarrantyTable
+);
+
+
+
+/* =========================================================
+   PROFILE
+========================================================= */
+
+profileButton?.addEventListener(
+    "click",
+    () => {
+
+        profileModal.style.display =
+            "flex";
+
+        profileEmailInput.value =
+            currentUser?.email || "";
+
+    }
+);
+
+
+closeProfileModal?.addEventListener(
+    "click",
+    () => {
+
+        profileModal.style.display =
+            "none";
+
+    }
+);
+
+
+profileModal?.addEventListener(
+    "click",
+    event => {
+
+        if (
+            event.target ===
+            profileModal
+        ) {
+
+            profileModal.style.display =
+                "none";
+
+        }
+
+    }
+);
+
+
+saveProfile?.addEventListener(
+    "click",
+    () => {
+
+        const name =
+            profileNameInput.value.trim();
+
+
+        if (!name) {
+
+            profileMessage.textContent =
+                "Please enter your name.";
+
+            profileMessage.style.color =
+                "#d92d20";
+
+            return;
+
+        }
+
+
+        profileName.textContent =
+            name;
+
+
+        profileMessage.textContent =
+            "Profile updated.";
+
+        profileMessage.style.color =
+            "#16834b";
+
+    }
+);
+
+
+
+/* =========================================================
+   AUTH
+========================================================= */
 
 onAuthStateChanged(
     auth,
-    async (user) => {
+    async user => {
 
-        currentUser = user;
+        if (!user) {
 
-        if (currentUser) {
-            await loadReceipts();
+            window.location.href =
+                "login.html";
+
+            return;
+
         }
+
+
+        currentUser =
+            user;
+
+
+        const initial =
+            user.email
+                ?.charAt(0)
+                ?.toUpperCase() ||
+            "U";
+
+
+        profileAvatar.textContent =
+            initial;
+
+        profileLargeAvatar.textContent =
+            initial;
+
+
+        profileName.textContent =
+            user.displayName ||
+            "User";
+
+
+        profileNameInput.value =
+            user.displayName || "";
+
+
+        profileEmailInput.value =
+            user.email || "";
+
+
+        await loadWarranties();
+
+        await loadReceipts();
+
     }
 );

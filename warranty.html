@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SHOPIX | Warranties</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/warranty.css">
+</head>
+
+
+<body>
+
+<div class="dashboard-layout">
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar">
+
+        <a href="index.html" class="sidebar-logo">
+            <span class="logo-icon">S</span>
+            <span>SHOPIX</span>
+        </a>
+
+
+        <nav class="sidebar-nav">
+
+            <p class="nav-title">MAIN MENU</p>
+
+            <a href="dashboard.html" class="nav-item">
+                <span class="nav-icon">▦</span>
+                Dashboard
+            </a>
+
+            <a href="receiptHistory.html" class="nav-item">
+                <span class="nav-icon">▤</span>
+                Receipts
+            </a>
+
+            <a href="receiptScanner.html" class="nav-item">
+                <span class="nav-icon">↑</span>
+                Upload Receipt
+            </a>
+
+            <a href="expenseAnalytics.html" class="nav-item">
+                <span class="nav-icon">◫</span>
+                Expenses
+            </a>
+
+            <a href="reports.html" class="nav-item">
+                <span class="nav-icon">▤</span>
+                Reports
+            </a>
+
+            <a href="warranty.html" class="nav-item active">
+                <span class="nav-icon">♢</span>
+                Warranties
+            </a>
+
+            <a href="settings.html" class="nav-item">
+                <span class="nav-icon">⚙</span>
+                Settings
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <div class="help-box">
+                <div class="help-icon">?</div>
+
+                <div>
+                    <strong>Need Help?</strong>
+                    <span>We're here for you</span>
+                </div>
+            </div>
+
+
+            <a href="index.html" class="logout-btn">
+                <span>↪</span>
+                Logout
+            </a>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main class="main-content">
+
+        <!-- TOP HEADER -->
+
+        <header class="top-header">
+
+            <div class="header-left">
+
+                <button
+                    type="button"
+                    class="mobile-menu-btn">
+                    ☰
+                </button>
+
+                <div>
+
+                    <span class="header-label">
+                        SHOPIX WARRANTY MANAGEMENT
+                    </span>
+
+                    <h2>Warranties</h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="header-right">
+
+                <button
+                    type="button"
+                    class="notification-btn">
+                    ♧
+                    <span></span>
+                </button>
+
+
+                <div
+                    class="top-user"
+                    id="profileButton">
+
+                    <div
+                        class="top-avatar"
+                        id="profileAvatar">
+                        U
+                    </div>
+
+                    <div>
+
+                        <strong id="profileName">
+                            User
+                        </strong>
+
+                        <small>
+                            Account
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- ================= CONTENT ================= -->
+
+        <section class="warranty-content">
+
+
+            <!-- PAGE HEADER -->
+
+            <div class="warranty-page-header">
+
+                <div>
+
+                    <p class="page-kicker">
+                        WARRANTY MANAGEMENT
+                    </p>
+
+                    <h1>
+                        Protect Your Purchases
+                    </h1>
+
+                    <p>
+                        Select a saved receipt, choose the products,
+                        and add their warranty duration.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ================= STATS ================= -->
+
+            <div class="warranty-stats-grid">
+
+                <div class="warranty-stat-card">
+
+                    <div class="warranty-stat-icon blue">
+                        ♢
+                    </div>
+
+                    <div>
+                        <span>ACTIVE WARRANTIES</span>
+
+                        <strong id="activeWarrantyCount">
+                            0
+                        </strong>
+
+                        <small>
+                            Currently protected
+                        </small>
+                    </div>
+
+                </div>
+
+
+                <div class="warranty-stat-card">
+
+                    <div class="warranty-stat-icon orange">
+                        !
+                    </div>
+
+                    <div>
+                        <span>EXPIRING SOON</span>
+
+                        <strong id="expiringWarrantyCount">
+                            0
+                        </strong>
+
+                        <small>
+                            Within 30 days
+                        </small>
+                    </div>
+
+                </div>
+
+
+                <div class="warranty-stat-card">
+
+                    <div class="warranty-stat-icon red">
+                        ×
+                    </div>
+
+                    <div>
+                        <span>EXPIRED</span>
+
+                        <strong id="expiredWarrantyCount">
+                            0
+                        </strong>
+
+                        <small>
+                            Warranty completed
+                        </small>
+                    </div>
+
+                </div>
+
+
+                <div class="warranty-stat-card">
+
+                    <div class="warranty-stat-icon purple">
+                        #
+                    </div>
+
+                    <div>
+                        <span>TOTAL WARRANTIES</span>
+
+                        <strong id="totalWarrantyCount">
+                            0
+                        </strong>
+
+                        <small>
+                            All saved warranties
+                        </small>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ================= REMINDER ================= -->
+
+            <div class="warranty-reminder">
+
+                <div class="reminder-icon">
+                    !
+                </div>
+
+                <div class="reminder-content">
+
+                    <strong>
+                        Warranty Reminder
+                    </strong>
+
+                    <p id="warrantyReminderText">
+                        No warranties are currently expiring soon.
+                    </p>
+
+                </div>
+
+                <a
+                    href="#warrantyRecords"
+                    class="reminder-link">
+                    View Warranties →
+                </a>
+
+            </div>
+
+
+
+            <!-- =====================================================
+                 ADD WARRANTY FROM RECEIPT
+            ====================================================== -->
+
+            <div class="dashboard-card warranty-add-card">
+
+
+                <!-- CARD HEADER -->
+
+                <div class="warranty-add-header">
+
+                    <div class="add-header-icon">
+                        +
+                    </div>
+
+                    <div>
+
+                        <span>
+                            ADD WARRANTY
+                        </span>
+
+                        <h3>
+                            Add Warranty from Receipt
+                        </h3>
+
+                        <p>
+                            Select a receipt and choose the products
+                            for which you want to track warranty.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- STEP 1 -->
+
+                <div class="warranty-step">
+
+                    <div class="step-number">
+                        1
+                    </div>
+
+                    <div class="step-content">
+
+                        <h4>
+                            Select a Receipt
+                        </h4>
+
+                        <p>
+                            Choose the receipt containing your purchase.
+                        </p>
+
+
+                        <select
+                            id="receiptSelect"
+                            class="receipt-select">
+
+                            <option value="">
+                                Select a saved receipt
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- RECEIPT INFORMATION -->
+
+                <div
+                    id="receiptInfo"
+                    class="receipt-info"
+                    style="display:none;">
+
+                    <div class="receipt-info-item">
+
+                        <span>
+                            STORE
+                        </span>
+
+                        <strong id="receiptStore">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="receipt-info-item">
+
+                        <span>
+                            PURCHASE DATE
+                        </span>
+
+                        <strong id="receiptPurchaseDate">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="receipt-info-item">
+
+                        <span>
+                            ITEMS
+                        </span>
+
+                        <strong id="receiptItemCount">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- STEP 2 -->
+
+                <div
+                    id="itemStep"
+                    class="warranty-step"
+                    style="display:none;">
+
+                    <div class="step-number">
+                        2
+                    </div>
+
+                    <div class="step-content">
+
+                        <h4>
+                            Select a Product
+                        </h4>
+
+                        <p>
+                            Choose the product for which you want
+                            to add warranty.
+                        </p>
+
+
+                        <div
+                            id="receiptItems"
+                            class="receipt-items">
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- STEP 3 -->
+
+                <div
+                    id="durationStep"
+                    class="warranty-step duration-step"
+                    style="display:none;">
+
+                    <div class="step-number">
+                        3
+                    </div>
+
+                    <div class="step-content">
+
+                        <h4>
+                            Add Warranty Duration
+                        </h4>
+
+                        <p>
+                            Select the warranty period for the
+                            selected product.
+                        </p>
+
+
+                        <!-- SELECTED PRODUCT -->
+
+                        <div class="selected-product-box">
+
+                            <div class="selected-product-icon">
+                                ♢
+                            </div>
+
+                            <div>
+
+                                <span>
+                                    SELECTED PRODUCT
+                                </span>
+
+                                <strong id="selectedProductName">
+                                    —
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- DURATION -->
+
+                        <label
+                            for="warrantyDuration"
+                            class="duration-label">
+
+                            Warranty Duration
+
+                        </label>
+
+
+                        <select
+                            id="warrantyDuration"
+                            class="duration-select">
+
+                            <option value="">
+                                Select warranty duration
+                            </option>
+
+                            <option value="6 Months">
+                                6 Months
+                            </option>
+
+                            <option value="1 Year">
+                                1 Year
+                            </option>
+
+                            <option value="2 Years">
+                                2 Years
+                            </option>
+
+                            <option value="3 Years">
+                                3 Years
+                            </option>
+
+                            <option value="5 Years">
+                                5 Years
+                            </option>
+
+                            <option value="CUSTOM">
+                                Custom Duration
+                            </option>
+
+                        </select>
+
+
+
+                        <!-- CUSTOM DURATION -->
+
+                        <div
+                            id="customDurationBox"
+                            class="custom-duration-box"
+                            style="display:none;">
+
+                            <input
+                                type="number"
+                                id="customDurationValue"
+                                min="1"
+                                placeholder="Enter number">
+
+                            <select
+                                id="customDurationUnit">
+
+                                <option value="Months">
+                                    Months
+                                </option>
+
+                                <option value="Years">
+                                    Years
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+
+                        <!-- EXPIRY PREVIEW -->
+
+                        <div
+                            id="expiryPreview"
+                            class="expiry-preview"
+                            style="display:none;">
+
+                            <span>
+                                WARRANTY EXPIRY
+                            </span>
+
+                            <strong id="calculatedExpiry">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <button
+                            type="button"
+                            id="addWarrantyBtn"
+                            class="primary-warranty-btn">
+
+                            Add Warranty
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- ================= NEXT ITEM QUESTION ================= -->
+
+                <div
+                    id="anotherItemBox"
+                    class="another-item-box"
+                    style="display:none;">
+
+                    <div class="success-icon">
+                        ✓
+                    </div>
+
+                    <div class="another-item-content">
+
+                        <strong>
+                            Warranty added successfully!
+                        </strong>
+
+                        <p id="anotherItemQuestion">
+                            Do you want to add warranty for another
+                            item from this store?
+                        </p>
+
+                    </div>
+
+
+                    <div class="another-item-actions">
+
+                        <button
+                            type="button"
+                            id="yesAnotherItemBtn"
+                            class="primary-warranty-btn">
+
+                            Yes, Add Another
+
+                        </button>
+
+
+                        <button
+                            type="button"
+                            id="noAnotherItemBtn"
+                            class="secondary-warranty-btn">
+
+                            No, Done
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- NO ITEMS -->
+
+                <div
+                    id="noReceiptItems"
+                    class="no-items-box"
+                    style="display:none;">
+
+                    <div class="no-items-icon">
+                        !
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            No products found
+                        </strong>
+
+                        <p>
+                            This receipt does not contain any
+                            saved product items.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ================= RECORDS ================= -->
+
+            <div
+                class="dashboard-card warranty-records-card"
+                id="warrantyRecords">
+
+
+                <div class="card-header warranty-card-header">
+
+                    <div>
+
+                        <h3>
+                            Warranty Records
+                        </h3>
+
+                        <p>
+                            All your saved product warranties.
+                        </p>
+
+                    </div>
+
+
+                    <select
+                        id="warrantyFilter"
+                        class="warranty-filter">
+
+                        <option value="all">
+                            All Warranties
+                        </option>
+
+                        <option value="active">
+                            Active
+                        </option>
+
+                        <option value="expiring">
+                            Expiring Soon
+                        </option>
+
+                        <option value="expired">
+                            Expired
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <div class="warranty-table-wrapper">
+
+                    <table class="warranty-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>PRODUCT</th>
+                                <th>STORE</th>
+                                <th>PURCHASE DATE</th>
+                                <th>EXPIRY DATE</th>
+                                <th>STATUS</th>
+                                <th>ACTION</th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="warrantyTableBody">
+                        </tbody>
+
+                    </table>
+
+
+                    <div
+                        id="warrantyEmpty"
+                        class="warranty-empty-state">
+
+                        <div class="empty-icon">
+                            ♢
+                        </div>
+
+                        <strong>
+                            No warranty records found
+                        </strong>
+
+                        <p>
+                            Select a receipt above to start
+                            adding warranties.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= PROFILE MODAL ================= -->
+
+        <div
+            id="profileModal"
+            class="profile-modal">
+
+            <div class="profile-modal-content">
+
+                <div class="profile-modal-header">
+
+                    <h2>
+                        My Profile
+                    </h2>
+
+                    <button
+                        type="button"
+                        id="closeProfileModal"
+                        class="profile-close-btn">
+                        ×
+                    </button>
+
+                </div>
+
+
+                <div class="profile-avatar-section">
+
+                    <div
+                        id="profileLargeAvatar"
+                        class="profile-large-avatar">
+                        U
+                    </div>
+
+                </div>
+
+
+                <div class="profile-form-group">
+
+                    <label for="profileNameInput">
+                        Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="profileNameInput"
+                        placeholder="Enter your name">
+
+                </div>
+
+
+                <div class="profile-form-group">
+
+                    <label for="profileEmailInput">
+                        Email
+                    </label>
+
+                    <input
+                        type="email"
+                        id="profileEmailInput"
+                        readonly>
+
+                </div>
+
+
+                <div
+                    id="profileMessage"
+                    class="profile-message">
+                </div>
+
+
+                <button
+                    type="button"
+                    id="saveProfile"
+                    class="profile-save-btn">
+
+                    Save Changes
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- FOOTER -->
+
+        <footer class="dashboard-footer">
+
+            <span>
+                © 2026 SHOPIX
+            </span>
+
+            <span>
+                AI Powered Smart Receipt & Shopping Assistant
+            </span>
+
+        </footer>
+
+    </main>
+
+</div>
+
+
+<script>
+    self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+</script>
+
+<script
+    type="module"
+    src="js/warranty.js">
+</script>
+
+</body>
+</html>
