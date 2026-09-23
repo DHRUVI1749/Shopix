@@ -3079,3 +3079,643 @@ onAuthStateChanged(
 
     }
 );
+
+// ==========================================
+// DASHBOARD WARRANTY DATA
+// ==========================================
+
+const dashboardWarrantyTotal =
+    document.getElementById("dashboardWarrantyTotal");
+
+const dashboardWarrantyExpiring =
+    document.getElementById("dashboardWarrantyExpiring");
+
+const dashboardWarrantyList =
+    document.getElementById("dashboardWarrantyList");
+
+
+// ==========================================
+// LOAD DASHBOARD WARRANTIES
+// ==========================================
+
+async function loadDashboardWarranties(user) {
+
+    if (!user) {
+        return;
+    }
+
+    try {
+
+        const warrantiesRef = collection(
+            db,
+            "users",
+            user.uid,
+            "warranties"
+        );
+
+        const snapshot = await getDocs(
+            warrantiesRef
+        );
+
+        const warranties = [];
+
+        snapshot.forEach(function (docSnapshot) {
+
+            const data = docSnapshot.data();
+
+            warranties.push({
+                id: docSnapshot.id,
+                ...data
+            });
+
+        });
+
+
+        // ==================================
+        // TOTAL WARRANTY COUNT
+        // ==================================
+
+        if (dashboardWarrantyTotal) {
+
+            dashboardWarrantyTotal.textContent =
+                warranties.length;
+
+        }
+
+
+        // ==================================
+        // CALCULATE WARRANTY STATUS
+        // ==================================
+
+        const today = new Date();
+
+        today.setHours(
+            0,
+            0,
+            0,
+            0
+        );
+
+        let expiringCount = 0;
+
+        warranties.forEach(function (warranty) {
+
+            const expiryDate =
+                parseWarrantyDate(
+                    warranty.warrantyExpiryDate
+                );
+
+            if (!expiryDate) {
+                return;
+            }
+
+            const difference =
+                expiryDate.getTime() -
+                today.getTime();
+
+            const daysLeft =
+                Math.ceil(
+                    difference /
+                    (1000 * 60 * 60 * 24)
+                );
+
+
+            if (
+                daysLeft >= 0 &&
+                daysLeft <= 30
+            ) {
+
+                expiringCount++;
+
+            }
+
+        });
+
+
+        // ==================================
+        // EXPIRING COUNT
+        // ==================================
+
+        if (dashboardWarrantyExpiring) {
+
+            dashboardWarrantyExpiring.textContent =
+                expiringCount;
+
+        }
+
+
+        // ==================================
+        // SORT WARRANTIES
+        // ==================================
+
+        warranties.sort(function (a, b) {
+
+            const dateA =
+                parseWarrantyDate(
+                    a.warrantyExpiryDate
+                );
+
+            const dateB =
+                parseWarrantyDate(
+                    b.warrantyExpiryDate
+                );
+
+            if (!dateA) {
+                return 1;
+            }
+
+            if (!dateB) {
+                return -1;
+            }
+
+            return (
+                dateA.getTime() -
+                dateB.getTime()
+            );
+
+        });
+
+
+        // ==================================
+        // SHOW WARRANTY ALERTS
+        // ==================================
+
+        renderDashboardWarrantyAlerts(
+            warranties
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Dashboard warranty error:",
+            error
+        );
+
+        if (dashboardWarrantyTotal) {
+            dashboardWarrantyTotal.textContent = "0";
+        }
+
+        if (dashboardWarrantyExpiring) {
+            dashboardWarrantyExpiring.textContent = "0";
+        }
+
+        if (dashboardWarrantyList) {
+
+            dashboardWarrantyList.innerHTML = `
+                <div class="receipt-row">
+                    <div class="receipt-store-icon">
+                        !
+                    </div>
+
+                    <div class="receipt-info">
+                        <strong>
+                            Unable to load warranties
+                        </strong>
+
+                        <span>
+                            Please try again later
+                        </span>
+                    </div>
+                </div>
+            `;
+
+        }
+
+    }
+
+}
+
+
+// ==========================================
+// RENDER WARRANTY ALERTS
+// ==========================================
+
+function renderDashboardWarrantyAlerts(
+    warranties
+) {
+
+    if (!dashboardWarrantyList) {
+        return;
+    }
+
+
+    const today = new Date();
+
+    today.setHours(
+        0,
+        0,
+        0,
+        0
+    );
+
+
+    const activeWarranties = warranties.filter(
+        function (warranty) {
+
+            const expiryDate =
+                parseWarrantyDate(
+                    warranty.warrantyExpiryDate
+                );
+
+            if (!expiryDate) {
+                return false;
+            }
+
+            const difference =
+                expiryDate.getTime() -
+                today.getTime();
+
+            const daysLeft =
+                Math.ceil(
+                    difference /
+                    (1000 * 60 * 60 * 24)
+                );
+
+            return daysLeft >= 0;
+
+        }
+    );
+
+
+    // ==================================
+    // NO ACTIVE WARRANTIES
+    // ==================================
+
+    if (activeWarranties.length === 0) {
+
+        dashboardWarrantyList.innerHTML = `
+            <div class="receipt-row">
+
+                <div class="receipt-store-icon">
+                    ✓
+                </div>
+
+                <div class="receipt-info">
+
+                    <strong>
+                        No active warranties
+                    </strong>
+
+                    <span>
+                        Your warranty alerts will appear here
+                    </span>
+
+                </div>
+
+            </div>
+        `;
+
+        return;
+    }
+
+
+    // Show maximum 5 warranties
+    const visibleWarranties =
+        activeWarranties.slice(
+            0,
+            5
+        );
+
+
+    dashboardWarrantyList.innerHTML = "";
+
+
+    visibleWarranties.forEach(
+        function (warranty) {
+
+            const expiryDate =
+                parseWarrantyDate(
+                    warranty.warrantyExpiryDate
+                );
+
+            if (!expiryDate) {
+                return;
+            }
+
+
+            const difference =
+                expiryDate.getTime() -
+                today.getTime();
+
+
+            const daysLeft =
+                Math.ceil(
+                    difference /
+                    (1000 * 60 * 60 * 24)
+                );
+
+
+            const isExpiringSoon =
+                daysLeft <= 30;
+
+
+            let statusText =
+                "Active";
+
+            let statusClass =
+                "dashboard-warranty-active";
+
+
+            if (isExpiringSoon) {
+
+                statusText =
+                    daysLeft === 0
+                        ? "Expires today"
+                        : `${daysLeft} days left`;
+
+                statusClass =
+                    "dashboard-warranty-warning";
+
+            }
+            else {
+
+                statusText =
+                    `${daysLeft} days left`;
+
+            }
+
+
+            const productName =
+                warranty.productName ||
+                "Warranty Item";
+
+
+            const storeName =
+                warranty.storeName ||
+                "Unknown Store";
+
+
+            const row =
+                document.createElement(
+                    "div"
+                );
+
+            row.className =
+                "receipt-row";
+
+
+            row.innerHTML = `
+
+                <div class="receipt-store-icon">
+                    ✓
+                </div>
+
+                <div class="receipt-info warranty-info">
+
+                    <strong>
+                        ${escapeDashboardHTML(
+                            productName
+                        )}
+                    </strong>
+
+                    <span>
+                        ${escapeDashboardHTML(
+                            storeName
+                        )}
+                        •
+                        Expires
+                        ${formatWarrantyDate(
+                            expiryDate
+                        )}
+                    </span>
+
+                </div>
+
+                <span class="
+                    dashboard-warranty-status
+                    ${statusClass}
+                ">
+                    ${escapeDashboardHTML(
+                        statusText
+                    )}
+                </span>
+
+            `;
+
+
+            dashboardWarrantyList.appendChild(
+                row
+            );
+
+        }
+    );
+
+}
+
+
+// ==========================================
+// PARSE WARRANTY DATE
+// ==========================================
+
+function parseWarrantyDate(value) {
+
+    if (!value) {
+        return null;
+    }
+
+
+    // Firestore Timestamp
+    if (
+        typeof value.toDate ===
+        "function"
+    ) {
+
+        const date =
+            value.toDate();
+
+        date.setHours(
+            0,
+            0,
+            0,
+            0
+        );
+
+        return date;
+
+    }
+
+
+    // JavaScript Date
+    if (
+        value instanceof Date
+    ) {
+
+        const date =
+            new Date(value);
+
+        date.setHours(
+            0,
+            0,
+            0,
+            0
+        );
+
+        return date;
+
+    }
+
+
+    // YYYY-MM-DD
+    if (
+        typeof value ===
+        "string"
+    ) {
+
+        const match =
+            value.match(
+                /^(\d{4})-(\d{2})-(\d{2})$/
+            );
+
+        if (match) {
+
+            const date =
+                new Date(
+                    Number(match[1]),
+                    Number(match[2]) - 1,
+                    Number(match[3])
+                );
+
+            date.setHours(
+                0,
+                0,
+                0,
+                0
+            );
+
+            return date;
+
+        }
+
+
+        // DD-MM-YYYY
+        const indianMatch =
+            value.match(
+                /^(\d{2})-(\d{2})-(\d{4})$/
+            );
+
+        if (indianMatch) {
+
+            const date =
+                new Date(
+                    Number(indianMatch[3]),
+                    Number(indianMatch[2]) - 1,
+                    Number(indianMatch[1])
+                );
+
+            date.setHours(
+                0,
+                0,
+                0,
+                0
+            );
+
+            return date;
+
+        }
+
+
+        // Normal date string
+        const date =
+            new Date(value);
+
+        if (
+            !isNaN(
+                date.getTime()
+            )
+        ) {
+
+            date.setHours(
+                0,
+                0,
+                0,
+                0
+            );
+
+            return date;
+
+        }
+
+    }
+
+
+    return null;
+
+}
+
+
+// ==========================================
+// FORMAT WARRANTY DATE
+// ==========================================
+
+function formatWarrantyDate(
+    date
+) {
+
+    if (!date) {
+        return "N/A";
+    }
+
+    return date.toLocaleDateString(
+        "en-IN",
+        {
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
+        }
+    );
+
+}
+
+
+// ==========================================
+// ESCAPE HTML
+// ==========================================
+
+function escapeDashboardHTML(
+    value
+) {
+
+    return String(value || "")
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+// ==========================================
+// WARRANTY AUTH LISTENER
+// ==========================================
+
+onAuthStateChanged(
+    auth,
+    function (user) {
+
+        if (user) {
+
+            loadDashboardWarranties(
+                user
+            );
+
+        }
+
+    }
+);

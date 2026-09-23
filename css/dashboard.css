@@ -1980,3 +1980,53 @@ button {
     }
 
 }
+
+/* ==========================================
+   DASHBOARD WARRANTY
+========================================== */
+
+.dashboard-warranty-status {
+    margin-left: auto;
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.dashboard-warranty-active {
+    background: #eaf7ef;
+    color: #198754;
+}
+
+.dashboard-warranty-warning {
+    background: #fff4df;
+    color: #b66a00;
+}
+
+.warranty-info {
+    min-width: 0;
+}
+
+.warranty-info strong {
+    display: block;
+    color: #17365d;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.warranty-info span {
+    display: block;
+    color: #8a9ab0;
+    font-size: 11px;
+    margin-top: 4px;
+}
+
+@media (max-width: 650px) {
+
+    .dashboard-warranty-status {
+        font-size: 9px;
+        padding: 4px 7px;
+    }
+
+}
