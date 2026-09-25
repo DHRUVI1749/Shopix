@@ -83,6 +83,31 @@ const chartDescription =
 
 
 // ==========================================
+// NOTIFICATION ELEMENTS
+// ==========================================
+
+const notificationButton =
+    document.getElementById("notificationButton");
+
+const notificationBadge =
+    document.getElementById("notificationBadge");
+
+const notificationPanel =
+    document.getElementById("notificationPanel");
+
+const notificationList =
+    document.getElementById("notificationList");
+
+const notificationSummary =
+    document.getElementById("notificationSummary");
+
+const markAllNotificationsRead =
+    document.getElementById(
+        "markAllNotificationsRead"
+    );
+
+
+// ==========================================
 // PROFILE
 // ==========================================
 
@@ -2877,221 +2902,23 @@ if (logoutButton) {
 
 
 // ==========================================
-// AUTH STATE
-// ==========================================
-
-onAuthStateChanged(
-    auth,
-    function (user) {
-
-        if (user) {
-
-            // ==================================
-            // USER LOGGED IN
-            // ==================================
-
-            currentUser =
-                user;
-
-
-            avatarRemoved =
-                false;
-
-
-            console.log(
-                "✅ Dashboard user:",
-                user.uid
-            );
-
-
-            sessionStorage.removeItem(
-                "loggedOut"
-            );
-
-
-            // ==================================
-            // PROFILE NAME
-            // ==================================
-
-            const displayName =
-                user.displayName ||
-                "User";
-
-
-            if (profileName) {
-
-                profileName.textContent =
-                    displayName;
-
-            }
-
-
-            // ==================================
-            // PROFILE AVATAR
-            // ==================================
-
-            if (profileAvatar) {
-
-                if (user.photoURL) {
-
-                    profileAvatar.innerHTML = `
-                        <img
-                            src="${user.photoURL}"
-                            alt="Profile Avatar"
-                            style="
-                                width:100%;
-                                height:100%;
-                                object-fit:cover;
-                                border-radius:50%;
-                            "
-                        >
-                    `;
-
-                }
-
-                else {
-
-                    profileAvatar.textContent =
-                        displayName
-                            .charAt(0)
-                            .toUpperCase();
-
-                }
-
-            }
-
-
-            // ==================================
-            // LARGE AVATAR
-            // ==================================
-
-            if (profileLargeAvatar) {
-
-                if (user.photoURL) {
-
-                    profileLargeAvatar.innerHTML = `
-                        <img
-                            src="${user.photoURL}"
-                            alt="Profile Avatar"
-                            style="
-                                width:100%;
-                                height:100%;
-                                object-fit:cover;
-                                border-radius:50%;
-                            "
-                        >
-                    `;
-
-                }
-
-                else {
-
-                    profileLargeAvatar.textContent =
-                        displayName
-                            .charAt(0)
-                            .toUpperCase();
-
-                }
-
-            }
-
-
-            // ==================================
-            // PROFILE INPUTS
-            // ==================================
-
-            if (profileNameInput) {
-
-                profileNameInput.value =
-                    displayName;
-
-            }
-
-
-            if (profileEmailInput) {
-
-                profileEmailInput.value =
-                    user.email ||
-                    "";
-
-            }
-
-
-            // ==================================
-            // LOAD TOTAL + CURRENCY SUMMARY
-            // ==================================
-
-            loadDashboardData(
-                user
-            );
-
-
-            // ==================================
-            // LOAD RECENT RECEIPTS
-            // ==================================
-
-            loadRecentReceipts(
-                user
-            );
-
-
-            // ==================================
-            // LOAD SPENDING CHART
-            // ==================================
-
-            loadSpendingChart(
-                user
-            );
-
-        }
-
-        else {
-
-            // ==================================
-            // NO USER
-            // ==================================
-
-            console.log(
-                "ℹ️ No user logged in."
-            );
-
-
-            currentUser =
-                null;
-
-
-            if (receiptList) {
-
-                receiptList.innerHTML = `
-                    <p>
-                        Please login to view your receipts.
-                    </p>
-                `;
-
-            }
-
-
-            window.location.replace(
-                "loginpg.html"
-            );
-
-        }
-
-    }
-);
-
-// ==========================================
 // DASHBOARD WARRANTY DATA
 // ==========================================
 
 const dashboardWarrantyTotal =
-    document.getElementById("dashboardWarrantyTotal");
+    document.getElementById(
+        "dashboardWarrantyTotal"
+    );
 
 const dashboardWarrantyExpiring =
-    document.getElementById("dashboardWarrantyExpiring");
+    document.getElementById(
+        "dashboardWarrantyExpiring"
+    );
 
 const dashboardWarrantyList =
-    document.getElementById("dashboardWarrantyList");
+    document.getElementById(
+        "dashboardWarrantyList"
+    );
 
 
 // ==========================================
@@ -3106,29 +2933,38 @@ async function loadDashboardWarranties(user) {
 
     try {
 
-        const warrantiesRef = collection(
-            db,
-            "users",
-            user.uid,
-            "warranties"
-        );
+        const warrantiesRef =
+            collection(
+                db,
+                "users",
+                user.uid,
+                "warranties"
+            );
 
-        const snapshot = await getDocs(
-            warrantiesRef
-        );
+        const snapshot =
+            await getDocs(
+                warrantiesRef
+            );
 
         const warranties = [];
 
-        snapshot.forEach(function (docSnapshot) {
+        snapshot.forEach(
+            function (docSnapshot) {
 
-            const data = docSnapshot.data();
+                const data =
+                    docSnapshot.data();
 
-            warranties.push({
-                id: docSnapshot.id,
-                ...data
-            });
+                warranties.push({
 
-        });
+                    id:
+                        docSnapshot.id,
+
+                    ...data
+
+                });
+
+            }
+        );
 
 
         // ==================================
@@ -3147,7 +2983,8 @@ async function loadDashboardWarranties(user) {
         // CALCULATE WARRANTY STATUS
         // ==================================
 
-        const today = new Date();
+        const today =
+            new Date();
 
         today.setHours(
             0,
@@ -3158,38 +2995,45 @@ async function loadDashboardWarranties(user) {
 
         let expiringCount = 0;
 
-        warranties.forEach(function (warranty) {
+        warranties.forEach(
+            function (warranty) {
 
-            const expiryDate =
-                parseWarrantyDate(
-                    warranty.warrantyExpiryDate
-                );
+                const expiryDate =
+                    parseWarrantyDate(
+                        warranty.warrantyExpiryDate
+                    );
 
-            if (!expiryDate) {
-                return;
+                if (!expiryDate) {
+                    return;
+                }
+
+                const difference =
+                    expiryDate.getTime() -
+                    today.getTime();
+
+                const daysLeft =
+                    Math.ceil(
+                        difference /
+                        (
+                            1000 *
+                            60 *
+                            60 *
+                            24
+                        )
+                    );
+
+
+                if (
+                    daysLeft >= 0 &&
+                    daysLeft <= 30
+                ) {
+
+                    expiringCount++;
+
+                }
+
             }
-
-            const difference =
-                expiryDate.getTime() -
-                today.getTime();
-
-            const daysLeft =
-                Math.ceil(
-                    difference /
-                    (1000 * 60 * 60 * 24)
-                );
-
-
-            if (
-                daysLeft >= 0 &&
-                daysLeft <= 30
-            ) {
-
-                expiringCount++;
-
-            }
-
-        });
+        );
 
 
         // ==================================
@@ -3208,32 +3052,34 @@ async function loadDashboardWarranties(user) {
         // SORT WARRANTIES
         // ==================================
 
-        warranties.sort(function (a, b) {
+        warranties.sort(
+            function (a, b) {
 
-            const dateA =
-                parseWarrantyDate(
-                    a.warrantyExpiryDate
+                const dateA =
+                    parseWarrantyDate(
+                        a.warrantyExpiryDate
+                    );
+
+                const dateB =
+                    parseWarrantyDate(
+                        b.warrantyExpiryDate
+                    );
+
+                if (!dateA) {
+                    return 1;
+                }
+
+                if (!dateB) {
+                    return -1;
+                }
+
+                return (
+                    dateA.getTime() -
+                    dateB.getTime()
                 );
 
-            const dateB =
-                parseWarrantyDate(
-                    b.warrantyExpiryDate
-                );
-
-            if (!dateA) {
-                return 1;
             }
-
-            if (!dateB) {
-                return -1;
-            }
-
-            return (
-                dateA.getTime() -
-                dateB.getTime()
-            );
-
-        });
+        );
 
 
         // ==================================
@@ -3241,6 +3087,15 @@ async function loadDashboardWarranties(user) {
         // ==================================
 
         renderDashboardWarrantyAlerts(
+            warranties
+        );
+
+
+        // ==================================
+        // SHOW NOTIFICATIONS
+        // ==================================
+
+        renderWarrantyNotifications(
             warranties
         );
 
@@ -3253,22 +3108,30 @@ async function loadDashboardWarranties(user) {
         );
 
         if (dashboardWarrantyTotal) {
-            dashboardWarrantyTotal.textContent = "0";
+
+            dashboardWarrantyTotal.textContent =
+                "0";
+
         }
 
         if (dashboardWarrantyExpiring) {
-            dashboardWarrantyExpiring.textContent = "0";
+
+            dashboardWarrantyExpiring.textContent =
+                "0";
+
         }
 
         if (dashboardWarrantyList) {
 
             dashboardWarrantyList.innerHTML = `
                 <div class="receipt-row">
+
                     <div class="receipt-store-icon">
                         !
                     </div>
 
                     <div class="receipt-info">
+
                         <strong>
                             Unable to load warranties
                         </strong>
@@ -3276,11 +3139,19 @@ async function loadDashboardWarranties(user) {
                         <span>
                             Please try again later
                         </span>
+
                     </div>
+
                 </div>
             `;
 
         }
+
+
+        // Clear notification UI
+        renderWarrantyNotifications(
+            []
+        );
 
     }
 
@@ -3300,7 +3171,8 @@ function renderDashboardWarrantyAlerts(
     }
 
 
-    const today = new Date();
+    const today =
+        new Date();
 
     today.setHours(
         0,
@@ -3310,39 +3182,47 @@ function renderDashboardWarrantyAlerts(
     );
 
 
-    const activeWarranties = warranties.filter(
-        function (warranty) {
+    const activeWarranties =
+        warranties.filter(
+            function (warranty) {
 
-            const expiryDate =
-                parseWarrantyDate(
-                    warranty.warrantyExpiryDate
-                );
+                const expiryDate =
+                    parseWarrantyDate(
+                        warranty.warrantyExpiryDate
+                    );
 
-            if (!expiryDate) {
-                return false;
+                if (!expiryDate) {
+                    return false;
+                }
+
+                const difference =
+                    expiryDate.getTime() -
+                    today.getTime();
+
+                const daysLeft =
+                    Math.ceil(
+                        difference /
+                        (
+                            1000 *
+                            60 *
+                            60 *
+                            24
+                        )
+                    );
+
+                return daysLeft >= 0;
+
             }
-
-            const difference =
-                expiryDate.getTime() -
-                today.getTime();
-
-            const daysLeft =
-                Math.ceil(
-                    difference /
-                    (1000 * 60 * 60 * 24)
-                );
-
-            return daysLeft >= 0;
-
-        }
-    );
+        );
 
 
     // ==================================
     // NO ACTIVE WARRANTIES
     // ==================================
 
-    if (activeWarranties.length === 0) {
+    if (
+        activeWarranties.length === 0
+    ) {
 
         dashboardWarrantyList.innerHTML = `
             <div class="receipt-row">
@@ -3378,7 +3258,8 @@ function renderDashboardWarrantyAlerts(
         );
 
 
-    dashboardWarrantyList.innerHTML = "";
+    dashboardWarrantyList.innerHTML =
+        "";
 
 
     visibleWarranties.forEach(
@@ -3402,7 +3283,12 @@ function renderDashboardWarrantyAlerts(
             const daysLeft =
                 Math.ceil(
                     difference /
-                    (1000 * 60 * 60 * 24)
+                    (
+                        1000 *
+                        60 *
+                        60 *
+                        24
+                    )
                 );
 
 
@@ -3669,7 +3555,7 @@ function formatWarrantyDate(
 
 
 // ==========================================
-// ESCAPE HTML
+// ESCAPE DASHBOARD HTML
 // ==========================================
 
 function escapeDashboardHTML(
@@ -3702,7 +3588,947 @@ function escapeDashboardHTML(
 
 
 // ==========================================
-// WARRANTY AUTH LISTENER
+// SHOPIX - IN-APP WARRANTY NOTIFICATIONS
+// ==========================================
+
+
+// ==========================================
+// GET NOTIFICATION STORAGE KEY
+// ==========================================
+
+function getNotificationStorageKey() {
+
+    if (!currentUser) {
+        return "shopix_read_notifications";
+    }
+
+    return (
+        "shopix_read_notifications_" +
+        currentUser.uid
+    );
+
+}
+
+
+// ==========================================
+// GET READ NOTIFICATION IDS
+// ==========================================
+
+function getReadNotificationIds() {
+
+    try {
+
+        const key =
+            getNotificationStorageKey();
+
+        const saved =
+            localStorage.getItem(
+                key
+            );
+
+        if (!saved) {
+            return [];
+        }
+
+        const parsed =
+            JSON.parse(saved);
+
+        return Array.isArray(parsed)
+            ? parsed
+            : [];
+
+    }
+    catch (error) {
+
+        console.error(
+            "Notification storage error:",
+            error
+        );
+
+        return [];
+
+    }
+
+}
+
+
+// ==========================================
+// SAVE READ NOTIFICATION IDS
+// ==========================================
+
+function saveReadNotificationIds(
+    ids
+) {
+
+    try {
+
+        localStorage.setItem(
+            getNotificationStorageKey(),
+            JSON.stringify(ids)
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Unable to save notification state:",
+            error
+        );
+
+    }
+
+}
+
+
+// ==========================================
+// BUILD WARRANTY NOTIFICATIONS
+// ==========================================
+
+function buildWarrantyNotifications(
+    warranties
+) {
+
+    const today =
+        new Date();
+
+    today.setHours(
+        0,
+        0,
+        0,
+        0
+    );
+
+
+    const notifications = [];
+
+
+    warranties.forEach(
+        function (warranty) {
+
+            const expiryDate =
+                parseWarrantyDate(
+                    warranty.warrantyExpiryDate
+                );
+
+            if (!expiryDate) {
+                return;
+            }
+
+
+            const difference =
+                expiryDate.getTime() -
+                today.getTime();
+
+
+            const daysLeft =
+                Math.ceil(
+                    difference /
+                    (
+                        1000 *
+                        60 *
+                        60 *
+                        24
+                    )
+                );
+
+
+            const productName =
+                warranty.productName ||
+                "Warranty Item";
+
+
+            const storeName =
+                warranty.storeName ||
+                "Unknown Store";
+
+
+            const formattedDate =
+                formatWarrantyDate(
+                    expiryDate
+                );
+
+
+            // ==================================
+            // EXPIRED
+            // ==================================
+
+            if (daysLeft < 0) {
+
+                notifications.push({
+
+                    id:
+                        `${warranty.id}_expired`,
+
+                    warrantyId:
+                        warranty.id,
+
+                    type:
+                        "expired",
+
+                    icon:
+                        "⚠️",
+
+                    title:
+                        "Warranty expired",
+
+                    message:
+                        `${productName} warranty expired on ${formattedDate}.`,
+
+                    productName:
+                        productName,
+
+                    storeName:
+                        storeName,
+
+                    expiryDate:
+                        expiryDate
+
+                });
+
+                return;
+
+            }
+
+
+            // ==================================
+            // EXPIRES TODAY
+            // ==================================
+
+            if (daysLeft === 0) {
+
+                notifications.push({
+
+                    id:
+                        `${warranty.id}_today`,
+
+                    warrantyId:
+                        warranty.id,
+
+                    type:
+                        "today",
+
+                    icon:
+                        "🔴",
+
+                    title:
+                        "Warranty expires today",
+
+                    message:
+                        `${productName} warranty expires today.`,
+
+                    productName:
+                        productName,
+
+                    storeName:
+                        storeName,
+
+                    expiryDate:
+                        expiryDate
+
+                });
+
+                return;
+
+            }
+
+
+            // ==================================
+            // 7 DAYS BEFORE
+            // ==================================
+
+            if (daysLeft <= 7) {
+
+                notifications.push({
+
+                    id:
+                        `${warranty.id}_7`,
+
+                    warrantyId:
+                        warranty.id,
+
+                    type:
+                        "warning",
+
+                    icon:
+                        "⚠️",
+
+                    title:
+                        "Warranty expiring soon",
+
+                    message:
+                        `${productName} warranty expires in ${daysLeft} days.`,
+
+                    productName:
+                        productName,
+
+                    storeName:
+                        storeName,
+
+                    expiryDate:
+                        expiryDate
+
+                });
+
+                return;
+
+            }
+
+
+            // ==================================
+            // 30 DAYS BEFORE
+            // ==================================
+
+            if (daysLeft <= 30) {
+
+                notifications.push({
+
+                    id:
+                        `${warranty.id}_30`,
+
+                    warrantyId:
+                        warranty.id,
+
+                    type:
+                        "warning",
+
+                    icon:
+                        "🔔",
+
+                    title:
+                        "Warranty reminder",
+
+                    message:
+                        `${productName} warranty expires in ${daysLeft} days.`,
+
+                    productName:
+                        productName,
+
+                    storeName:
+                        storeName,
+
+                    expiryDate:
+                        expiryDate
+
+                });
+
+            }
+
+        }
+    );
+
+
+    // ==================================
+    // SORT NOTIFICATIONS
+    // ==================================
+
+    notifications.sort(
+        function (a, b) {
+
+            const dateA =
+                a.expiryDate
+                    ? a.expiryDate.getTime()
+                    : Infinity;
+
+            const dateB =
+                b.expiryDate
+                    ? b.expiryDate.getTime()
+                    : Infinity;
+
+            return dateA - dateB;
+
+        }
+    );
+
+
+    return notifications;
+
+}
+
+
+// ==========================================
+// RENDER WARRANTY NOTIFICATIONS
+// ==========================================
+
+function renderWarrantyNotifications(
+    warranties
+) {
+
+    if (!notificationList) {
+        return;
+    }
+
+
+    const notifications =
+        buildWarrantyNotifications(
+            warranties
+        );
+
+
+    const readIds =
+        getReadNotificationIds();
+
+
+    // ==================================
+    // NO NOTIFICATIONS
+    // ==================================
+
+    if (
+        notifications.length === 0
+    ) {
+
+        notificationList.innerHTML = `
+            <div class="notification-empty">
+
+                <div class="notification-empty-icon">
+                    🔔
+                </div>
+
+                <strong>
+                    No notifications
+                </strong>
+
+                <span>
+                    Your warranty reminders will appear here.
+                </span>
+
+            </div>
+        `;
+
+
+        if (notificationSummary) {
+
+            notificationSummary.textContent =
+                "No new notifications";
+
+        }
+
+
+        if (notificationBadge) {
+
+            notificationBadge.style.display =
+                "none";
+
+            notificationBadge.textContent =
+                "0";
+
+        }
+
+
+        return;
+    }
+
+
+    // ==================================
+    // REMOVE OLD READ IDS
+    // ==================================
+
+    const existingNotificationIds =
+        notifications.map(
+            function (notification) {
+
+                return notification.id;
+
+            }
+        );
+
+
+    const validReadIds =
+        readIds.filter(
+            function (id) {
+
+                return existingNotificationIds.includes(
+                    id
+                );
+
+            }
+        );
+
+
+    saveReadNotificationIds(
+        validReadIds
+    );
+
+
+    // ==================================
+    // UNREAD COUNT
+    // ==================================
+
+    const unreadNotifications =
+        notifications.filter(
+            function (notification) {
+
+                return !validReadIds.includes(
+                    notification.id
+                );
+
+            }
+        );
+
+
+    const unreadCount =
+        unreadNotifications.length;
+
+
+    // ==================================
+    // UPDATE BADGE
+    // ==================================
+
+    if (notificationBadge) {
+
+        if (unreadCount > 0) {
+
+            notificationBadge.textContent =
+                unreadCount > 99
+                    ? "99+"
+                    : unreadCount;
+
+            notificationBadge.style.display =
+                "flex";
+
+        }
+        else {
+
+            notificationBadge.textContent =
+                "0";
+
+            notificationBadge.style.display =
+                "none";
+
+        }
+
+    }
+
+
+    // ==================================
+    // UPDATE SUMMARY
+    // ==================================
+
+    if (notificationSummary) {
+
+        if (unreadCount === 0) {
+
+            notificationSummary.textContent =
+                "All notifications read";
+
+        }
+
+        else {
+
+            notificationSummary.textContent =
+                unreadCount +
+                (
+                    unreadCount === 1
+                        ? " new notification"
+                        : " new notifications"
+                );
+
+        }
+
+    }
+
+
+    // ==================================
+    // CLEAR LIST
+    // ==================================
+
+    notificationList.innerHTML =
+        "";
+
+
+    // ==================================
+    // CREATE NOTIFICATION ITEMS
+    // ==================================
+
+    notifications.forEach(
+        function (notification) {
+
+            const isRead =
+                validReadIds.includes(
+                    notification.id
+                );
+
+
+            const item =
+                document.createElement(
+                    "div"
+                );
+
+
+            item.className =
+                "notification-item" +
+                (
+                    isRead
+                        ? ""
+                        : " unread"
+                );
+
+
+            item.dataset.notificationId =
+                notification.id;
+
+
+            const iconClass =
+                notification.type === "expired"
+                    ? "expired"
+                    : "warning";
+
+
+            item.innerHTML = `
+
+                <div class="
+                    notification-icon
+                    ${iconClass}
+                ">
+                    ${notification.icon}
+                </div>
+
+                <div class="notification-content">
+
+                    <strong>
+                        ${escapeDashboardHTML(
+                            notification.title
+                        )}
+                    </strong>
+
+                    <span>
+                        ${escapeDashboardHTML(
+                            notification.message
+                        )}
+                    </span>
+
+                    <small>
+                        ${escapeDashboardHTML(
+                            notification.storeName
+                        )}
+                        •
+                        Expires
+                        ${formatWarrantyDate(
+                            notification.expiryDate
+                        )}
+                    </small>
+
+                </div>
+
+                ${
+                    isRead
+                        ? ""
+                        : `
+                            <span
+                                class="notification-unread-dot"
+                                aria-label="Unread"
+                            ></span>
+                        `
+                }
+
+            `;
+
+
+            // ==================================
+            // CLICK NOTIFICATION
+            // ==================================
+
+            item.addEventListener(
+                "click",
+                function () {
+
+                    markNotificationAsRead(
+                        notification.id
+                    );
+
+
+                    item.classList.remove(
+                        "unread"
+                    );
+
+
+                    const unreadDot =
+                        item.querySelector(
+                            ".notification-unread-dot"
+                        );
+
+
+                    if (unreadDot) {
+
+                        unreadDot.remove();
+
+                    }
+
+
+                    updateNotificationBadgeFromDOM();
+
+                }
+            );
+
+
+            notificationList.appendChild(
+                item
+            );
+
+        }
+    );
+
+}
+
+
+// ==========================================
+// MARK NOTIFICATION AS READ
+// ==========================================
+
+function markNotificationAsRead(
+    notificationId
+) {
+
+    if (!notificationId) {
+        return;
+    }
+
+
+    const readIds =
+        getReadNotificationIds();
+
+
+    if (
+        !readIds.includes(
+            notificationId
+        )
+    ) {
+
+        readIds.push(
+            notificationId
+        );
+
+    }
+
+
+    saveReadNotificationIds(
+        readIds
+    );
+
+}
+
+
+// ==========================================
+// UPDATE BADGE FROM DOM
+// ==========================================
+
+function updateNotificationBadgeFromDOM() {
+
+    if (!notificationList) {
+        return;
+    }
+
+
+    const unreadItems =
+        notificationList.querySelectorAll(
+            ".notification-item.unread"
+        );
+
+
+    const unreadCount =
+        unreadItems.length;
+
+
+    if (notificationBadge) {
+
+        if (unreadCount > 0) {
+
+            notificationBadge.textContent =
+                unreadCount > 99
+                    ? "99+"
+                    : unreadCount;
+
+            notificationBadge.style.display =
+                "flex";
+
+        }
+
+        else {
+
+            notificationBadge.textContent =
+                "0";
+
+            notificationBadge.style.display =
+                "none";
+
+        }
+
+    }
+
+
+    if (notificationSummary) {
+
+        if (unreadCount === 0) {
+
+            notificationSummary.textContent =
+                "All notifications read";
+
+        }
+
+        else {
+
+            notificationSummary.textContent =
+                unreadCount +
+                (
+                    unreadCount === 1
+                        ? " new notification"
+                        : " new notifications"
+                );
+
+        }
+
+    }
+
+}
+
+
+// ==========================================
+// NOTIFICATION BUTTON
+// ==========================================
+
+if (notificationButton) {
+
+    notificationButton.addEventListener(
+        "click",
+        function (event) {
+
+            event.stopPropagation();
+
+
+            if (!notificationPanel) {
+                return;
+            }
+
+
+            notificationPanel.classList.toggle(
+                "show"
+            );
+
+        }
+    );
+
+}
+
+
+// ==========================================
+// MARK ALL NOTIFICATIONS READ
+// ==========================================
+
+if (markAllNotificationsRead) {
+
+    markAllNotificationsRead.addEventListener(
+        "click",
+        function (event) {
+
+            event.preventDefault();
+
+            event.stopPropagation();
+
+
+            if (!notificationList) {
+                return;
+            }
+
+
+            const unreadItems =
+                notificationList.querySelectorAll(
+                    ".notification-item.unread"
+                );
+
+
+            const readIds =
+                getReadNotificationIds();
+
+
+            unreadItems.forEach(
+                function (item) {
+
+                    const notificationId =
+                        item.dataset.notificationId;
+
+
+                    if (
+                        notificationId &&
+                        !readIds.includes(
+                            notificationId
+                        )
+                    ) {
+
+                        readIds.push(
+                            notificationId
+                        );
+
+                    }
+
+
+                    item.classList.remove(
+                        "unread"
+                    );
+
+
+                    const dot =
+                        item.querySelector(
+                            ".notification-unread-dot"
+                        );
+
+
+                    if (dot) {
+                        dot.remove();
+                    }
+
+                }
+            );
+
+
+            saveReadNotificationIds(
+                readIds
+            );
+
+
+            updateNotificationBadgeFromDOM();
+
+        }
+    );
+
+}
+
+
+// ==========================================
+// CLOSE NOTIFICATION PANEL OUTSIDE
+// ==========================================
+
+document.addEventListener(
+    "click",
+    function (event) {
+
+        if (
+            !notificationPanel ||
+            !notificationButton
+        ) {
+            return;
+        }
+
+
+        if (
+            !notificationPanel.contains(
+                event.target
+            ) &&
+            !notificationButton.contains(
+                event.target
+            )
+        ) {
+
+            notificationPanel.classList.remove(
+                "show"
+            );
+
+        }
+
+    }
+);
+
+
+// ==========================================
+// AUTH STATE
 // ==========================================
 
 onAuthStateChanged(
@@ -3711,8 +4537,202 @@ onAuthStateChanged(
 
         if (user) {
 
+            // ==================================
+            // USER LOGGED IN
+            // ==================================
+
+            currentUser =
+                user;
+
+
+            avatarRemoved =
+                false;
+
+
+            console.log(
+                "✅ Dashboard user:",
+                user.uid
+            );
+
+
+            sessionStorage.removeItem(
+                "loggedOut"
+            );
+
+
+            // ==================================
+            // PROFILE NAME
+            // ==================================
+
+            const displayName =
+                user.displayName ||
+                "User";
+
+
+            if (profileName) {
+
+                profileName.textContent =
+                    displayName;
+
+            }
+
+
+            // ==================================
+            // PROFILE AVATAR
+            // ==================================
+
+            if (profileAvatar) {
+
+                if (user.photoURL) {
+
+                    profileAvatar.innerHTML = `
+                        <img
+                            src="${user.photoURL}"
+                            alt="Profile Avatar"
+                            style="
+                                width:100%;
+                                height:100%;
+                                object-fit:cover;
+                                border-radius:50%;
+                            "
+                        >
+                    `;
+
+                }
+
+                else {
+
+                    profileAvatar.textContent =
+                        displayName
+                            .charAt(0)
+                            .toUpperCase();
+
+                }
+
+            }
+
+
+            // ==================================
+            // LARGE AVATAR
+            // ==================================
+
+            if (profileLargeAvatar) {
+
+                if (user.photoURL) {
+
+                    profileLargeAvatar.innerHTML = `
+                        <img
+                            src="${user.photoURL}"
+                            alt="Profile Avatar"
+                            style="
+                                width:100%;
+                                height:100%;
+                                object-fit:cover;
+                                border-radius:50%;
+                            "
+                        >
+                    `;
+
+                }
+
+                else {
+
+                    profileLargeAvatar.textContent =
+                        displayName
+                            .charAt(0)
+                            .toUpperCase();
+
+                }
+
+            }
+
+
+            // ==================================
+            // PROFILE INPUTS
+            // ==================================
+
+            if (profileNameInput) {
+
+                profileNameInput.value =
+                    displayName;
+
+            }
+
+
+            if (profileEmailInput) {
+
+                profileEmailInput.value =
+                    user.email ||
+                    "";
+
+            }
+
+
+            // ==================================
+            // LOAD TOTAL + CURRENCY SUMMARY
+            // ==================================
+
+            loadDashboardData(
+                user
+            );
+
+
+            // ==================================
+            // LOAD RECENT RECEIPTS
+            // ==================================
+
+            loadRecentReceipts(
+                user
+            );
+
+
+            // ==================================
+            // LOAD SPENDING CHART
+            // ==================================
+
+            loadSpendingChart(
+                user
+            );
+
+
+            // ==================================
+            // LOAD WARRANTY + NOTIFICATIONS
+            // ==================================
+
             loadDashboardWarranties(
                 user
+            );
+
+        }
+
+        else {
+
+            // ==================================
+            // NO USER
+            // ==================================
+
+            console.log(
+                "ℹ️ No user logged in."
+            );
+
+
+            currentUser =
+                null;
+
+
+            if (receiptList) {
+
+                receiptList.innerHTML = `
+                    <p>
+                        Please login to view your receipts.
+                    </p>
+                `;
+
+            }
+
+
+            window.location.replace(
+                "loginpg.html"
             );
 
         }
