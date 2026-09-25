@@ -103,7 +103,6 @@
                 </p>
 
 
-
                 <!-- FEATURES -->
 
                 <div class="mini-features">
@@ -132,7 +131,6 @@
                     </div>
 
 
-
                     <!-- FEATURE 2 -->
 
                     <div class="mini-feature">
@@ -154,7 +152,6 @@
                         </div>
 
                     </div>
-
 
 
                     <!-- FEATURE 3 -->
@@ -197,7 +194,6 @@
         </section>
 
 
-
         <!-- =========================
              RIGHT SIDE
         ========================== -->
@@ -223,7 +219,6 @@
                 </div>
 
 
-
                 <!-- HEADING -->
 
                 <div class="login-heading">
@@ -237,7 +232,6 @@
                     </p>
 
                 </div>
-
 
 
                 <!-- =========================
@@ -267,18 +261,15 @@
                     </div>
 
 
-
                     <!-- PASSWORD -->
 
                     <div class="form-group">
-
 
                         <div class="password-label">
 
                             <label for="password">
                                 Password
                             </label>
-
 
                             <a
                                 href="#"
@@ -288,7 +279,6 @@
                             </a>
 
                         </div>
-
 
 
                         <div class="password-input">
@@ -302,7 +292,6 @@
                                 required
                             >
 
-
                             <button
                                 type="button"
                                 class="show-password"
@@ -314,7 +303,6 @@
                         </div>
 
                     </div>
-
 
 
                     <!-- REMEMBER ME -->
@@ -337,7 +325,6 @@
                     </div>
 
 
-
                     <!-- LOGIN MESSAGE -->
 
                     <div
@@ -345,7 +332,6 @@
                         class="login-message"
                         aria-live="polite"
                     ></div>
-
 
 
                     <!-- LOGIN BUTTON -->
@@ -367,7 +353,6 @@
                     </button>
 
 
-
                     <!-- DIVIDER -->
 
                     <div class="divider">
@@ -381,7 +366,6 @@
                         <span></span>
 
                     </div>
-
 
 
                     <!-- GOOGLE BUTTON -->
@@ -401,7 +385,6 @@
                     </button>
 
 
-
                     <!-- SIGN UP -->
 
                     <p class="signup-text">
@@ -416,7 +399,6 @@
 
 
                 </form>
-
 
 
                 <!-- SECURITY NOTE -->
@@ -439,7 +421,6 @@
     </main>
 
 
-
     <!-- =================================================
          FIREBASE LOGIN SCRIPT
     ================================================== -->
@@ -459,9 +440,10 @@
             setPersistence,
             browserLocalPersistence,
             browserSessionPersistence,
-            sendPasswordResetEmail
+            sendPasswordResetEmail,
+            GoogleAuthProvider,
+            signInWithPopup
         } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-
 
 
         // ==========================================
@@ -508,7 +490,6 @@
             document.getElementById("googleButton");
 
 
-
         // ==========================================
         // LOGOUT / BACK BUTTON PROTECTION
         // ==========================================
@@ -540,7 +521,6 @@
             showLogoutMessage();
 
         }
-
 
 
         // ==========================================
@@ -584,7 +564,6 @@
         );
 
 
-
         // ==========================================
         // SHOW / HIDE PASSWORD
         // ==========================================
@@ -592,7 +571,6 @@
         togglePassword.addEventListener(
             "click",
             function () {
-
 
                 if (
                     passwordInput.type === "password"
@@ -619,7 +597,6 @@
         );
 
 
-
         // ==========================================
         // SHOW MESSAGE
         // ==========================================
@@ -638,7 +615,6 @@
         }
 
 
-
         // ==========================================
         // LOGIN FORM
         // ==========================================
@@ -647,9 +623,7 @@
             "submit",
             async function (event) {
 
-
                 event.preventDefault();
-
 
 
                 // Get values
@@ -660,7 +634,6 @@
 
                 const password =
                     passwordInput.value;
-
 
 
                 // ==================================
@@ -695,7 +668,6 @@
                 }
 
 
-
                 // ==================================
                 // DISABLE BUTTON
                 // ==================================
@@ -714,9 +686,7 @@
                 );
 
 
-
                 try {
-
 
                     // ==================================
                     // REMEMBER ME
@@ -743,7 +713,6 @@
                     }
 
 
-
                     // ==================================
                     // FIREBASE LOGIN
                     // ==================================
@@ -758,7 +727,6 @@
 
                     const user =
                         userCredential.user;
-
 
 
                     // ==================================
@@ -788,7 +756,6 @@
                         "Login Successful ✓";
 
 
-
                     // ==================================
                     // REDIRECT
                     // ==================================
@@ -803,18 +770,15 @@
                         800
                     );
 
-
                 }
 
 
                 catch (error) {
 
-
                     console.error(
                         "Firebase Login Error:",
                         error
                     );
-
 
 
                     // ==================================
@@ -823,7 +787,6 @@
 
                     let errorMessage =
                         "Login failed. Please try again.";
-
 
 
                     if (
@@ -892,14 +855,12 @@
                     }
 
 
-
                     // Show error
 
                     showMessage(
                         errorMessage,
                         "error"
                     );
-
 
 
                     // Enable button again
@@ -917,7 +878,6 @@
         );
 
 
-
         // ==========================================
         // FORGOT PASSWORD
         // ==========================================
@@ -926,13 +886,11 @@
             "click",
             async function (event) {
 
-
                 event.preventDefault();
 
 
                 const email =
                     emailInput.value.trim();
-
 
 
                 if (!email) {
@@ -949,9 +907,7 @@
                 }
 
 
-
                 try {
-
 
                     await sendPasswordResetEmail(
                         auth,
@@ -964,12 +920,10 @@
                         "success"
                     );
 
-
                 }
 
 
                 catch (error) {
-
 
                     console.error(
                         error
@@ -1003,21 +957,229 @@
         );
 
 
-
         // ==========================================
         // GOOGLE LOGIN
         // ==========================================
 
         googleButton.addEventListener(
             "click",
-            function () {
+            async function () {
+
+                // Disable Google button
+
+                googleButton.disabled =
+                    true;
 
 
                 showMessage(
-                    "Google login will be added later.",
+                    "Opening Google login...",
                     "loading"
                 );
 
+
+                try {
+
+                    // ==================================
+                    // REMEMBER ME / PERSISTENCE
+                    // ==================================
+
+                    if (
+                        rememberInput.checked
+                    ) {
+
+                        await setPersistence(
+                            auth,
+                            browserLocalPersistence
+                        );
+
+                    }
+
+                    else {
+
+                        await setPersistence(
+                            auth,
+                            browserSessionPersistence
+                        );
+
+                    }
+
+
+                    // ==================================
+                    // GOOGLE PROVIDER
+                    // ==================================
+
+                    const provider =
+                        new GoogleAuthProvider();
+
+
+                    // ==================================
+                    // GOOGLE LOGIN POPUP
+                    // ==================================
+
+                    const result =
+                        await signInWithPopup(
+                            auth,
+                            provider
+                        );
+
+
+                    // Get Google user
+
+                    const user =
+                        result.user;
+
+
+                    console.log(
+                        "Google Login successful:",
+                        user
+                    );
+
+
+                    // ==================================
+                    // LOGIN SUCCESS
+                    // ==================================
+
+                    sessionStorage.removeItem(
+                        "loggedOut"
+                    );
+
+
+                    showMessage(
+                        "Google login successful! Redirecting...",
+                        "success"
+                    );
+
+
+                    googleButton.disabled =
+                        false;
+
+
+                    // ==================================
+                    // REDIRECT TO DASHBOARD
+                    // ==================================
+
+                    setTimeout(
+                        function () {
+
+                            window.location.href =
+                                "dashboard.html";
+
+                        },
+                        800
+                    );
+
+                }
+
+
+                catch (error) {
+
+                    console.error(
+                        "Google Login Error:",
+                        error
+                    );
+
+
+                    // ==================================
+                    // GOOGLE ERROR MESSAGES
+                    // ==================================
+
+                    let errorMessage =
+                        "Google login failed. Please try again.";
+
+
+                    if (
+                        error.code ===
+                        "auth/popup-closed-by-user"
+                    ) {
+
+                        errorMessage =
+                            "Google login was cancelled.";
+
+                    }
+
+
+                    else if (
+                        error.code ===
+                        "auth/popup-blocked"
+                    ) {
+
+                        errorMessage =
+                            "❌ Google login popup was blocked. Please allow popups for this site.";
+
+                    }
+
+
+                    else if (
+                        error.code ===
+                        "auth/cancelled-popup-request"
+                    ) {
+
+                        errorMessage =
+                            "Google login request was cancelled.";
+
+                    }
+
+
+                    else if (
+                        error.code ===
+                        "auth/network-request-failed"
+                    ) {
+
+                        errorMessage =
+                            "❌ Network error. Please check your internet connection.";
+
+                    }
+
+
+                    else if (
+                        error.code ===
+                        "auth/account-exists-with-different-credential"
+                    ) {
+
+                        errorMessage =
+                            "❌ This email already has an account with another login method. Please use Email & Password.";
+
+                    }
+
+
+                    else if (
+                        error.code ===
+                        "auth/unauthorized-domain"
+                    ) {
+
+                        errorMessage =
+                            "❌ This website domain is not authorized in Firebase.";
+
+                    }
+
+
+                    else if (
+                        error.code ===
+                        "auth/operation-not-allowed"
+                    ) {
+
+                        errorMessage =
+                            "❌ Google Sign-In is not enabled in Firebase.";
+
+                    }
+
+
+                    console.error(
+                        "Google Login Error Code:",
+                        error.code
+                    );
+
+
+                    showMessage(
+                        errorMessage,
+                        "error"
+                    );
+
+
+                    googleButton.disabled =
+                        false;
+
+                }
 
             }
         );
