@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SHOPIX | Settings</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="css/settings.css">
+</head>
+
+<body>
+
+    <div class="settings-layout">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+
+            <a href="dashboard.html" class="sidebar-logo">
+                <span class="logo-icon">S</span>
+                <span>SHOPIX</span>
+            </a>
+
+            <nav class="sidebar-nav">
+
+                <p class="nav-title">MAIN MENU</p>
+
+                <a href="dashboard.html" class="nav-item">
+                    <span class="nav-icon">▦</span>
+                    Dashboard
+                </a>
+
+                <a href="receiptHistory.html" class="nav-item">
+                    <span class="nav-icon">▤</span>
+                    Receipts
+                </a>
+
+                <a href="receiptScanner.html" class="nav-item">
+                    <span class="nav-icon">↑</span>
+                    Upload Receipt
+                </a>
+
+                <a href="expenses.html" class="nav-item">
+                    <span class="nav-icon">◫</span>
+                    Expenses
+                </a>
+
+                <a href="warranties.html" class="nav-item">
+                    <span class="nav-icon">♢</span>
+                    Warranties
+                </a>
+
+                <a href="settings.html" class="nav-item active">
+                    <span class="nav-icon">⚙</span>
+                    Settings
+                </a>
+
+            </nav>
+
+            <div class="sidebar-bottom">
+
+                <a href="help.html" class="help-box">
+                    <div class="help-icon">?</div>
+
+                    <div>
+                        <strong>Need Help?</strong>
+                        <span>We're here for you</span>
+                    </div>
+                </a>
+
+                <a href="index.html" class="logout-btn">
+                    <span>↪</span>
+                    Logout
+                </a>
+
+            </div>
+
+        </aside>
+
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+
+            <!-- TOP HEADER -->
+            <header class="top-header">
+
+                <div>
+                    <span class="header-label">SHOPIX</span>
+                    <h1>Settings</h1>
+                    <p>Manage your account and application preferences.</p>
+                </div>
+
+                <a href="dashboard.html" class="back-btn">
+                    ← Dashboard
+                </a>
+
+            </header>
+
+
+            <!-- SETTINGS CONTENT -->
+            <section class="settings-content">
+
+                <!-- PROFILE -->
+                <div class="settings-card">
+
+                    <div class="card-heading">
+                        <div class="heading-icon">👤</div>
+
+                        <div>
+                            <h2>Profile</h2>
+                            <p>Manage your personal information.</p>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+                            <label for="userName">Name</label>
+                            <input
+                                type="text"
+                                id="userName"
+                                placeholder="Enter your name">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="userEmail">Email</label>
+                            <input
+                                type="email"
+                                id="userEmail"
+                                placeholder="Your email"
+                                readonly>
+                        </div>
+
+                    </div>
+
+                    <button class="primary-btn" id="saveProfileBtn">
+                        Save Changes
+                    </button>
+
+                </div>
+
+
+                <!-- APPEARANCE -->
+                <div class="settings-card">
+
+                    <div class="card-heading">
+                        <div class="heading-icon">🎨</div>
+
+                        <div>
+                            <h2>Appearance</h2>
+                            <p>Choose how SHOPIX looks on your device.</p>
+                        </div>
+                    </div>
+
+                    <div class="theme-row">
+
+                        <div>
+                            <strong>Theme</strong>
+                            <span>Switch between light and dark mode.</span>
+                        </div>
+
+                        <button
+                            type="button"
+                            class="theme-toggle"
+                            id="themeToggle">
+
+                            <span class="toggle-circle"></span>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ACCOUNT -->
+                <div class="settings-card">
+
+                    <div class="card-heading">
+                        <div class="heading-icon">🔐</div>
+
+                        <div>
+                            <h2>Account & Security</h2>
+                            <p>Manage your account security.</p>
+                        </div>
+                    </div>
+
+                    <button class="secondary-btn" id="changePasswordBtn">
+                        Change Password
+                    </button>
+
+                </div>
+
+
+                <!-- HELP -->
+                <div class="settings-card help-card">
+
+                    <div class="card-heading">
+
+                        <div class="heading-icon">❓</div>
+
+                        <div>
+                            <h2>Need Help?</h2>
+                            <p>Have questions about SHOPIX?</p>
+                        </div>
+
+                    </div>
+
+                    <a href="help.html" class="help-link">
+                        Open Help Center →
+                    </a>
+
+                </div>
+
+            </section>
+
+
+            <footer class="settings-footer">
+                <span>© 2026 SHOPIX</span>
+                <span>AI Powered Smart Receipt & Shopping Assistant</span>
+            </footer>
+
+        </main>
+
+    </div>
+
+
+    <script type="module" src="js/settings.js"></script>
+
+</body>
+
+</html>

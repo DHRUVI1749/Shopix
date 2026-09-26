@@ -231,6 +231,64 @@ button {
     text-overflow: ellipsis;
 }
 
+/* NEED HELP */
+
+.help-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 12px;
+
+    margin-bottom: 8px;
+
+    border-radius: 8px;
+
+    color: #101828;
+
+    transition: 0.2s;
+}
+
+.help-box:hover {
+    background: #f4f6fa;
+}
+
+.help-icon {
+    width: 32px;
+    height: 32px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #eaf0ff;
+    color: #102a72;
+
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.help-box > div:last-child {
+    display: flex;
+    flex-direction: column;
+}
+
+.help-box strong {
+    font-size: 11px;
+}
+
+.help-box span {
+    margin-top: 3px;
+
+    color: #98a2b3;
+
+    font-size: 9px;
+}
+
 .logout-btn {
     display: flex;
     align-items: center;
@@ -1435,4 +1493,86 @@ button {
 
 .offer-view-btn:hover {
     opacity: 0.9;
+}
+
+/* =========================
+   DARK THEME
+========================= */
+
+body.dark-theme {
+    background: #101828;
+    color: #f9fafb;
+}
+
+body.dark-theme .sidebar,
+body.dark-theme .topbar,
+body.dark-theme .top-header {
+    background: #182230;
+    border-color: #344054;
+}
+
+body.dark-theme .nav-item {
+    color: #d0d5dd;
+}
+
+body.dark-theme .nav-item:hover {
+    background: #263447;
+    color: #ffffff;
+}
+
+body.dark-theme .nav-item.active {
+    background: #263f70;
+    color: #ffffff;
+}
+
+body.dark-theme .help-box {
+    color: #f9fafb;
+}
+
+body.dark-theme .help-box:hover {
+    background: #263447;
+}
+
+body.dark-theme .main-content {
+    background: #101828;
+}
+
+body.dark-theme .welcome-small,
+body.dark-theme .welcome-description,
+body.dark-theme .stat-change,
+body.dark-theme .card-header p {
+    color: #98a2b3;
+}
+
+body.dark-theme .stat-card,
+body.dark-theme .dashboard-card {
+    background: #182230;
+    border-color: #344054;
+}
+
+body.dark-theme .card-header {
+    border-color: #344054;
+}
+
+body.dark-theme .card-header h3,
+body.dark-theme .stat-card h2,
+body.dark-theme .receipt-info strong,
+body.dark-theme .warranty-info strong {
+    color: #f9fafb;
+}
+
+body.dark-theme .receipt-row,
+body.dark-theme .warranty-row {
+    border-color: #344054;
+}
+
+body.dark-theme .receipt-amount,
+body.dark-theme .receipt-info span,
+body.dark-theme .warranty-info span {
+    color: #d0d5dd;
+}
+
+body.dark-theme .dashboard-footer {
+    border-color: #344054;
+    color: #98a2b3;
 }
