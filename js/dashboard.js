@@ -1,8 +1,16 @@
-// ============================================================
+// ==========================================
 // SHOPIX - DASHBOARD
-// ============================================================
+// ==========================================
 
-import { auth, db } from "./firebase.js";
+// ==========================================
+// FIREBASE IMPORT
+// ==========================================
+
+import {
+    auth,
+    db,
+    storage
+} from "./firebase.js";
 
 import {
     collection,
@@ -14,73 +22,294 @@ import {
 
 import {
     onAuthStateChanged,
-    signOut
+    signOut,
+    updateProfile
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
+import {
+    ref as storageRef,
+    uploadBytes,
+    getDownloadURL,
+    deleteObject
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-storage.js";
 
-// ============================================================
-// ELEMENTS
-// ============================================================
 
+// ==========================================
+// GET HTML ELEMENTS
+// ==========================================
+
+// Recent Receipts
 const receiptList =
     document.getElementById("dashboardReceiptList");
 
-// Total Expense card
+// Total Expense
 const totalExpenseElement =
-    document.querySelector(".stat-card:nth-child(1) h2");
+    document.getElementById("totalExpense");
 
-// This Month card
-const thisMonthElement =
-    document.querySelector(".stat-card:nth-child(4) h2");
+const totalExpenseNote =
+    document.getElementById("totalExpenseNote");
 
-// Spending chart
+// Currency Summary
+const currencySummaryText =
+    document.getElementById("currencySummaryText");
+
+const currencySummaryList =
+    document.getElementById("currencySummaryList");
+
+// Chart
+const chartSelect =
+    document.getElementById("chartPeriod");
+
+const chartCurrency =
+    document.getElementById("chartCurrency");
+
 const spendingBars =
     document.getElementById("spendingBars");
 
-// Chart dropdown
-const chartPeriod =
-    document.getElementById("chartPeriod");
+const chartY1 =
+    document.getElementById("chartY1");
 
-// Chart Y-axis values
-const chartValueTop =
-    document.getElementById("chartValueTop");
+const chartY2 =
+    document.getElementById("chartY2");
 
-const chartValueSecond =
-    document.getElementById("chartValueSecond");
+const chartY3 =
+    document.getElementById("chartY3");
 
-const chartValueThird =
-    document.getElementById("chartValueThird");
+const chartY4 =
+    document.getElementById("chartY4");
+
+const chartDescription =
+    document.getElementById("chartDescription");
 
 
-// ============================================================
-// CURRENCY FORMAT
-// ============================================================
+// ==========================================
+// NOTIFICATION ELEMENTS
+// ==========================================
 
-function formatCurrency(amount) {
+const notificationButton =
+    document.getElementById("notificationButton");
 
-    return "₹" +
-        Number(amount || 0).toLocaleString("en-IN");
+const notificationBadge =
+    document.getElementById("notificationBadge");
 
+const notificationPanel =
+    document.getElementById("notificationPanel");
+
+const notificationList =
+    document.getElementById("notificationList");
+
+const notificationSummary =
+    document.getElementById("notificationSummary");
+
+const markAllNotificationsRead =
+    document.getElementById(
+        "markAllNotificationsRead"
+    );
+
+
+// ==========================================
+// PROFILE
+// ==========================================
+
+const profileButton =
+    document.getElementById("profileButton");
+
+const profileModal =
+    document.getElementById("profileModal");
+
+const closeProfile =
+    document.getElementById("closeProfile");
+
+const profileName =
+    document.getElementById("profileName");
+
+const profileAvatar =
+    document.getElementById("profileAvatar");
+
+const profileLargeAvatar =
+    document.getElementById("profileLargeAvatar");
+
+const profileNameInput =
+    document.getElementById("profileNameInput");
+
+const profileEmailInput =
+    document.getElementById("profileEmailInput");
+
+const saveProfile =
+    document.getElementById("saveProfile");
+
+const profileMessage =
+    document.getElementById("profileMessage");
+
+
+// ==========================================
+// AVATAR ELEMENTS
+// ==========================================
+
+const changeAvatarBtn =
+    document.getElementById("changeAvatarBtn");
+
+const removeAvatarBtn =
+    document.getElementById("removeAvatarBtn");
+
+const avatarInput =
+    document.getElementById("avatarInput");
+
+
+// ==========================================
+// CURRENT USER
+// ==========================================
+
+let currentUser = null;
+
+let selectedAvatarFile = null;
+
+let avatarRemoved = false;
+
+
+// ==========================================
+// CURRENCY SYMBOL
+// ==========================================
+
+function getCurrencySymbol(currency) {
+
+    const symbols = {
+
+        INR: "₹",
+        USD: "$",
+        EUR: "€",
+        GBP: "£",
+        AED: "د.إ",
+        CAD: "C$",
+        AUD: "A$",
+        Other: ""
+
+    };
+
+    return symbols[currency] || currency || "";
 }
 
 
-// ============================================================
+// ==========================================
+// FORMAT CURRENCY
+// ==========================================
+
+function formatCurrency(
+    amount,
+    currency = "INR"
+) {
+
+    const number =
+        Number(amount) || 0;
+
+    const normalizedCurrency =
+        normalizeCurrency(currency);
+
+    const symbol =
+        getCurrencySymbol(
+            normalizedCurrency
+        );
+
+    const formattedNumber =
+        new Intl.NumberFormat(
+            "en-IN",
+            {
+                maximumFractionDigits: 2
+            }
+        ).format(number);
+
+    if (normalizedCurrency === "Other") {
+
+        return formattedNumber;
+
+    }
+
+    return (
+        symbol +
+        formattedNumber
+    );
+}
+
+
+// ==========================================
 // PARSE AMOUNT
-// ============================================================
+// ==========================================
 
 function parseAmount(value) {
 
-    return Number(
-        String(value || 0)
-            .replace(/[^\d.-]/g, "")
-    ) || 0;
+    if (
+        value === null ||
+        value === undefined
+    ) {
+        return 0;
+    }
 
+    if (
+        typeof value === "number"
+    ) {
+        return value;
+    }
+
+    const cleaned =
+        String(value)
+            .replace(
+                /[₹$€£,\s]/g,
+                ""
+            )
+            .replace(
+                /[^\d.-]/g,
+                ""
+            );
+
+    const amount =
+        parseFloat(cleaned);
+
+    return isNaN(amount)
+        ? 0
+        : amount;
 }
 
 
-// ============================================================
+// ==========================================
+// NORMALIZE CURRENCY
+// ==========================================
+
+function normalizeCurrency(currency) {
+
+    if (!currency) {
+        return "INR";
+    }
+
+    const value =
+        String(currency)
+            .trim()
+            .toUpperCase();
+
+    const validCurrencies = [
+        "INR",
+        "USD",
+        "EUR",
+        "GBP",
+        "AED",
+        "CAD",
+        "AUD"
+    ];
+
+    if (
+        validCurrencies.includes(
+            value
+        )
+    ) {
+        return value;
+    }
+
+    return "Other";
+}
+
+
+// ==========================================
 // PARSE RECEIPT DATE
-// ============================================================
+// ==========================================
 
 function parseReceiptDate(value) {
 
@@ -88,766 +317,1625 @@ function parseReceiptDate(value) {
         return null;
     }
 
-
     // Firestore Timestamp
     if (
         typeof value === "object" &&
         typeof value.toDate === "function"
     ) {
 
-        const date = value.toDate();
+        return value.toDate();
 
-        return isNaN(date.getTime())
+    }
+
+
+    // Timestamp-like object
+    if (
+        typeof value === "object" &&
+        typeof value.seconds === "number"
+    ) {
+
+        return new Date(
+            value.seconds * 1000
+        );
+
+    }
+
+
+    // Date object
+    if (
+        value instanceof Date
+    ) {
+
+        return isNaN(
+            value.getTime()
+        )
+            ? null
+            : value;
+
+    }
+
+
+    const stringValue =
+        String(value).trim();
+
+
+    // YYYY-MM-DD
+    if (
+        /^\d{4}-\d{2}-\d{2}$/.test(
+            stringValue
+        )
+    ) {
+
+        const [
+            year,
+            month,
+            day
+        ] =
+            stringValue
+                .split("-")
+                .map(Number);
+
+        const date =
+            new Date(
+                year,
+                month - 1,
+                day
+            );
+
+        return isNaN(
+            date.getTime()
+        )
             ? null
             : date;
     }
 
 
-    // JavaScript Date
-    if (value instanceof Date) {
-
-        return isNaN(value.getTime())
-            ? null
-            : value;
-    }
-
-
-    const text =
-        String(value).trim();
-
-
-    // ========================================================
-    // YYYY-MM-DD
     // YYYY/MM/DD
-    // ========================================================
+    if (
+        /^\d{4}\/\d{2}\/\d{2}$/.test(
+            stringValue
+        )
+    ) {
 
-    let match =
-        text.match(
-            /^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})$/
-        );
-
-
-    if (match) {
-
-        const year =
-            Number(match[1]);
-
-        const month =
-            Number(match[2]) - 1;
-
-        const day =
-            Number(match[3]);
-
+        const [
+            year,
+            month,
+            day
+        ] =
+            stringValue
+                .split("/")
+                .map(Number);
 
         const date =
             new Date(
                 year,
-                month,
+                month - 1,
                 day
             );
 
-
-        if (
-            date.getFullYear() === year &&
-            date.getMonth() === month &&
-            date.getDate() === day
-        ) {
-
-            return date;
-        }
+        return isNaN(
+            date.getTime()
+        )
+            ? null
+            : date;
     }
 
 
-    // ========================================================
     // DD-MM-YYYY
-    // DD/MM/YYYY
-    // ========================================================
+    if (
+        /^\d{2}-\d{2}-\d{4}$/.test(
+            stringValue
+        )
+    ) {
 
-    match =
-        text.match(
-            /^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})$/
-        );
-
-
-    if (match) {
-
-        const day =
-            Number(match[1]);
-
-        const month =
-            Number(match[2]) - 1;
-
-        const year =
-            Number(match[3]);
-
+        const [
+            day,
+            month,
+            year
+        ] =
+            stringValue
+                .split("-")
+                .map(Number);
 
         const date =
             new Date(
                 year,
-                month,
+                month - 1,
                 day
             );
 
-
-        if (
-            date.getFullYear() === year &&
-            date.getMonth() === month &&
-            date.getDate() === day
-        ) {
-
-            return date;
-        }
+        return isNaN(
+            date.getTime()
+        )
+            ? null
+            : date;
     }
 
 
-    // ========================================================
-    // Normal JavaScript date string
-    // ========================================================
+    // DD/MM/YYYY
+    if (
+        /^\d{2}\/\d{2}\/\d{4}$/.test(
+            stringValue
+        )
+    ) {
 
+        const [
+            day,
+            month,
+            year
+        ] =
+            stringValue
+                .split("/")
+                .map(Number);
+
+        const date =
+            new Date(
+                year,
+                month - 1,
+                day
+            );
+
+        return isNaN(
+            date.getTime()
+        )
+            ? null
+            : date;
+    }
+
+
+    // Normal date
     const date =
-        new Date(text);
+        new Date(stringValue);
 
-
-    if (!isNaN(date.getTime())) {
-        return date;
-    }
-
-
-    console.warn(
-        "⚠️ Could not parse receipt date:",
-        value
-    );
-
-    return null;
+    return isNaN(
+        date.getTime()
+    )
+        ? null
+        : date;
 }
 
 
-// ============================================================
-// LOAD DASHBOARD EXPENSE DATA
-// ============================================================
+// ==========================================
+// GET RECEIPT DATA
+// ==========================================
+
+function getReceiptAmount(data) {
+
+    return parseAmount(
+        data.totalAmount ??
+        data.total ??
+        data.amount
+    );
+}
+
+
+function getReceiptCurrency(data) {
+
+    return normalizeCurrency(
+        data.currency
+    );
+}
+
+
+function getReceiptDate(data) {
+
+    return parseReceiptDate(
+        data.purchaseDate ??
+        data.date ??
+        data.createdAt
+    );
+}
+
+
+// ==========================================
+// LOAD ALL RECEIPTS
+// ==========================================
+
+async function getAllReceipts(user) {
+
+    const receiptsRef =
+        collection(
+            db,
+            "users",
+            user.uid,
+            "receipts"
+        );
+
+    const snapshot =
+        await getDocs(
+            receiptsRef
+        );
+
+    const receipts = [];
+
+    snapshot.forEach(
+        function (docSnapshot) {
+
+            receipts.push({
+                id: docSnapshot.id,
+                data: docSnapshot.data()
+            });
+
+        }
+    );
+
+    return receipts;
+}
+
+
+// ==========================================
+// LOAD DASHBOARD TOTAL + CURRENCY SUMMARY
+// ==========================================
 
 async function loadDashboardData(user) {
 
     try {
 
-        console.log(
-            "Loading dashboard data for:",
-            user.uid
+        const receipts =
+            await getAllReceipts(user);
+
+
+        const totalByCurrency = {};
+
+        const countByCurrency = {};
+
+
+        // ==================================
+        // CALCULATE TOTALS
+        // ==================================
+
+        receipts.forEach(
+            function (receipt) {
+
+                const data =
+                    receipt.data;
+
+                const amount =
+                    getReceiptAmount(
+                        data
+                    );
+
+                const currency =
+                    getReceiptCurrency(
+                        data
+                    );
+
+
+                if (
+                    !totalByCurrency[
+                        currency
+                    ]
+                ) {
+
+                    totalByCurrency[
+                        currency
+                    ] = 0;
+
+                }
+
+
+                if (
+                    !countByCurrency[
+                        currency
+                    ]
+                ) {
+
+                    countByCurrency[
+                        currency
+                    ] = 0;
+
+                }
+
+
+                totalByCurrency[
+                    currency
+                ] += amount;
+
+
+                countByCurrency[
+                    currency
+                ] += 1;
+
+            }
         );
 
 
-        const receiptsRef =
-            collection(
-                db,
-                "users",
-                user.uid,
-                "receipts"
+        const currencies =
+            Object.keys(
+                totalByCurrency
             );
 
 
-        const snapshot =
-            await getDocs(receiptsRef);
+        // ==================================
+        // TOTAL EXPENSE
+        // ==================================
 
+        if (totalExpenseElement) {
 
-        let totalExpense = 0;
+            if (
+                currencies.length === 0
+            ) {
 
-        let thisMonthExpense = 0;
+                totalExpenseElement.textContent =
+                    "--";
 
+                if (totalExpenseNote) {
 
-        // Current date
-        const now =
-            new Date();
-
-        const currentMonth =
-            now.getMonth();
-
-        const currentYear =
-            now.getFullYear();
-
-
-        // ====================================================
-        // CALCULATE EXPENSES
-        // ====================================================
-
-        snapshot.forEach((docSnapshot) => {
-
-            const data =
-                docSnapshot.data();
-
-
-            const amount =
-                parseAmount(
-                    data.totalAmount
-                );
-
-
-            // Total expense
-            totalExpense += amount;
-
-
-            // Receipt date
-            const receiptDate =
-                parseReceiptDate(
-                    data.purchaseDate
-                );
-
-
-            // This month
-            if (receiptDate) {
-
-                if (
-                    receiptDate.getMonth() === currentMonth &&
-                    receiptDate.getFullYear() === currentYear
-                ) {
-
-                    thisMonthExpense += amount;
+                    totalExpenseNote.textContent =
+                        "No receipts yet";
 
                 }
 
             }
 
-        });
+            else if (
+                currencies.length === 1
+            ) {
 
+                const currency =
+                    currencies[0];
 
-        // ====================================================
-        // UPDATE TOTAL EXPENSE
-        // ====================================================
+                totalExpenseElement.textContent =
+                    formatCurrency(
+                        totalByCurrency[
+                            currency
+                        ],
+                        currency
+                    );
 
-        if (totalExpenseElement) {
+                if (totalExpenseNote) {
 
-            totalExpenseElement.textContent =
-                formatCurrency(totalExpense);
+                    totalExpenseNote.textContent =
+                        countByCurrency[
+                            currency
+                        ] +
+                        (
+                            countByCurrency[
+                                currency
+                            ] === 1
+                                ? " receipt"
+                                : " receipts"
+                        );
+
+                }
+
+            }
+
+            else {
+
+                totalExpenseElement.textContent =
+                    currencies.length +
+                    " currencies";
+
+                if (totalExpenseNote) {
+
+                    totalExpenseNote.textContent =
+                        "See Currency Summary for totals";
+
+                }
+
+            }
 
         }
 
 
-        // ====================================================
-        // UPDATE THIS MONTH
-        // ====================================================
+        // ==================================
+        // CURRENCY SUMMARY
+        // ==================================
 
-        if (thisMonthElement) {
+        renderCurrencySummary(
+            totalByCurrency,
+            countByCurrency
+        );
 
-            thisMonthElement.textContent =
-                formatCurrency(thisMonthExpense);
 
-        }
+        // ==================================
+        // UPDATE CHART CURRENCY OPTIONS
+        // ==================================
+
+        updateChartCurrencyOptions(
+            currencies
+        );
 
 
         console.log(
-            "✅ Dashboard expenses updated:",
-            {
-                totalExpense,
-                thisMonthExpense
-            }
+            "Original currency totals:",
+            totalByCurrency
         );
 
-
-    } catch (error) {
+    }
+    catch (error) {
 
         console.error(
-            "❌ Error loading dashboard expense data:",
+            "Dashboard data error:",
             error
         );
-
 
         if (totalExpenseElement) {
 
             totalExpenseElement.textContent =
-                "₹0";
+                "--";
 
         }
 
+        if (totalExpenseNote) {
 
-        if (thisMonthElement) {
-
-            thisMonthElement.textContent =
-                "₹0";
+            totalExpenseNote.textContent =
+                "Unable to load expense data";
 
         }
 
     }
-
 }
 
 
-// ============================================================
-// LOAD SPENDING CHART
-// ============================================================
+// ==========================================
+// RENDER CURRENCY SUMMARY
+// ==========================================
 
-async function loadSpendingChart(user) {
+function renderCurrencySummary(
+    totalByCurrency,
+    countByCurrency
+) {
 
-    if (!spendingBars) {
+    if (!currencySummaryList) {
+        return;
+    }
 
-        console.warn(
-            "⚠️ Spending chart container not found."
+
+    const entries =
+        Object.entries(
+            totalByCurrency
         );
+
+
+    // ==================================
+    // NO DATA
+    // ==================================
+
+    if (
+        entries.length === 0
+    ) {
+
+        currencySummaryList.innerHTML = `
+            <div class="currency-summary-empty">
+                No receipt data available yet.
+            </div>
+        `;
+
+        if (currencySummaryText) {
+
+            currencySummaryText.textContent =
+                "Your spending by original currency";
+
+        }
 
         return;
     }
 
 
-    try {
+    // ==================================
+    // SORT CURRENCIES
+    // ==================================
 
-        console.log(
-            "Loading spending chart..."
-        );
+    entries.sort(
+        function (a, b) {
 
-
-        const receiptsRef =
-            collection(
-                db,
-                "users",
-                user.uid,
-                "receipts"
+            return (
+                b[1] - a[1]
             );
-
-
-        const snapshot =
-            await getDocs(receiptsRef);
-
-
-        // ====================================================
-        // GET SELECTED PERIOD
-        // ====================================================
-
-        const numberOfMonths =
-            chartPeriod
-                ? Number(chartPeriod.value) || 6
-                : 6;
-
-
-        // ====================================================
-        // CURRENT DATE
-        // ====================================================
-
-        const now =
-            new Date();
-
-
-        // ====================================================
-        // CREATE LAST N MONTHS
-        // ====================================================
-
-        const months = [];
-
-
-        for (
-            let i = numberOfMonths - 1;
-            i >= 0;
-            i--
-        ) {
-
-            const date =
-                new Date(
-                    now.getFullYear(),
-                    now.getMonth() - i,
-                    1
-                );
-
-
-            months.push({
-
-                year:
-                    date.getFullYear(),
-
-                month:
-                    date.getMonth(),
-
-                name:
-                    date.toLocaleString(
-                        "en-US",
-                        {
-                            month: "short"
-                        }
-                    ),
-
-                amount: 0
-
-            });
 
         }
+    );
 
 
-        // ====================================================
-        // ADD RECEIPTS TO CORRESPONDING MONTH
-        // ====================================================
+    // ==================================
+    // SUMMARY DESCRIPTION
+    // ==================================
 
-        snapshot.forEach((docSnapshot) => {
+    if (currencySummaryText) {
 
-            const data =
-                docSnapshot.data();
+        currencySummaryText.textContent =
+            entries.length === 1
+                ? "Your spending in the original currency"
+                : "Your spending grouped by original currency";
+
+    }
 
 
-            const amount =
-                parseAmount(
-                    data.totalAmount
+    currencySummaryList.innerHTML = "";
+
+
+    // ==================================
+    // CREATE SUMMARY ROWS
+    // ==================================
+
+    entries.forEach(
+        function ([currency, amount]) {
+
+            const row =
+                document.createElement(
+                    "div"
                 );
 
-
-            const receiptDate =
-                parseReceiptDate(
-                    data.purchaseDate
-                );
+            row.className =
+                "currency-summary-row";
 
 
-            if (!receiptDate) {
-
-                console.warn(
-                    "⚠️ Receipt date could not be read:",
-                    data.purchaseDate
-                );
-
-                return;
-            }
+            const count =
+                countByCurrency[
+                    currency
+                ] || 0;
 
 
-            months.forEach((item) => {
+            row.innerHTML = `
+                <div>
+                    <strong>
+                        ${currency}
+                    </strong>
 
-                if (
-                    receiptDate.getFullYear() === item.year &&
-                    receiptDate.getMonth() === item.month
-                ) {
-
-                    item.amount += amount;
-
-                }
-
-            });
-
-        });
-
-
-        // ====================================================
-        // FIND MAXIMUM MONTHLY VALUE
-        // ====================================================
-
-        const maxAmount =
-            Math.max(
-                ...months.map(
-                    item => item.amount
-                ),
-                0
-            );
-
-
-        // ====================================================
-        // UPDATE Y-AXIS
-        // ====================================================
-
-        updateChartLabels(maxAmount);
-
-
-        // ====================================================
-        // CLEAR OLD BARS
-        // ====================================================
-
-        spendingBars.innerHTML = "";
-
-
-        // ====================================================
-        // NO DATA
-        // ====================================================
-
-        if (maxAmount === 0) {
-
-            const message =
-                document.createElement("div");
-
-
-            message.style.width = "100%";
-            message.style.textAlign = "center";
-            message.style.padding = "25px 10px";
-
-
-            message.innerHTML = `
-                <div style="
-                    font-size:24px;
-                    margin-bottom:8px;
-                ">
-                    📊
+                    <span>
+                        ${
+                            count
+                        }
+                        ${
+                            count === 1
+                                ? "receipt"
+                                : "receipts"
+                        }
+                    </span>
                 </div>
 
-                <div style="
-                    color:#334155;
-                    font-size:13px;
-                    font-weight:600;
-                    margin-bottom:4px;
-                ">
-                    No spending in the selected period
-                </div>
-
-                <div style="
-                    color:#98a2b3;
-                    font-size:11px;
-                ">
-                    Your saved receipts will appear here
-                    when they fall within this period.
-                </div>
+                <strong>
+                    ${formatCurrency(
+                        amount,
+                        currency
+                    )}
+                </strong>
             `;
 
 
-            spendingBars.appendChild(message);
+            currencySummaryList.appendChild(
+                row
+            );
+
+        }
+    );
+}
+
+
+// ==========================================
+// UPDATE CHART CURRENCY DROPDOWN
+// ==========================================
+
+function updateChartCurrencyOptions(
+    currencies
+) {
+
+    if (!chartCurrency) {
+        return;
+    }
+
+
+    const oldValue =
+        chartCurrency.value;
+
+
+    chartCurrency.innerHTML = "";
+
+
+    // ==================================
+    // ALL CURRENCIES OPTION
+    // ==================================
+
+    const allOption =
+        document.createElement(
+            "option"
+        );
+
+    allOption.value =
+        "all";
+
+    allOption.textContent =
+        "All currencies";
+
+    chartCurrency.appendChild(
+        allOption
+    );
+
+
+    // ==================================
+    // ADD AVAILABLE CURRENCIES
+    // ==================================
+
+    currencies.forEach(
+        function (currency) {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                currency;
+
+            option.textContent =
+                currency;
+
+            chartCurrency.appendChild(
+                option
+            );
+
+        }
+    );
+
+
+    // ==================================
+    // SELECT PREVIOUS VALUE
+    // ==================================
+
+    if (
+        currencies.includes(
+            oldValue
+        )
+    ) {
+
+        chartCurrency.value =
+            oldValue;
+
+    }
+
+    else if (
+        currencies.length === 1
+    ) {
+
+        chartCurrency.value =
+            currencies[0];
+
+    }
+
+    else {
+
+        chartCurrency.value =
+            "all";
+
+    }
+
+
+    if (currentUser) {
+
+        loadSpendingChart(
+            currentUser
+        );
+
+    }
+}
+
+
+// ==========================================
+// LOAD SPENDING CHART
+// ==========================================
+
+async function loadSpendingChart(user) {
+
+    try {
+
+        const receipts =
+            await getAllReceipts(
+                user
+            );
+
+
+        const selectedPeriod =
+            chartSelect
+                ? chartSelect.value
+                : "6";
+
+
+        const selectedCurrency =
+            chartCurrency
+                ? chartCurrency.value
+                : "all";
+
+
+        const today =
+            new Date();
+
+        const currentYear =
+            today.getFullYear();
+
+        const currentMonth =
+            today.getMonth();
+
+
+        // ==================================
+        // FIND AVAILABLE CURRENCIES
+        // ==================================
+
+        const currencies = [
+            ...new Set(
+                receipts.map(
+                    function (receipt) {
+
+                        return getReceiptCurrency(
+                            receipt.data
+                        );
+
+                    }
+                )
+            )
+        ];
+
+
+        // ==================================
+        // MULTIPLE CURRENCY WARNING
+        // ==================================
+
+        if (
+            selectedCurrency === "all" &&
+            currencies.length > 1
+        ) {
+
+            renderMultiCurrencyChartMessage();
 
             return;
+
         }
 
 
-        // ====================================================
-        // CREATE BARS
-        // ====================================================
+        let activeCurrency =
+            selectedCurrency;
 
-        months.forEach((item) => {
+
+        if (
+            selectedCurrency === "all" &&
+            currencies.length === 1
+        ) {
+
+            activeCurrency =
+                currencies[0];
+
+        }
+
+
+        if (
+            currencies.length === 0
+        ) {
+
+            activeCurrency =
+                "INR";
+
+        }
+
+
+        // ==================================
+        // CREATE MONTH DATA
+        // ==================================
+
+        const monthData = [];
+
+
+        // ==================================
+        // THIS YEAR
+        // ==================================
+
+        if (
+            selectedPeriod === "12"
+        ) {
+
+            for (
+                let month = 0;
+                month < 12;
+                month++
+            ) {
+
+                const date =
+                    new Date(
+                        currentYear,
+                        month,
+                        1
+                    );
+
+
+                monthData.push({
+
+                    year:
+                        currentYear,
+
+                    month:
+                        month,
+
+                    label:
+                        date.toLocaleString(
+                            "en-US",
+                            {
+                                month:
+                                    "short"
+                            }
+                        ),
+
+                    amount:
+                        0
+
+                });
+
+            }
+
+        }
+
+
+        // ==================================
+        // LAST 6 MONTHS
+        // ==================================
+
+        else if (
+            selectedPeriod === "6"
+        ) {
+
+            for (
+                let i = 5;
+                i >= 0;
+                i--
+            ) {
+
+                const date =
+                    new Date(
+                        currentYear,
+                        currentMonth - i,
+                        1
+                    );
+
+
+                monthData.push({
+
+                    year:
+                        date.getFullYear(),
+
+                    month:
+                        date.getMonth(),
+
+                    label:
+                        date.toLocaleString(
+                            "en-US",
+                            {
+                                month:
+                                    "short"
+                            }
+                        ),
+
+                    amount:
+                        0
+
+                });
+
+            }
+
+        }
+
+
+        // ==================================
+        // ALL TIME
+        // ==================================
+
+        else if (
+            selectedPeriod === "all"
+        ) {
+
+            const uniqueMonths = {};
+
+
+            receipts.forEach(
+                function (receipt) {
+
+                    const receiptDate =
+                        getReceiptDate(
+                            receipt.data
+                        );
+
+
+                    if (!receiptDate) {
+                        return;
+                    }
+
+
+                    const key =
+                        receiptDate.getFullYear() +
+                        "-" +
+                        String(
+                            receiptDate.getMonth() + 1
+                        ).padStart(
+                            2,
+                            "0"
+                        );
+
+
+                    uniqueMonths[key] = {
+
+                        year:
+                            receiptDate.getFullYear(),
+
+                        month:
+                            receiptDate.getMonth(),
+
+                        label:
+                            receiptDate.toLocaleString(
+                                "en-US",
+                                {
+                                    month:
+                                        "short"
+                                }
+                            ) +
+                            " " +
+                            receiptDate.getFullYear()
+
+                    };
+
+                }
+            );
+
+
+            Object.values(
+                uniqueMonths
+            )
+                .sort(
+                    function (a, b) {
+
+                        if (
+                            a.year !==
+                            b.year
+                        ) {
+
+                            return (
+                                a.year -
+                                b.year
+                            );
+
+                        }
+
+                        return (
+                            a.month -
+                            b.month
+                        );
+
+                    }
+                )
+                .forEach(
+                    function (item) {
+
+                        monthData.push({
+
+                            year:
+                                item.year,
+
+                            month:
+                                item.month,
+
+                            label:
+                                item.label,
+
+                            amount:
+                                0
+
+                        });
+
+                    }
+                );
+
+
+            // No receipts
+            if (
+                monthData.length === 0
+            ) {
+
+                monthData.push({
+
+                    year:
+                        currentYear,
+
+                    month:
+                        currentMonth,
+
+                    label:
+                        today.toLocaleString(
+                            "en-US",
+                            {
+                                month:
+                                    "short"
+                            }
+                        ),
+
+                    amount:
+                        0
+
+                });
+
+            }
+
+        }
+
+
+        // ==================================
+        // ADD RECEIPTS
+        // ==================================
+
+        receipts.forEach(
+            function (receipt) {
+
+                const data =
+                    receipt.data;
+
+
+                const receiptDate =
+                    getReceiptDate(
+                        data
+                    );
+
+
+                if (!receiptDate) {
+                    return;
+                }
+
+
+                const currency =
+                    getReceiptCurrency(
+                        data
+                    );
+
+
+                // Only selected currency
+                if (
+                    currency !==
+                    activeCurrency
+                ) {
+
+                    return;
+
+                }
+
+
+                const amount =
+                    getReceiptAmount(
+                        data
+                    );
+
+
+                const matchingMonth =
+                    monthData.find(
+                        function (item) {
+
+                            return (
+
+                                item.year ===
+                                receiptDate.getFullYear()
+
+                                &&
+
+                                item.month ===
+                                receiptDate.getMonth()
+
+                            );
+
+                        }
+                    );
+
+
+                if (
+                    matchingMonth
+                ) {
+
+                    matchingMonth.amount +=
+                        amount;
+
+                }
+
+            }
+        );
+
+
+        console.log(
+            "Chart currency:",
+            activeCurrency
+        );
+
+        console.log(
+            "Chart data:",
+            monthData
+        );
+
+
+        updateChart(
+            monthData,
+            activeCurrency
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Spending chart error:",
+            error
+        );
+
+    }
+}
+
+
+// ==========================================
+// MULTI-CURRENCY CHART MESSAGE
+// ==========================================
+
+function renderMultiCurrencyChartMessage() {
+
+    if (!spendingBars) {
+        return;
+    }
+
+
+    spendingBars.innerHTML = `
+        <div
+            style="
+                width:100%;
+                min-height:180px;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                text-align:center;
+                color:#7b8794;
+                padding:20px;
+            "
+        >
+            <div>
+                <strong>
+                    Select a currency
+                </strong>
+
+                <br>
+
+                <span>
+                    Different currencies are kept separate
+                    and are not converted or combined.
+                </span>
+            </div>
+        </div>
+    `;
+
+
+    updateChartYAxis(
+        0,
+        "INR"
+    );
+
+
+    if (chartDescription) {
+
+        chartDescription.textContent =
+            "Select a currency to view spending";
+
+    }
+}
+
+
+// ==========================================
+// UPDATE CHART
+// ==========================================
+
+function updateChart(
+    monthData,
+    currency
+) {
+
+    if (!spendingBars) {
+
+        console.error(
+            "Chart bars container not found."
+        );
+
+        return;
+
+    }
+
+
+    spendingBars.innerHTML = "";
+
+
+    // ==================================
+    // CHART DESCRIPTION
+    // ==================================
+
+    if (chartDescription) {
+
+        chartDescription.textContent =
+            "Spending in " +
+            currency;
+
+    }
+
+
+    // ==================================
+    // FIND MAXIMUM
+    // ==================================
+
+    let maxValue = 0;
+
+
+    monthData.forEach(
+        function (item) {
+
+            if (
+                item.amount >
+                maxValue
+            ) {
+
+                maxValue =
+                    item.amount;
+
+            }
+
+        }
+    );
+
+
+    // ==================================
+    // CREATE BARS
+    // ==================================
+
+    monthData.forEach(
+        function (item) {
 
             const wrapper =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
 
             wrapper.className =
                 "bar-wrapper";
 
 
-            // -----------------------------------------------
-            // BAR
-            // -----------------------------------------------
-
             const bar =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
 
             bar.className =
                 "bar";
 
 
-            // Calculate percentage
-            const percentage =
-                (item.amount / maxAmount) * 100;
+            const label =
+                document.createElement(
+                    "span"
+                );
+
+            label.textContent =
+                item.label;
 
 
-            // Bar height
-            bar.style.height =
-                Math.max(
-                    percentage,
-                    item.amount > 0 ? 4 : 0
-                ) + "%";
+            // ==================================
+            // BAR HEIGHT
+            // ==================================
+
+            let percentage = 0;
 
 
-            // Current month / highest bar styling
             if (
-                item.year === now.getFullYear() &&
-                item.month === now.getMonth()
+                maxValue > 0
             ) {
 
-                bar.classList.add(
-                    "active-bar"
-                );
+                percentage =
+                    (
+                        item.amount /
+                        maxValue
+                    ) * 100;
 
             }
 
 
-            // Tooltip
-            bar.title =
-                `${item.name}: ${formatCurrency(item.amount)}`;
+            // Keep small values visible
+            if (
+                item.amount > 0 &&
+                percentage < 8
+            ) {
+
+                percentage = 8;
+
+            }
 
 
-            // -----------------------------------------------
-            // MONTH LABEL
-            // -----------------------------------------------
-
-            const label =
-                document.createElement("span");
-
-            label.textContent =
-                item.name;
+            bar.style.height =
+                percentage + "%";
 
 
-            // -----------------------------------------------
-            // APPEND
-            // -----------------------------------------------
+            // ==================================
+            // TOOLTIP
+            // ==================================
 
-            wrapper.appendChild(bar);
+            if (
+                item.amount > 0
+            ) {
 
-            wrapper.appendChild(label);
+                bar.title =
+                    item.label +
+                    " - " +
+                    formatCurrency(
+                        item.amount,
+                        currency
+                    );
 
-            spendingBars.appendChild(wrapper);
+            }
+            else {
 
-        });
+                bar.title =
+                    item.label +
+                    " - No spending";
 
-
-        console.log(
-            "✅ Spending chart loaded:",
-            months
-        );
-
-
-    } catch (error) {
-
-        console.error(
-            "❌ Error loading spending chart:",
-            error
-        );
-
-
-        updateChartLabels(0);
+            }
 
 
-        spendingBars.innerHTML = `
-            <div style="
-                width:100%;
-                text-align:center;
-                padding:25px 10px;
-            ">
-                <div style="
-                    font-size:24px;
-                    margin-bottom:8px;
-                ">
-                    !
-                </div>
+            wrapper.appendChild(
+                bar
+            );
 
-                <div style="
-                    color:#334155;
-                    font-size:13px;
-                    font-weight:600;
-                    margin-bottom:4px;
-                ">
-                    Unable to load spending chart
-                </div>
+            wrapper.appendChild(
+                label
+            );
 
-                <div style="
-                    color:#98a2b3;
-                    font-size:11px;
-                ">
-                    Please try again later.
-                </div>
-            </div>
-        `;
 
-    }
+            spendingBars.appendChild(
+                wrapper
+            );
 
+        }
+    );
+
+
+    // ==================================
+    // UPDATE Y AXIS
+    // ==================================
+
+    updateChartYAxis(
+        maxValue,
+        currency
+    );
 }
 
 
-// ============================================================
-// UPDATE CHART Y-AXIS LABELS
-// ============================================================
+// ==========================================
+// UPDATE CHART Y AXIS
+// ==========================================
 
-function updateChartLabels(maxAmount) {
+function updateChartYAxis(
+    maxValue,
+    currency = "INR"
+) {
 
-    if (!chartValueTop) {
+    if (
+        !chartY1 ||
+        !chartY2 ||
+        !chartY3 ||
+        !chartY4
+    ) {
         return;
     }
 
 
-    if (maxAmount <= 0) {
+    // ==================================
+    // NO DATA
+    // ==================================
 
-        chartValueTop.textContent =
-            "₹0";
+    if (
+        maxValue <= 0
+    ) {
 
-        if (chartValueSecond) {
+        chartY1.textContent =
+            formatChartValue(
+                1000,
+                currency
+            );
 
-            chartValueSecond.textContent =
-                "₹0";
+        chartY2.textContent =
+            formatChartValue(
+                700,
+                currency
+            );
 
-        }
+        chartY3.textContent =
+            formatChartValue(
+                300,
+                currency
+            );
 
-        if (chartValueThird) {
-
-            chartValueThird.textContent =
-                "₹0";
-
-        }
+        chartY4.textContent =
+            formatChartValue(
+                0,
+                currency
+            );
 
         return;
+    }
+
+
+    // ==================================
+    // DYNAMIC SCALE
+    // ==================================
+
+    let top;
+
+
+    if (
+        maxValue < 1000
+    ) {
+
+        top =
+            Math.ceil(
+                maxValue / 100
+            ) * 100;
+
+
+        if (
+            top < 100
+        ) {
+
+            top = 100;
+
+        }
+
+    }
+
+    else if (
+        maxValue < 10000
+    ) {
+
+        top =
+            Math.ceil(
+                maxValue / 1000
+            ) * 1000;
+
+    }
+
+    else if (
+        maxValue < 100000
+    ) {
+
+        top =
+            Math.ceil(
+                maxValue / 5000
+            ) * 5000;
+
+    }
+
+    else {
+
+        top =
+            Math.ceil(
+                maxValue / 25000
+            ) * 25000;
+
     }
 
 
     const second =
-        maxAmount * 0.66;
+        top * (2 / 3);
 
     const third =
-        maxAmount * 0.33;
+        top * (1 / 3);
 
 
-    chartValueTop.textContent =
-        formatChartValue(maxAmount);
+    chartY1.textContent =
+        formatChartValue(
+            top,
+            currency
+        );
 
+    chartY2.textContent =
+        formatChartValue(
+            second,
+            currency
+        );
 
-    if (chartValueSecond) {
+    chartY3.textContent =
+        formatChartValue(
+            third,
+            currency
+        );
 
-        chartValueSecond.textContent =
-            formatChartValue(second);
-
-    }
-
-
-    if (chartValueThird) {
-
-        chartValueThird.textContent =
-            formatChartValue(third);
-
-    }
-
+    chartY4.textContent =
+        formatChartValue(
+            0,
+            currency
+        );
 }
 
 
-// ============================================================
-// FORMAT CHART VALUES
-// ============================================================
+// ==========================================
+// FORMAT CHART VALUE
+// ==========================================
 
-function formatChartValue(amount) {
+function formatChartValue(
+    value,
+    currency
+) {
 
-    const value =
-        Number(amount || 0);
+    const symbol =
+        getCurrencySymbol(
+            currency
+        );
 
 
-    // Lakhs
-    if (value >= 100000) {
+    if (
+        value >= 10000000
+    ) {
 
-        return "₹" +
+        return (
+            symbol +
             (
-                value / 100000
-            )
-                .toFixed(1)
-                .replace(".0", "") +
-            "L";
+                value /
+                10000000
+            ).toFixed(1) +
+            "Cr"
+        );
 
     }
 
 
-    // Thousands
-    if (value >= 1000) {
+    if (
+        value >= 100000
+    ) {
 
-        return "₹" +
+        return (
+            symbol +
             (
-                value / 1000
-            )
-                .toFixed(1)
-                .replace(".0", "") +
-            "k";
+                value /
+                100000
+            ).toFixed(1) +
+            "L"
+        );
 
     }
 
 
-    return "₹" +
-        Math.round(value);
+    if (
+        value >= 1000
+    ) {
 
+        return (
+            symbol +
+            (
+                value /
+                1000
+            ).toFixed(1) +
+            "k"
+        );
+
+    }
+
+
+    return (
+        symbol +
+        Math.round(value)
+    );
 }
 
 
-// ============================================================
-// CHART PERIOD CHANGE
-// ============================================================
+// ==========================================
+// CHART PERIOD DROPDOWN
+// ==========================================
 
-if (chartPeriod) {
+if (chartSelect) {
 
-    chartPeriod.addEventListener(
+    chartSelect.addEventListener(
         "change",
         function () {
 
-            const user =
-                auth.currentUser;
+            console.log(
+                "Chart period changed:",
+                this.value
+            );
 
 
-            if (user) {
+            if (currentUser) {
 
-                loadSpendingChart(user);
+                loadSpendingChart(
+                    currentUser
+                );
 
             }
 
@@ -857,19 +1945,45 @@ if (chartPeriod) {
 }
 
 
-// ============================================================
+// ==========================================
+// CHART CURRENCY DROPDOWN
+// ==========================================
+
+if (chartCurrency) {
+
+    chartCurrency.addEventListener(
+        "change",
+        function () {
+
+            console.log(
+                "Chart currency changed:",
+                this.value
+            );
+
+
+            if (currentUser) {
+
+                loadSpendingChart(
+                    currentUser
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+// ==========================================
 // LOAD RECENT RECEIPTS
-// ============================================================
+// ==========================================
 
 async function loadRecentReceipts(user) {
 
     if (!receiptList) {
         return;
     }
-
-
-    receiptList.innerHTML =
-        "<p>Loading recent receipts...</p>";
 
 
     try {
@@ -900,151 +2014,839 @@ async function loadRecentReceipts(user) {
             );
 
 
-        // ====================================================
+        receiptList.innerHTML =
+            "";
+
+
+        // ==================================
         // NO RECEIPTS
-        // ====================================================
+        // ==================================
 
-        if (snapshot.empty) {
+        if (
+            snapshot.empty
+        ) {
 
-            receiptList.innerHTML =
-                "<p>No recent receipts found.</p>";
+            receiptList.innerHTML = `
+                <div class="receipt-row">
+
+                    <div class="receipt-store-icon">
+                        ▣
+                    </div>
+
+                    <div class="receipt-info">
+
+                        <strong>
+                            No receipts yet
+                        </strong>
+
+                        <span>
+                            Upload your first receipt
+                        </span>
+
+                    </div>
+
+                    <div class="receipt-price">
+                        —
+                    </div>
+
+                </div>
+            `;
 
             return;
         }
 
 
-        receiptList.innerHTML =
-            "";
-
-
-        // ====================================================
+        // ==================================
         // DISPLAY RECEIPTS
-        // ====================================================
+        // ==================================
 
-        snapshot.forEach((docSnapshot) => {
+        snapshot.forEach(
+            function (docSnapshot) {
 
-            const data =
-                docSnapshot.data();
-
-
-            const receiptItem =
-                document.createElement("div");
+                const data =
+                    docSnapshot.data();
 
 
-            receiptItem.className =
-                "receipt-row";
+                const storeName =
+                    data.storeName ||
+                    "Unknown Store";
 
 
-            // Store icon
-            const icon =
-                document.createElement("div");
-
-            icon.className =
-                "receipt-store-icon";
-
-            icon.textContent =
-                "▣";
-
-
-            // Info
-            const info =
-                document.createElement("div");
-
-            info.className =
-                "receipt-info";
-
-
-            const store =
-                document.createElement("strong");
-
-            store.textContent =
-                data.storeName ||
-                "Unknown Store";
-
-
-            const meta =
-                document.createElement("span");
-
-            meta.textContent =
-                `${data.category || "Other"} · ${data.purchaseDate || "No date"}`;
-
-
-            info.appendChild(store);
-
-            info.appendChild(meta);
-
-
-            // Amount
-            const amount =
-                document.createElement("div");
-
-            amount.className =
-                "receipt-price";
-
-
-            amount.textContent =
-                formatCurrency(
-                    parseAmount(
-                        data.totalAmount
-                    )
-                );
-
-
-            // Append
-            receiptItem.appendChild(icon);
-
-            receiptItem.appendChild(info);
-
-            receiptItem.appendChild(amount);
-
-
-            // =================================================
-            // OPEN RECEIPT DETAILS
-            // =================================================
-
-            receiptItem.addEventListener(
-                "click",
-                function () {
-
-                    localStorage.setItem(
-                        "selectedReceiptId",
-                        docSnapshot.id
+                const amount =
+                    getReceiptAmount(
+                        data
                     );
 
 
-                    window.location.href =
-                        "receiptDetails.html";
+                const currency =
+                    getReceiptCurrency(
+                        data
+                    );
+
+
+                const date =
+                    getReceiptDate(
+                        data
+                    );
+
+
+                let dateText =
+                    "Date unavailable";
+
+
+                if (date) {
+
+                    dateText =
+                        date.toLocaleDateString(
+                            "en-IN"
+                        );
 
                 }
-            );
 
 
-            receiptList.appendChild(
-                receiptItem
-            );
+                // ==================================
+                // CREATE ROW
+                // ==================================
 
-        });
+                const row =
+                    document.createElement(
+                        "div"
+                    );
 
 
-    } catch (error) {
+                row.className =
+                    "receipt-row";
+
+
+                row.style.cursor =
+                    "pointer";
+
+
+                row.innerHTML = `
+                    <div class="receipt-store-icon">
+                        ▣
+                    </div>
+
+                    <div class="receipt-info">
+
+                        <strong>
+                            ${escapeHTML(
+                                storeName
+                            )}
+                        </strong>
+
+                        <span>
+                            ${dateText}
+                        </span>
+
+                    </div>
+
+                    <div class="receipt-price">
+
+                        ${formatCurrency(
+                            amount,
+                            currency
+                        )}
+
+                    </div>
+                `;
+
+
+                // ==================================
+                // OPEN RECEIPT DETAILS
+                // ==================================
+
+                row.addEventListener(
+                    "click",
+                    function () {
+
+                        localStorage.setItem(
+                            "selectedReceiptId",
+                            docSnapshot.id
+                        );
+
+
+                        window.location.href =
+                            "receiptDetails.html";
+
+                    }
+                );
+
+
+                receiptList.appendChild(
+                    row
+                );
+
+            }
+        );
+
+    }
+    catch (error) {
 
         console.error(
-            "❌ Error loading recent receipts:",
+            "Recent receipts error:",
             error
         );
 
 
-        receiptList.innerHTML =
-            "<p>Unable to load recent receipts.</p>";
+        receiptList.innerHTML = `
+            <div class="receipt-row">
+
+                <div class="receipt-store-icon">
+                    !
+                </div>
+
+                <div class="receipt-info">
+
+                    <strong>
+                        Unable to load receipts
+                    </strong>
+
+                    <span>
+                        Please try again later
+                    </span>
+
+                </div>
+
+                <div class="receipt-price">
+                    —
+                </div>
+
+            </div>
+        `;
 
     }
+}
+
+
+// ==========================================
+// ESCAPE HTML
+// ==========================================
+
+function escapeHTML(value) {
+
+    return String(value)
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+}
+
+
+// ==========================================
+// PROFILE - OPEN
+// ==========================================
+
+if (profileButton) {
+
+    profileButton.addEventListener(
+        "click",
+        function () {
+
+            if (!currentUser) {
+                return;
+            }
+
+
+            const name =
+                currentUser.displayName ||
+                "User";
+
+
+            const email =
+                currentUser.email ||
+                "";
+
+
+            if (profileNameInput) {
+
+                profileNameInput.value =
+                    name;
+
+            }
+
+
+            if (profileEmailInput) {
+
+                profileEmailInput.value =
+                    email;
+
+            }
+
+
+            // ==================================
+            // PROFILE IMAGE
+            // ==================================
+
+            if (
+                currentUser.photoURL &&
+                !avatarRemoved
+            ) {
+
+                profileAvatar.innerHTML = `
+                    <img
+                        src="${currentUser.photoURL}"
+                        alt="Profile Avatar"
+                        style="
+                            width:100%;
+                            height:100%;
+                            object-fit:cover;
+                            border-radius:50%;
+                        "
+                    >
+                `;
+
+
+                profileLargeAvatar.innerHTML = `
+                    <img
+                        src="${currentUser.photoURL}"
+                        alt="Profile Avatar"
+                        style="
+                            width:100%;
+                            height:100%;
+                            object-fit:cover;
+                            border-radius:50%;
+                        "
+                    >
+                `;
+
+            }
+
+            else {
+
+                const initial =
+                    name
+                        .charAt(0)
+                        .toUpperCase();
+
+
+                profileAvatar.textContent =
+                    initial;
+
+
+                profileLargeAvatar.textContent =
+                    initial;
+
+            }
+
+
+            if (profileMessage) {
+
+                profileMessage.textContent =
+                    "";
+
+                profileMessage.style.color =
+                    "";
+
+            }
+
+
+            selectedAvatarFile =
+                null;
+
+
+            if (avatarInput) {
+
+                avatarInput.value =
+                    "";
+
+            }
+
+
+            // IMPORTANT:
+            // Modal uses inline display:none
+            profileModal.style.display =
+                "flex";
+
+        }
+    );
 
 }
 
 
-// ============================================================
+// ==========================================
+// CHANGE AVATAR
+// ==========================================
+
+if (
+    changeAvatarBtn &&
+    avatarInput
+) {
+
+    changeAvatarBtn.addEventListener(
+        "click",
+        function () {
+
+            avatarInput.click();
+
+        }
+    );
+
+
+    avatarInput.addEventListener(
+        "change",
+        function () {
+
+            const file =
+                avatarInput.files[0];
+
+
+            if (!file) {
+                return;
+            }
+
+
+            if (
+                !file.type.startsWith(
+                    "image/"
+                )
+            ) {
+
+                profileMessage.textContent =
+                    "Please select an image.";
+
+                profileMessage.style.color =
+                    "red";
+
+                avatarInput.value =
+                    "";
+
+                return;
+
+            }
+
+
+            selectedAvatarFile =
+                file;
+
+
+            avatarRemoved =
+                false;
+
+
+            const imageURL =
+                URL.createObjectURL(
+                    file
+                );
+
+
+            profileAvatar.innerHTML = `
+                <img
+                    src="${imageURL}"
+                    alt="Profile Avatar"
+                    style="
+                        width:100%;
+                        height:100%;
+                        object-fit:cover;
+                        border-radius:50%;
+                    "
+                >
+            `;
+
+
+            profileLargeAvatar.innerHTML = `
+                <img
+                    src="${imageURL}"
+                    alt="Profile Avatar"
+                    style="
+                        width:100%;
+                        height:100%;
+                        object-fit:cover;
+                        border-radius:50%;
+                    "
+                >
+            `;
+
+
+            profileMessage.textContent =
+                "Avatar selected. Click Save Changes to save it.";
+
+            profileMessage.style.color =
+                "green";
+
+        }
+    );
+
+}
+
+
+// ==========================================
+// REMOVE AVATAR
+// ==========================================
+
+if (removeAvatarBtn) {
+
+    removeAvatarBtn.addEventListener(
+        "click",
+        function () {
+
+            if (!currentUser) {
+                return;
+            }
+
+
+            selectedAvatarFile =
+                null;
+
+
+            if (avatarInput) {
+
+                avatarInput.value =
+                    "";
+
+            }
+
+
+            avatarRemoved =
+                true;
+
+
+            const name =
+                currentUser.displayName ||
+                "User";
+
+
+            const initial =
+                name
+                    .charAt(0)
+                    .toUpperCase();
+
+
+            profileAvatar.textContent =
+                initial;
+
+
+            profileLargeAvatar.textContent =
+                initial;
+
+
+            profileMessage.textContent =
+                "Profile picture removed. Click Save Changes to confirm.";
+
+            profileMessage.style.color =
+                "green";
+
+        }
+    );
+
+}
+
+
+// ==========================================
+// CLOSE PROFILE
+// ==========================================
+
+if (closeProfile) {
+
+    closeProfile.addEventListener(
+        "click",
+        function () {
+
+            profileModal.style.display =
+                "none";
+
+        }
+    );
+
+}
+
+
+// ==========================================
+// CLOSE PROFILE OUTSIDE
+// ==========================================
+
+if (profileModal) {
+
+    profileModal.addEventListener(
+        "click",
+        function (event) {
+
+            if (
+                event.target ===
+                profileModal
+            ) {
+
+                profileModal.style.display =
+                    "none";
+
+            }
+
+        }
+    );
+
+}
+
+
+// ==========================================
+// SAVE PROFILE
+// ==========================================
+
+if (saveProfile) {
+
+    saveProfile.addEventListener(
+        "click",
+        async function () {
+
+            if (!currentUser) {
+                return;
+            }
+
+
+            const newName =
+                profileNameInput.value.trim();
+
+
+            if (!newName) {
+
+                profileMessage.textContent =
+                    "Please enter your name.";
+
+                profileMessage.style.color =
+                    "red";
+
+                return;
+
+            }
+
+
+            saveProfile.disabled =
+                true;
+
+            saveProfile.textContent =
+                "Saving...";
+
+
+            profileMessage.textContent =
+                "";
+
+
+            try {
+
+                let photoURL =
+                    currentUser.photoURL ||
+                    null;
+
+
+                // ==================================
+                // REMOVE OLD AVATAR
+                // ==================================
+
+                if (avatarRemoved) {
+
+                    try {
+
+                        const oldAvatarRef =
+                            storageRef(
+                                storage,
+                                "avatars/" +
+                                currentUser.uid +
+                                "/profile.jpg"
+                            );
+
+
+                        await deleteObject(
+                            oldAvatarRef
+                        );
+
+                    }
+                    catch (error) {
+
+                        console.log(
+                            "No old avatar found."
+                        );
+
+                    }
+
+
+                    photoURL =
+                        null;
+
+                }
+
+
+                // ==================================
+                // UPLOAD NEW AVATAR
+                // ==================================
+
+                if (selectedAvatarFile) {
+
+                    const avatarRef =
+                        storageRef(
+                            storage,
+                            "avatars/" +
+                            currentUser.uid +
+                            "/profile.jpg"
+                        );
+
+
+                    await uploadBytes(
+                        avatarRef,
+                        selectedAvatarFile
+                    );
+
+
+                    photoURL =
+                        await getDownloadURL(
+                            avatarRef
+                        );
+
+                }
+
+
+                // ==================================
+                // UPDATE AUTH PROFILE
+                // ==================================
+
+                await updateProfile(
+                    currentUser,
+                    {
+                        displayName:
+                            newName,
+
+                        photoURL:
+                            photoURL
+                    }
+                );
+
+
+                // ==================================
+                // UPDATE UI
+                // ==================================
+
+                profileName.textContent =
+                    newName;
+
+
+                if (photoURL) {
+
+                    profileAvatar.innerHTML = `
+                        <img
+                            src="${photoURL}"
+                            alt="Profile Avatar"
+                            style="
+                                width:100%;
+                                height:100%;
+                                object-fit:cover;
+                                border-radius:50%;
+                            "
+                        >
+                    `;
+
+
+                    profileLargeAvatar.innerHTML = `
+                        <img
+                            src="${photoURL}"
+                            alt="Profile Avatar"
+                            style="
+                                width:100%;
+                                height:100%;
+                                object-fit:cover;
+                                border-radius:50%;
+                            "
+                        >
+                    `;
+
+                }
+
+                else {
+
+                    const initial =
+                        newName
+                            .charAt(0)
+                            .toUpperCase();
+
+
+                    profileAvatar.textContent =
+                        initial;
+
+
+                    profileLargeAvatar.textContent =
+                        initial;
+
+                }
+
+
+                profileMessage.textContent =
+                    "Profile updated successfully.";
+
+                profileMessage.style.color =
+                    "green";
+
+
+                selectedAvatarFile =
+                    null;
+
+                avatarRemoved =
+                    false;
+
+
+                if (avatarInput) {
+
+                    avatarInput.value =
+                        "";
+
+                }
+
+
+                setTimeout(
+                    function () {
+
+                        profileModal.style.display =
+                            "none";
+
+                    },
+                    1000
+                );
+
+            }
+            catch (error) {
+
+                console.error(
+                    "Profile update error:",
+                    error
+                );
+
+
+                profileMessage.textContent =
+                    "Unable to update profile. Please try again.";
+
+                profileMessage.style.color =
+                    "red";
+
+            }
+
+
+            saveProfile.disabled =
+                false;
+
+            saveProfile.textContent =
+                "Save Changes";
+
+        }
+    );
+
+}
+
+
+// ==========================================
 // LOGOUT
-// ============================================================
+// ==========================================
 
 const logoutButton =
     document.querySelector(
@@ -1063,89 +2865,31 @@ if (logoutButton) {
 
             try {
 
-                await signOut(auth);
+                await signOut(
+                    auth
+                );
+
+
+                sessionStorage.setItem(
+                    "loggedOut",
+                    "true"
+                );
 
 
                 console.log(
-                    "✅ User logged out successfully."
+                    "User logged out."
                 );
 
 
-                // =================================================
-                // LOGOUT MESSAGE
-                // =================================================
-
-                const logoutMessage =
-                    document.createElement("div");
-
-
-                logoutMessage.textContent =
-                    "✅ You have been logged out successfully.";
-
-
-                // Position
-                logoutMessage.style.position =
-                    "fixed";
-
-                logoutMessage.style.bottom =
-                    "30px";
-
-                logoutMessage.style.left =
-                    "50%";
-
-                logoutMessage.style.transform =
-                    "translateX(-50%)";
-
-
-                // Design
-                logoutMessage.style.padding =
-                    "14px 22px";
-
-                logoutMessage.style.background =
-                    "#ffffff";
-
-                logoutMessage.style.color =
-                    "#142d6b";
-
-                logoutMessage.style.borderRadius =
-                    "10px";
-
-                logoutMessage.style.boxShadow =
-                    "0 4px 15px rgba(0,0,0,0.15)";
-
-                logoutMessage.style.fontSize =
-                    "15px";
-
-                logoutMessage.style.fontWeight =
-                    "600";
-
-                logoutMessage.style.zIndex =
-                    "9999";
-
-
-                document.body.appendChild(
-                    logoutMessage
+                window.location.replace(
+                    "loginpg.html"
                 );
 
-
-                // Redirect after 3 seconds
-                setTimeout(
-                    () => {
-
-                        logoutMessage.remove();
-
-                        window.location.href =
-                            "loginpg.html";
-
-                    },
-                    3000
-                );
-
-
-            } catch (error) {
+            }
+            catch (error) {
 
                 console.error(
-                    "❌ Logout error:",
+                    "Logout error:",
                     error
                 );
 
@@ -1157,9 +2901,1635 @@ if (logoutButton) {
 }
 
 
-// ============================================================
-// AUTHENTICATION CHECK
-// ============================================================
+// ==========================================
+// DASHBOARD WARRANTY DATA
+// ==========================================
+
+const dashboardWarrantyTotal =
+    document.getElementById(
+        "dashboardWarrantyTotal"
+    );
+
+const dashboardWarrantyExpiring =
+    document.getElementById(
+        "dashboardWarrantyExpiring"
+    );
+
+const dashboardWarrantyList =
+    document.getElementById(
+        "dashboardWarrantyList"
+    );
+
+
+// ==========================================
+// LOAD DASHBOARD WARRANTIES
+// ==========================================
+
+async function loadDashboardWarranties(user) {
+
+    if (!user) {
+        return;
+    }
+
+    try {
+
+        const warrantiesRef =
+            collection(
+                db,
+                "users",
+                user.uid,
+                "warranties"
+            );
+
+        const snapshot =
+            await getDocs(
+                warrantiesRef
+            );
+
+        const warranties = [];
+
+        snapshot.forEach(
+            function (docSnapshot) {
+
+                const data =
+                    docSnapshot.data();
+
+                warranties.push({
+
+                    id:
+                        docSnapshot.id,
+
+                    ...data
+
+                });
+
+            }
+        );
+
+
+        // ==================================
+        // TOTAL WARRANTY COUNT
+        // ==================================
+
+        if (dashboardWarrantyTotal) {
+
+            dashboardWarrantyTotal.textContent =
+                warranties.length;
+
+        }
+
+
+        // ==================================
+        // CALCULATE WARRANTY STATUS
+        // ==================================
+
+        const today =
+            new Date();
+
+        today.setHours(
+            0,
+            0,
+            0,
+            0
+        );
+
+        let expiringCount = 0;
+
+        warranties.forEach(
+            function (warranty) {
+
+                const expiryDate =
+                    parseWarrantyDate(
+                        warranty.warrantyExpiryDate
+                    );
+
+                if (!expiryDate) {
+                    return;
+                }
+
+                const difference =
+                    expiryDate.getTime() -
+                    today.getTime();
+
+                const daysLeft =
+                    Math.ceil(
+                        difference /
+                        (
+                            1000 *
+                            60 *
+                            60 *
+                            24
+                        )
+                    );
+
+
+                if (
+                    daysLeft >= 0 &&
+                    daysLeft <= 30
+                ) {
+
+                    expiringCount++;
+
+                }
+
+            }
+        );
+
+
+        // ==================================
+        // EXPIRING COUNT
+        // ==================================
+
+        if (dashboardWarrantyExpiring) {
+
+            dashboardWarrantyExpiring.textContent =
+                expiringCount;
+
+        }
+
+
+        // ==================================
+        // SORT WARRANTIES
+        // ==================================
+
+        warranties.sort(
+            function (a, b) {
+
+                const dateA =
+                    parseWarrantyDate(
+                        a.warrantyExpiryDate
+                    );
+
+                const dateB =
+                    parseWarrantyDate(
+                        b.warrantyExpiryDate
+                    );
+
+                if (!dateA) {
+                    return 1;
+                }
+
+                if (!dateB) {
+                    return -1;
+                }
+
+                return (
+                    dateA.getTime() -
+                    dateB.getTime()
+                );
+
+            }
+        );
+
+
+        // ==================================
+        // SHOW WARRANTY ALERTS
+        // ==================================
+
+        renderDashboardWarrantyAlerts(
+            warranties
+        );
+
+
+        // ==================================
+        // SHOW NOTIFICATIONS
+        // ==================================
+
+        renderWarrantyNotifications(
+            warranties
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Dashboard warranty error:",
+            error
+        );
+
+        if (dashboardWarrantyTotal) {
+
+            dashboardWarrantyTotal.textContent =
+                "0";
+
+        }
+
+        if (dashboardWarrantyExpiring) {
+
+            dashboardWarrantyExpiring.textContent =
+                "0";
+
+        }
+
+        if (dashboardWarrantyList) {
+
+            dashboardWarrantyList.innerHTML = `
+                <div class="receipt-row">
+
+                    <div class="receipt-store-icon">
+                        !
+                    </div>
+
+                    <div class="receipt-info">
+
+                        <strong>
+                            Unable to load warranties
+                        </strong>
+
+                        <span>
+                            Please try again later
+                        </span>
+
+                    </div>
+
+                </div>
+            `;
+
+        }
+
+
+        // Clear notification UI
+        renderWarrantyNotifications(
+            []
+        );
+
+    }
+
+}
+
+
+// ==========================================
+// RENDER WARRANTY ALERTS
+// ==========================================
+
+function renderDashboardWarrantyAlerts(
+    warranties
+) {
+
+    if (!dashboardWarrantyList) {
+        return;
+    }
+
+
+    const today =
+        new Date();
+
+    today.setHours(
+        0,
+        0,
+        0,
+        0
+    );
+
+
+    const activeWarranties =
+        warranties.filter(
+            function (warranty) {
+
+                const expiryDate =
+                    parseWarrantyDate(
+                        warranty.warrantyExpiryDate
+                    );
+
+                if (!expiryDate) {
+                    return false;
+                }
+
+                const difference =
+                    expiryDate.getTime() -
+                    today.getTime();
+
+                const daysLeft =
+                    Math.ceil(
+                        difference /
+                        (
+                            1000 *
+                            60 *
+                            60 *
+                            24
+                        )
+                    );
+
+                return daysLeft >= 0;
+
+            }
+        );
+
+
+    // ==================================
+    // NO ACTIVE WARRANTIES
+    // ==================================
+
+    if (
+        activeWarranties.length === 0
+    ) {
+
+        dashboardWarrantyList.innerHTML = `
+            <div class="receipt-row">
+
+                <div class="receipt-store-icon">
+                    ✓
+                </div>
+
+                <div class="receipt-info">
+
+                    <strong>
+                        No active warranties
+                    </strong>
+
+                    <span>
+                        Your warranty alerts will appear here
+                    </span>
+
+                </div>
+
+            </div>
+        `;
+
+        return;
+    }
+
+
+    // Show maximum 5 warranties
+    const visibleWarranties =
+        activeWarranties.slice(
+            0,
+            5
+        );
+
+
+    dashboardWarrantyList.innerHTML =
+        "";
+
+
+    visibleWarranties.forEach(
+        function (warranty) {
+
+            const expiryDate =
+                parseWarrantyDate(
+                    warranty.warrantyExpiryDate
+                );
+
+            if (!expiryDate) {
+                return;
+            }
+
+
+            const difference =
+                expiryDate.getTime() -
+                today.getTime();
+
+
+            const daysLeft =
+                Math.ceil(
+                    difference /
+                    (
+                        1000 *
+                        60 *
+                        60 *
+                        24
+                    )
+                );
+
+
+            const isExpiringSoon =
+                daysLeft <= 30;
+
+
+            let statusText =
+                "Active";
+
+            let statusClass =
+                "dashboard-warranty-active";
+
+
+            if (isExpiringSoon) {
+
+                statusText =
+                    daysLeft === 0
+                        ? "Expires today"
+                        : `${daysLeft} days left`;
+
+                statusClass =
+                    "dashboard-warranty-warning";
+
+            }
+            else {
+
+                statusText =
+                    `${daysLeft} days left`;
+
+            }
+
+
+            const productName =
+                warranty.productName ||
+                "Warranty Item";
+
+
+            const storeName =
+                warranty.storeName ||
+                "Unknown Store";
+
+
+            const row =
+                document.createElement(
+                    "div"
+                );
+
+            row.className =
+                "receipt-row";
+
+
+            row.innerHTML = `
+
+                <div class="receipt-store-icon">
+                    ✓
+                </div>
+
+                <div class="receipt-info warranty-info">
+
+                    <strong>
+                        ${escapeDashboardHTML(
+                            productName
+                        )}
+                    </strong>
+
+                    <span>
+                        ${escapeDashboardHTML(
+                            storeName
+                        )}
+                        •
+                        Expires
+                        ${formatWarrantyDate(
+                            expiryDate
+                        )}
+                    </span>
+
+                </div>
+
+                <span class="
+                    dashboard-warranty-status
+                    ${statusClass}
+                ">
+                    ${escapeDashboardHTML(
+                        statusText
+                    )}
+                </span>
+
+            `;
+
+
+            dashboardWarrantyList.appendChild(
+                row
+            );
+
+        }
+    );
+
+}
+
+
+// ==========================================
+// PARSE WARRANTY DATE
+// ==========================================
+
+function parseWarrantyDate(value) {
+
+    if (!value) {
+        return null;
+    }
+
+
+    // Firestore Timestamp
+    if (
+        typeof value.toDate ===
+        "function"
+    ) {
+
+        const date =
+            value.toDate();
+
+        date.setHours(
+            0,
+            0,
+            0,
+            0
+        );
+
+        return date;
+
+    }
+
+
+    // JavaScript Date
+    if (
+        value instanceof Date
+    ) {
+
+        const date =
+            new Date(value);
+
+        date.setHours(
+            0,
+            0,
+            0,
+            0
+        );
+
+        return date;
+
+    }
+
+
+    // YYYY-MM-DD
+    if (
+        typeof value ===
+        "string"
+    ) {
+
+        const match =
+            value.match(
+                /^(\d{4})-(\d{2})-(\d{2})$/
+            );
+
+        if (match) {
+
+            const date =
+                new Date(
+                    Number(match[1]),
+                    Number(match[2]) - 1,
+                    Number(match[3])
+                );
+
+            date.setHours(
+                0,
+                0,
+                0,
+                0
+            );
+
+            return date;
+
+        }
+
+
+        // DD-MM-YYYY
+        const indianMatch =
+            value.match(
+                /^(\d{2})-(\d{2})-(\d{4})$/
+            );
+
+        if (indianMatch) {
+
+            const date =
+                new Date(
+                    Number(indianMatch[3]),
+                    Number(indianMatch[2]) - 1,
+                    Number(indianMatch[1])
+                );
+
+            date.setHours(
+                0,
+                0,
+                0,
+                0
+            );
+
+            return date;
+
+        }
+
+
+        // Normal date string
+        const date =
+            new Date(value);
+
+        if (
+            !isNaN(
+                date.getTime()
+            )
+        ) {
+
+            date.setHours(
+                0,
+                0,
+                0,
+                0
+            );
+
+            return date;
+
+        }
+
+    }
+
+
+    return null;
+
+}
+
+
+// ==========================================
+// FORMAT WARRANTY DATE
+// ==========================================
+
+function formatWarrantyDate(
+    date
+) {
+
+    if (!date) {
+        return "N/A";
+    }
+
+    return date.toLocaleDateString(
+        "en-IN",
+        {
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
+        }
+    );
+
+}
+
+
+// ==========================================
+// ESCAPE DASHBOARD HTML
+// ==========================================
+
+function escapeDashboardHTML(
+    value
+) {
+
+    return String(value || "")
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+// ==========================================
+// SHOPIX - IN-APP WARRANTY NOTIFICATIONS
+// ==========================================
+
+
+// ==========================================
+// GET NOTIFICATION STORAGE KEY
+// ==========================================
+
+function getNotificationStorageKey() {
+
+    if (!currentUser) {
+        return "shopix_read_notifications";
+    }
+
+    return (
+        "shopix_read_notifications_" +
+        currentUser.uid
+    );
+
+}
+
+
+// ==========================================
+// GET READ NOTIFICATION IDS
+// ==========================================
+
+function getReadNotificationIds() {
+
+    try {
+
+        const key =
+            getNotificationStorageKey();
+
+        const saved =
+            localStorage.getItem(
+                key
+            );
+
+        if (!saved) {
+            return [];
+        }
+
+        const parsed =
+            JSON.parse(saved);
+
+        return Array.isArray(parsed)
+            ? parsed
+            : [];
+
+    }
+    catch (error) {
+
+        console.error(
+            "Notification storage error:",
+            error
+        );
+
+        return [];
+
+    }
+
+}
+
+
+// ==========================================
+// SAVE READ NOTIFICATION IDS
+// ==========================================
+
+function saveReadNotificationIds(
+    ids
+) {
+
+    try {
+
+        localStorage.setItem(
+            getNotificationStorageKey(),
+            JSON.stringify(ids)
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Unable to save notification state:",
+            error
+        );
+
+    }
+
+}
+
+
+// ==========================================
+// BUILD WARRANTY NOTIFICATIONS
+// ==========================================
+
+function buildWarrantyNotifications(
+    warranties
+) {
+
+    const today =
+        new Date();
+
+    today.setHours(
+        0,
+        0,
+        0,
+        0
+    );
+
+
+    const notifications = [];
+
+
+    warranties.forEach(
+        function (warranty) {
+
+            const expiryDate =
+                parseWarrantyDate(
+                    warranty.warrantyExpiryDate
+                );
+
+            if (!expiryDate) {
+                return;
+            }
+
+
+            const difference =
+                expiryDate.getTime() -
+                today.getTime();
+
+
+            const daysLeft =
+                Math.ceil(
+                    difference /
+                    (
+                        1000 *
+                        60 *
+                        60 *
+                        24
+                    )
+                );
+
+
+            const productName =
+                warranty.productName ||
+                "Warranty Item";
+
+
+            const storeName =
+                warranty.storeName ||
+                "Unknown Store";
+
+
+            const formattedDate =
+                formatWarrantyDate(
+                    expiryDate
+                );
+
+
+            // ==================================
+            // EXPIRED
+            // ==================================
+
+            if (daysLeft < 0) {
+
+                notifications.push({
+
+                    id:
+                        `${warranty.id}_expired`,
+
+                    warrantyId:
+                        warranty.id,
+
+                    type:
+                        "expired",
+
+                    icon:
+                        "⚠️",
+
+                    title:
+                        "Warranty expired",
+
+                    message:
+                        `${productName} warranty expired on ${formattedDate}.`,
+
+                    productName:
+                        productName,
+
+                    storeName:
+                        storeName,
+
+                    expiryDate:
+                        expiryDate
+
+                });
+
+                return;
+
+            }
+
+
+            // ==================================
+            // EXPIRES TODAY
+            // ==================================
+
+            if (daysLeft === 0) {
+
+                notifications.push({
+
+                    id:
+                        `${warranty.id}_today`,
+
+                    warrantyId:
+                        warranty.id,
+
+                    type:
+                        "today",
+
+                    icon:
+                        "🔴",
+
+                    title:
+                        "Warranty expires today",
+
+                    message:
+                        `${productName} warranty expires today.`,
+
+                    productName:
+                        productName,
+
+                    storeName:
+                        storeName,
+
+                    expiryDate:
+                        expiryDate
+
+                });
+
+                return;
+
+            }
+
+
+            // ==================================
+            // 7 DAYS BEFORE
+            // ==================================
+
+            if (daysLeft <= 7) {
+
+                notifications.push({
+
+                    id:
+                        `${warranty.id}_7`,
+
+                    warrantyId:
+                        warranty.id,
+
+                    type:
+                        "warning",
+
+                    icon:
+                        "⚠️",
+
+                    title:
+                        "Warranty expiring soon",
+
+                    message:
+                        `${productName} warranty expires in ${daysLeft} days.`,
+
+                    productName:
+                        productName,
+
+                    storeName:
+                        storeName,
+
+                    expiryDate:
+                        expiryDate
+
+                });
+
+                return;
+
+            }
+
+
+            // ==================================
+            // 30 DAYS BEFORE
+            // ==================================
+
+            if (daysLeft <= 30) {
+
+                notifications.push({
+
+                    id:
+                        `${warranty.id}_30`,
+
+                    warrantyId:
+                        warranty.id,
+
+                    type:
+                        "warning",
+
+                    icon:
+                        "🔔",
+
+                    title:
+                        "Warranty reminder",
+
+                    message:
+                        `${productName} warranty expires in ${daysLeft} days.`,
+
+                    productName:
+                        productName,
+
+                    storeName:
+                        storeName,
+
+                    expiryDate:
+                        expiryDate
+
+                });
+
+            }
+
+        }
+    );
+
+
+    // ==================================
+    // SORT NOTIFICATIONS
+    // ==================================
+
+    notifications.sort(
+        function (a, b) {
+
+            const dateA =
+                a.expiryDate
+                    ? a.expiryDate.getTime()
+                    : Infinity;
+
+            const dateB =
+                b.expiryDate
+                    ? b.expiryDate.getTime()
+                    : Infinity;
+
+            return dateA - dateB;
+
+        }
+    );
+
+
+    return notifications;
+
+}
+
+
+// ==========================================
+// RENDER WARRANTY NOTIFICATIONS
+// ==========================================
+
+function renderWarrantyNotifications(
+    warranties
+) {
+
+    if (!notificationList) {
+        return;
+    }
+
+
+    const notifications =
+        buildWarrantyNotifications(
+            warranties
+        );
+
+
+    const readIds =
+        getReadNotificationIds();
+
+
+    // ==================================
+    // NO NOTIFICATIONS
+    // ==================================
+
+    if (
+        notifications.length === 0
+    ) {
+
+        notificationList.innerHTML = `
+            <div class="notification-empty">
+
+                <div class="notification-empty-icon">
+                    🔔
+                </div>
+
+                <strong>
+                    No notifications
+                </strong>
+
+                <span>
+                    Your warranty reminders will appear here.
+                </span>
+
+            </div>
+        `;
+
+
+        if (notificationSummary) {
+
+            notificationSummary.textContent =
+                "No new notifications";
+
+        }
+
+
+        if (notificationBadge) {
+
+            notificationBadge.style.display =
+                "none";
+
+            notificationBadge.textContent =
+                "0";
+
+        }
+
+
+        return;
+    }
+
+
+    // ==================================
+    // REMOVE OLD READ IDS
+    // ==================================
+
+    const existingNotificationIds =
+        notifications.map(
+            function (notification) {
+
+                return notification.id;
+
+            }
+        );
+
+
+    const validReadIds =
+        readIds.filter(
+            function (id) {
+
+                return existingNotificationIds.includes(
+                    id
+                );
+
+            }
+        );
+
+
+    saveReadNotificationIds(
+        validReadIds
+    );
+
+
+    // ==================================
+    // UNREAD COUNT
+    // ==================================
+
+    const unreadNotifications =
+        notifications.filter(
+            function (notification) {
+
+                return !validReadIds.includes(
+                    notification.id
+                );
+
+            }
+        );
+
+
+    const unreadCount =
+        unreadNotifications.length;
+
+
+    // ==================================
+    // UPDATE BADGE
+    // ==================================
+
+    if (notificationBadge) {
+
+        if (unreadCount > 0) {
+
+            notificationBadge.textContent =
+                unreadCount > 99
+                    ? "99+"
+                    : unreadCount;
+
+            notificationBadge.style.display =
+                "flex";
+
+        }
+        else {
+
+            notificationBadge.textContent =
+                "0";
+
+            notificationBadge.style.display =
+                "none";
+
+        }
+
+    }
+
+
+    // ==================================
+    // UPDATE SUMMARY
+    // ==================================
+
+    if (notificationSummary) {
+
+        if (unreadCount === 0) {
+
+            notificationSummary.textContent =
+                "All notifications read";
+
+        }
+
+        else {
+
+            notificationSummary.textContent =
+                unreadCount +
+                (
+                    unreadCount === 1
+                        ? " new notification"
+                        : " new notifications"
+                );
+
+        }
+
+    }
+
+
+    // ==================================
+    // CLEAR LIST
+    // ==================================
+
+    notificationList.innerHTML =
+        "";
+
+
+    // ==================================
+    // CREATE NOTIFICATION ITEMS
+    // ==================================
+
+    notifications.forEach(
+        function (notification) {
+
+            const isRead =
+                validReadIds.includes(
+                    notification.id
+                );
+
+
+            const item =
+                document.createElement(
+                    "div"
+                );
+
+
+            item.className =
+                "notification-item" +
+                (
+                    isRead
+                        ? ""
+                        : " unread"
+                );
+
+
+            item.dataset.notificationId =
+                notification.id;
+
+
+            const iconClass =
+                notification.type === "expired"
+                    ? "expired"
+                    : "warning";
+
+
+            item.innerHTML = `
+
+                <div class="
+                    notification-icon
+                    ${iconClass}
+                ">
+                    ${notification.icon}
+                </div>
+
+                <div class="notification-content">
+
+                    <strong>
+                        ${escapeDashboardHTML(
+                            notification.title
+                        )}
+                    </strong>
+
+                    <span>
+                        ${escapeDashboardHTML(
+                            notification.message
+                        )}
+                    </span>
+
+                    <small>
+                        ${escapeDashboardHTML(
+                            notification.storeName
+                        )}
+                        •
+                        Expires
+                        ${formatWarrantyDate(
+                            notification.expiryDate
+                        )}
+                    </small>
+
+                </div>
+
+                ${
+                    isRead
+                        ? ""
+                        : `
+                            <span
+                                class="notification-unread-dot"
+                                aria-label="Unread"
+                            ></span>
+                        `
+                }
+
+            `;
+
+
+            // ==================================
+            // CLICK NOTIFICATION
+            // ==================================
+
+            item.addEventListener(
+                "click",
+                function () {
+
+                    markNotificationAsRead(
+                        notification.id
+                    );
+
+
+                    item.classList.remove(
+                        "unread"
+                    );
+
+
+                    const unreadDot =
+                        item.querySelector(
+                            ".notification-unread-dot"
+                        );
+
+
+                    if (unreadDot) {
+
+                        unreadDot.remove();
+
+                    }
+
+
+                    updateNotificationBadgeFromDOM();
+
+                }
+            );
+
+
+            notificationList.appendChild(
+                item
+            );
+
+        }
+    );
+
+}
+
+
+// ==========================================
+// MARK NOTIFICATION AS READ
+// ==========================================
+
+function markNotificationAsRead(
+    notificationId
+) {
+
+    if (!notificationId) {
+        return;
+    }
+
+
+    const readIds =
+        getReadNotificationIds();
+
+
+    if (
+        !readIds.includes(
+            notificationId
+        )
+    ) {
+
+        readIds.push(
+            notificationId
+        );
+
+    }
+
+
+    saveReadNotificationIds(
+        readIds
+    );
+
+}
+
+
+// ==========================================
+// UPDATE BADGE FROM DOM
+// ==========================================
+
+function updateNotificationBadgeFromDOM() {
+
+    if (!notificationList) {
+        return;
+    }
+
+
+    const unreadItems =
+        notificationList.querySelectorAll(
+            ".notification-item.unread"
+        );
+
+
+    const unreadCount =
+        unreadItems.length;
+
+
+    if (notificationBadge) {
+
+        if (unreadCount > 0) {
+
+            notificationBadge.textContent =
+                unreadCount > 99
+                    ? "99+"
+                    : unreadCount;
+
+            notificationBadge.style.display =
+                "flex";
+
+        }
+
+        else {
+
+            notificationBadge.textContent =
+                "0";
+
+            notificationBadge.style.display =
+                "none";
+
+        }
+
+    }
+
+
+    if (notificationSummary) {
+
+        if (unreadCount === 0) {
+
+            notificationSummary.textContent =
+                "All notifications read";
+
+        }
+
+        else {
+
+            notificationSummary.textContent =
+                unreadCount +
+                (
+                    unreadCount === 1
+                        ? " new notification"
+                        : " new notifications"
+                );
+
+        }
+
+    }
+
+}
+
+
+// ==========================================
+// NOTIFICATION BUTTON
+// ==========================================
+
+if (notificationButton) {
+
+    notificationButton.addEventListener(
+        "click",
+        function (event) {
+
+            event.stopPropagation();
+
+
+            if (!notificationPanel) {
+                return;
+            }
+
+
+            notificationPanel.classList.toggle(
+                "show"
+            );
+
+        }
+    );
+
+}
+
+
+// ==========================================
+// MARK ALL NOTIFICATIONS READ
+// ==========================================
+
+if (markAllNotificationsRead) {
+
+    markAllNotificationsRead.addEventListener(
+        "click",
+        function (event) {
+
+            event.preventDefault();
+
+            event.stopPropagation();
+
+
+            if (!notificationList) {
+                return;
+            }
+
+
+            const unreadItems =
+                notificationList.querySelectorAll(
+                    ".notification-item.unread"
+                );
+
+
+            const readIds =
+                getReadNotificationIds();
+
+
+            unreadItems.forEach(
+                function (item) {
+
+                    const notificationId =
+                        item.dataset.notificationId;
+
+
+                    if (
+                        notificationId &&
+                        !readIds.includes(
+                            notificationId
+                        )
+                    ) {
+
+                        readIds.push(
+                            notificationId
+                        );
+
+                    }
+
+
+                    item.classList.remove(
+                        "unread"
+                    );
+
+
+                    const dot =
+                        item.querySelector(
+                            ".notification-unread-dot"
+                        );
+
+
+                    if (dot) {
+                        dot.remove();
+                    }
+
+                }
+            );
+
+
+            saveReadNotificationIds(
+                readIds
+            );
+
+
+            updateNotificationBadgeFromDOM();
+
+        }
+    );
+
+}
+
+
+// ==========================================
+// CLOSE NOTIFICATION PANEL OUTSIDE
+// ==========================================
+
+document.addEventListener(
+    "click",
+    function (event) {
+
+        if (
+            !notificationPanel ||
+            !notificationButton
+        ) {
+            return;
+        }
+
+
+        if (
+            !notificationPanel.contains(
+                event.target
+            ) &&
+            !notificationButton.contains(
+                event.target
+            )
+        ) {
+
+            notificationPanel.classList.remove(
+                "show"
+            );
+
+        }
+
+    }
+);
+
+
+// ==========================================
+// AUTH STATE
+// ==========================================
 
 onAuthStateChanged(
     auth,
@@ -1167,91 +4537,203 @@ onAuthStateChanged(
 
         if (user) {
 
+            // ==================================
+            // USER LOGGED IN
+            // ==================================
+
+            currentUser =
+                user;
+
+
+            avatarRemoved =
+                false;
+
+
             console.log(
                 "✅ Dashboard user:",
                 user.uid
             );
 
 
-            // Dynamic expense cards
-            loadDashboardData(user);
+            sessionStorage.removeItem(
+                "loggedOut"
+            );
 
 
-            // Recent receipts
-            loadRecentReceipts(user);
+            // ==================================
+            // PROFILE NAME
+            // ==================================
+
+            const displayName =
+                user.displayName ||
+                "User";
 
 
-            // Dynamic spending chart
-            loadSpendingChart(user);
+            if (profileName) {
 
-        } else {
+                profileName.textContent =
+                    displayName;
+
+            }
+
+
+            // ==================================
+            // PROFILE AVATAR
+            // ==================================
+
+            if (profileAvatar) {
+
+                if (user.photoURL) {
+
+                    profileAvatar.innerHTML = `
+                        <img
+                            src="${user.photoURL}"
+                            alt="Profile Avatar"
+                            style="
+                                width:100%;
+                                height:100%;
+                                object-fit:cover;
+                                border-radius:50%;
+                            "
+                        >
+                    `;
+
+                }
+
+                else {
+
+                    profileAvatar.textContent =
+                        displayName
+                            .charAt(0)
+                            .toUpperCase();
+
+                }
+
+            }
+
+
+            // ==================================
+            // LARGE AVATAR
+            // ==================================
+
+            if (profileLargeAvatar) {
+
+                if (user.photoURL) {
+
+                    profileLargeAvatar.innerHTML = `
+                        <img
+                            src="${user.photoURL}"
+                            alt="Profile Avatar"
+                            style="
+                                width:100%;
+                                height:100%;
+                                object-fit:cover;
+                                border-radius:50%;
+                            "
+                        >
+                    `;
+
+                }
+
+                else {
+
+                    profileLargeAvatar.textContent =
+                        displayName
+                            .charAt(0)
+                            .toUpperCase();
+
+                }
+
+            }
+
+
+            // ==================================
+            // PROFILE INPUTS
+            // ==================================
+
+            if (profileNameInput) {
+
+                profileNameInput.value =
+                    displayName;
+
+            }
+
+
+            if (profileEmailInput) {
+
+                profileEmailInput.value =
+                    user.email ||
+                    "";
+
+            }
+
+
+            // ==================================
+            // LOAD TOTAL + CURRENCY SUMMARY
+            // ==================================
+
+            loadDashboardData(
+                user
+            );
+
+
+            // ==================================
+            // LOAD RECENT RECEIPTS
+            // ==================================
+
+            loadRecentReceipts(
+                user
+            );
+
+
+            // ==================================
+            // LOAD SPENDING CHART
+            // ==================================
+
+            loadSpendingChart(
+                user
+            );
+
+
+            // ==================================
+            // LOAD WARRANTY + NOTIFICATIONS
+            // ==================================
+
+            loadDashboardWarranties(
+                user
+            );
+
+        }
+
+        else {
+
+            // ==================================
+            // NO USER
+            // ==================================
 
             console.log(
                 "ℹ️ No user logged in."
             );
 
 
-            // =================================================
-            // RECENT RECEIPTS
-            // =================================================
+            currentUser =
+                null;
+
 
             if (receiptList) {
 
-                receiptList.innerHTML =
-                    "<p>Please login to view your receipts.</p>";
-
-            }
-
-
-            // =================================================
-            // TOTAL EXPENSE
-            // =================================================
-
-            if (totalExpenseElement) {
-
-                totalExpenseElement.textContent =
-                    "₹0";
-
-            }
-
-
-            // =================================================
-            // THIS MONTH
-            // =================================================
-
-            if (thisMonthElement) {
-
-                thisMonthElement.textContent =
-                    "₹0";
-
-            }
-
-
-            // =================================================
-            // CHART
-            // =================================================
-
-            if (spendingBars) {
-
-                spendingBars.innerHTML = `
-                    <div style="
-                        width:100%;
-                        text-align:center;
-                        padding:25px 10px;
-                    ">
-                        <div style="
-                            color:#667085;
-                            font-size:12px;
-                        ">
-                            Please login to view spending data.
-                        </div>
-                    </div>
+                receiptList.innerHTML = `
+                    <p>
+                        Please login to view your receipts.
+                    </p>
                 `;
 
             }
 
 
-            updateChartLabels(0);
+            window.location.replace(
+                "loginpg.html"
+            );
 
         }
 

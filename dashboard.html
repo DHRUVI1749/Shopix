@@ -5,15 +5,23 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
     <title>SHOPIX | Dashboard</title>
 
-    <meta name="description"
+    <meta
+        name="description"
         content="SHOPIX Smart Receipt and Shopping Assistant Dashboard">
 
-    <!-- Google Font -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <!-- =========================
+         GOOGLE FONT
+    ========================== -->
+
+    <link rel="preconnect"
+        href="https://fonts.googleapis.com">
 
     <link rel="preconnect"
         href="https://fonts.gstatic.com"
@@ -23,18 +31,14 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
 
-    <!-- Dashboard CSS -->
-    <link rel="stylesheet" href="css/dashboard.css">
 
-    <!-- Dashboard Protection -->
-    <script>
-        window.addEventListener("pageshow", function (event) {
+    <!-- =========================
+         DASHBOARD CSS
+    ========================== -->
 
-            if (event.persisted) {
-                window.location.reload();
-            }
-
-        });    </script>
+    <link
+        rel="stylesheet"
+        href="css/dashboard.css">
 
 </head>
 
@@ -45,7 +49,8 @@
     <!-- =========================
          DASHBOARD LAYOUT
     ========================== -->
-  <div class="dashboard-layout">
+
+    <div class="dashboard-layout">
 
 
         <!-- =========================
@@ -57,7 +62,9 @@
 
             <!-- LOGO -->
 
-            <a href="index.html" class="sidebar-logo">
+            <a
+                href="index.html"
+                class="sidebar-logo">
 
                 <span class="logo-icon">
                     S
@@ -70,10 +77,11 @@
             </a>
 
 
-            <!-- NAVIGATION -->
+            <!-- =========================
+                 NAVIGATION
+            ========================== -->
 
             <nav class="sidebar-nav">
-
 
                 <p class="nav-title">
                     MAIN MENU
@@ -82,7 +90,9 @@
 
                 <!-- Dashboard -->
 
-                <a href="dashboard.html" class="nav-item active">
+                <a
+                    href="dashboard.html"
+                    class="nav-item active">
 
                     <span class="nav-icon">
                         ▦
@@ -95,7 +105,9 @@
 
                 <!-- Receipts -->
 
-                <a href="receiptHistory.html" class="nav-item">
+                <a
+                    href="receiptHistory.html"
+                    class="nav-item">
 
                     <span class="nav-icon">
                         ▤
@@ -108,7 +120,9 @@
 
                 <!-- Upload Receipt -->
 
-                <a href="receiptScanner.html" class="nav-item">
+                <a
+                    href="receiptScanner.html"
+                    class="nav-item">
 
                     <span class="nav-icon">
                         ↑
@@ -121,7 +135,9 @@
 
                 <!-- Expenses -->
 
-                <a href="expenses.html" class="nav-item">
+                <a
+                    href="expenseAnalytics.html"
+                    class="nav-item">
 
                     <span class="nav-icon">
                         ◫
@@ -132,9 +148,26 @@
                 </a>
 
 
+                <!-- Reports -->
+
+                <a
+                    href="reports.html"
+                    class="nav-item">
+
+                    <span class="nav-icon">
+                        ▤
+                    </span>
+
+                    Reports
+
+                </a>
+
+
                 <!-- Warranties -->
 
-                <a href="warranties.html" class="nav-item">
+                <a
+                    href="warranty.html"
+                    class="nav-item">
 
                     <span class="nav-icon">
                         ♢
@@ -147,7 +180,9 @@
 
                 <!-- Settings -->
 
-                <a href="settings.html" class="nav-item">
+                <a
+                    href="#"
+                    class="nav-item">
 
                     <span class="nav-icon">
                         ⚙
@@ -157,43 +192,54 @@
 
                 </a>
 
-
             </nav>
 
 
-            <!-- SIDEBAR BOTTOM -->
+            <!-- =========================
+                 SIDEBAR BOTTOM
+            ========================== -->
 
-<div class="sidebar-bottom">
-
-    <a href="help.html" class="help-box">
-
-        <div class="help-icon">
-            ?
-        </div>
-
-        <div>
-            <strong>
-                Need Help?
-            </strong>
-
-            <span>
-                We're here for you
-            </span>
-        </div>
-
-    </a>
-
-    <!-- Logout -->
-    <a href="index.html" class="logout-btn">
-        <span>↪</span>
-        Logout
-    </a>
-
-</div>
+            <div class="sidebar-bottom">
 
 
-        
+                <!-- HELP -->
 
+                <div class="help-box">
+
+                    <div class="help-icon">
+                        ?
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Need Help?
+                        </strong>
+
+                        <span>
+                            We're here for you
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- LOGOUT -->
+
+                <a
+                    href="index.html"
+                    class="logout-btn">
+
+                    <span>
+                        ↪
+                    </span>
+
+                    Logout
+
+                </a>
+
+            </div>
 
         </aside>
 
@@ -215,6 +261,9 @@
 
                 <div class="header-left">
 
+
+                    <!-- MOBILE MENU -->
+
                     <button
                         class="mobile-menu-btn"
                         type="button">
@@ -222,6 +271,7 @@
                         ☰
 
                     </button>
+
 
                     <div>
 
@@ -238,29 +288,144 @@
                 </div>
 
 
+                <!-- =========================
+                     HEADER RIGHT
+                ========================== -->
+
                 <div class="header-right">
 
 
-                    <button
-                        class="notification-btn"
-                        type="button">
+                    <!-- =========================
+                         NOTIFICATION
+                    ========================== -->
 
-                        ♧
-
-                        <span></span>
-
-                    </button>
+                    <div class="notification-wrapper">
 
 
-                    <div class="top-user">
+                        <button
+                            class="notification-btn"
+                            id="notificationButton"
+                            type="button"
+                            aria-label="Notifications">
 
-                        <div class="top-avatar">
-                            U
+                            🔔
+
+                            <span
+                                id="notificationBadge"
+                                class="notification-badge"
+                                style="display:none;">
+
+                                0
+
+                            </span>
+
+                        </button>
+
+
+                        <!-- =========================
+                             NOTIFICATION PANEL
+                        ========================== -->
+
+                        <div
+                            class="notification-panel"
+                            id="notificationPanel">
+
+
+                            <!-- PANEL HEADER -->
+
+                            <div
+                                class="notification-panel-header">
+
+
+                                <div>
+
+                                    <h3>
+                                        Notifications
+                                    </h3>
+
+                                    <p
+                                        id="notificationSummary">
+
+                                        No new notifications
+
+                                    </p>
+
+                                </div>
+
+
+                                <button
+                                    type="button"
+                                    id="markAllNotificationsRead">
+
+                                    Mark all read
+
+                                </button>
+
+                            </div>
+
+
+                            <!-- NOTIFICATION LIST -->
+
+                            <div
+                                class="notification-list"
+                                id="notificationList">
+
+
+                                <div
+                                    class="notification-empty">
+
+
+                                    <div
+                                        class="notification-empty-icon">
+
+                                        🔔
+
+                                    </div>
+
+
+                                    <strong>
+                                        No notifications
+                                    </strong>
+
+
+                                    <span>
+                                        Your warranty reminders
+                                        will appear here.
+                                    </span>
+
+
+                                </div>
+
+
+                            </div>
+
+
                         </div>
+
+                    </div>
+
+
+                    <!-- =========================
+                         PROFILE BUTTON
+                    ========================== -->
+
+                    <div
+                        class="top-user"
+                        id="profileButton"
+                        style="cursor:pointer;">
+
+                        <div
+                            class="top-avatar"
+                            id="profileAvatar">
+
+                            U
+
+                        </div>
+
 
                         <div>
 
-                            <strong>
+                            <strong id="profileName">
                                 User
                             </strong>
 
@@ -286,7 +451,7 @@
 
 
                 <!-- =========================
-                     WELCOME
+                     WELCOME SECTION
                 ========================== -->
 
                 <div class="welcome-section">
@@ -298,9 +463,11 @@
                             Welcome back 👋
                         </p>
 
+
                         <h1>
                             Your Shopping Overview
                         </h1>
+
 
                         <p class="welcome-description">
                             Manage your receipts, expenses and warranties
@@ -324,7 +491,6 @@
 
                     </a>
 
-
                 </div>
 
 
@@ -333,116 +499,87 @@
                      STAT CARDS
                 ========================== -->
 
-                <div class="stats-grid">
+                <div
+                    class="stats-grid"
+                    style="
+                        grid-template-columns:
+                        repeat(2, minmax(0, 1fr));
+                    ">
 
 
                     <!-- TOTAL EXPENSE -->
 
                     <div class="stat-card">
 
+
                         <div class="stat-top">
 
+
                             <div class="stat-icon blue">
-                                ₹
+                                ¤
                             </div>
+
 
                             <span class="stat-label">
                                 TOTAL EXPENSE
                             </span>
 
+
                         </div>
 
-                        <h2>
-                            ₹0
+
+                        <h2 id="totalExpense">
+                            --
                         </h2>
 
-                        <p class="stat-change positive">
+
+                        <p
+                            class="stat-change positive"
+                            id="totalExpenseNote">
+
                             Based on saved receipts
+
                         </p>
+
 
                     </div>
 
 
 
-                    <!-- BUDGET -->
+                    <!-- WARRANTIES -->
 
                     <div class="stat-card">
 
-                        <div class="stat-top">
-
-                            <div class="stat-icon purple">
-                                ◫
-                            </div>
-
-                            <span class="stat-label">
-                                MONTHLY BUDGET
-                            </span>
-
-                        </div>
-
-                        <h2>
-                            ₹50,000
-                        </h2>
-
-                        <p class="stat-change">
-                            ₹5,000 remaining
-                        </p>
-
-                    </div>
-
-
-
-                    <!-- WARRANTY -->
-
-                    <div class="stat-card">
 
                         <div class="stat-top">
+
 
                             <div class="stat-icon green">
                                 ♢
                             </div>
 
+
                             <span class="stat-label">
                                 WARRANTIES
                             </span>
 
-                        </div>
-
-                        <h2>
-                            5
-                        </h2>
-
-                        <p class="stat-change warning">
-                            2 expiring soon
-                        </p>
-
-                    </div>
-
-
-
-                    <!-- THIS MONTH -->
-
-                    <div class="stat-card">
-
-                        <div class="stat-top">
-
-                            <div class="stat-icon orange">
-                                ↗
-                            </div>
-
-                            <span class="stat-label">
-                                THIS MONTH
-                            </span>
 
                         </div>
 
-                        <h2>
-                            ₹0
+
+                        <h2 id="dashboardWarrantyTotal">
+                            See warranties
                         </h2>
 
-                        <p class="stat-change positive">
-                            Current month spending
+
+                        <p
+                            class="stat-change warning"
+                            id="dashboardWarrantyExpiring">
+
+                            See warranties.
+
                         </p>
+
 
                     </div>
 
@@ -452,18 +589,22 @@
 
 
                 <!-- =========================
-                     CHART + AI CARD
+                     CHART + CURRENCY SUMMARY
                 ========================== -->
 
                 <div class="middle-grid">
 
 
-                    <!-- SPENDING CHART -->
+                    <!-- =========================
+                         SPENDING OVERVIEW
+                    ========================== -->
 
-                    <div class="dashboard-card spending-card">
+                    <div
+                        class="dashboard-card spending-card">
 
 
                         <div class="card-header">
+
 
                             <div>
 
@@ -471,58 +612,96 @@
                                     Spending Overview
                                 </h3>
 
-                                <p>
+
+                                <p id="chartDescription">
                                     Your monthly spending activity
                                 </p>
 
                             </div>
 
 
-                            <select id="chartPeriod">
+                            <!-- CHART CONTROLS -->
 
-                                <option value="6">
-                                    Last 6 months
-                                </option>
+                            <div
+                                style="
+                                    display:flex;
+                                    gap:8px;
+                                    align-items:center;
+                                    flex-wrap:wrap;
+                                ">
 
-                                <option value="12">
-                                    Last 12 months
-                                </option>
 
-                            </select>
+                                <!-- CURRENCY -->
+
+                                <select id="chartCurrency">
+
+                                    <option value="all">
+                                        All currencies
+                                    </option>
+
+                                </select>
+
+
+                                <!-- PERIOD -->
+
+                                <select id="chartPeriod">
+
+                                    <option value="6">
+                                        Last 6 months
+                                    </option>
+
+                                    <option value="12">
+                                        This year
+                                    </option>
+
+                                    <option value="all">
+                                        All time
+                                    </option>
+
+                                </select>
+
+                            </div>
+
 
                         </div>
 
 
 
-                        <!-- DYNAMIC CHART -->
+                        <!-- CHART -->
 
                         <div class="chart">
 
+
+                            <!-- Y AXIS -->
+
                             <div class="chart-values">
 
-                                <span id="chartValueTop">
-                                    ₹0
+                                <span id="chartY1">
+                                    0
                                 </span>
 
-                                <span id="chartValueSecond">
-                                    ₹0
+                                <span id="chartY2">
+                                    0
                                 </span>
 
-                                <span id="chartValueThird">
-                                    ₹0
+                                <span id="chartY3">
+                                    0
                                 </span>
 
-                                <span>
-                                    ₹0
+                                <span id="chartY4">
+                                    0
                                 </span>
 
                             </div>
 
+
+
+                            <!-- CHART AREA -->
 
                             <div class="chart-area">
 
 
-                                <div class="chart-grid-line"></div>
+                                <!-- GRID LINES -->
 
                                 <div class="chart-grid-line"></div>
 
@@ -530,17 +709,19 @@
 
                                 <div class="chart-grid-line"></div>
 
+                                <div class="chart-grid-line"></div>
 
-                                <!-- BARS WILL BE GENERATED BY JAVASCRIPT -->
+
+                                <!-- DYNAMIC BARS -->
 
                                 <div
                                     class="bars"
                                     id="spendingBars">
-
                                 </div>
 
 
                             </div>
+
 
                         </div>
 
@@ -549,42 +730,62 @@
 
 
 
-                    <!-- AI INSIGHT -->
+                    <!-- =========================
+                         CURRENCY SUMMARY
+                    ========================== -->
 
-                    <div class="dashboard-card ai-card">
+                    <div
+                        class="dashboard-card ai-card currency-summary-card">
 
+
+                        <!-- TOP -->
 
                         <div class="ai-card-top">
 
+
                             <div class="ai-icon">
-                                ✦
+                                ¤
                             </div>
 
+
                             <span>
-                                AI INSIGHT
+                                CURRENCY SUMMARY
                             </span>
+
 
                         </div>
 
 
-                        <h3>
-                            Smart Spending Insight
-                        </h3>
+                        <!-- HEADING -->
+
+                        <div class="currency-summary-heading">
+
+                            <h3>
+                                Currency Summary
+                            </h3>
 
 
-                        <p>
-                            Your spending insights will be generated
-                            from your saved receipts.
-                        </p>
+                            <p id="currencySummaryText">
+                                Your spending grouped by original currency
+                            </p>
+
+                        </div>
 
 
-                        <a
-                            href="smart-insights.html"
-                            class="ai-link">
+                        <!-- CURRENCY LIST -->
 
-                            View AI Insights →
+                        <div
+                            id="currencySummaryList"
+                            class="currency-summary-list">
 
-                        </a>
+                            <div
+                                class="currency-summary-loading">
+
+                                Loading currency data...
+
+                            </div>
+
+                        </div>
 
 
                     </div>
@@ -598,8 +799,11 @@
                      RECENT RECEIPTS
                 ========================== -->
 
-                <div class="dashboard-card receipts-card">
+                <div
+                    class="dashboard-card receipts-card">
 
+
+                    <!-- HEADER -->
 
                     <div class="card-header">
 
@@ -610,6 +814,7 @@
                                 Recent Receipts
                             </h3>
 
+
                             <p>
                                 Your latest uploaded receipts
                             </p>
@@ -619,8 +824,12 @@
 
                         <!-- VIEW ALL -->
 
-                        <a href="receiptHistory.html">
+                        <a
+                            href="receiptHistory.html"
+                            class="view-all-link">
+
                             View All →
+
                         </a>
 
 
@@ -628,14 +837,14 @@
 
 
 
-                    <!-- DYNAMIC RECEIPT LIST -->
+                    <!-- RECEIPT LIST -->
 
                     <div
                         class="receipt-list"
                         id="dashboardReceiptList">
 
 
-                        <!-- Loading state -->
+                        <!-- LOADING -->
 
                         <div class="receipt-row">
 
@@ -647,13 +856,16 @@
 
                             <div class="receipt-info">
 
+
                                 <strong>
                                     Loading receipts...
                                 </strong>
 
+
                                 <span>
                                     Please wait
                                 </span>
+
 
                             </div>
 
@@ -674,10 +886,11 @@
 
 
                 <!-- =========================
-                     WARRANTY ALERT
+                     WARRANTY ALERTS
                 ========================== -->
 
-                <div class="dashboard-card warranty-card">
+                <div
+                    class="dashboard-card warranty-card">
 
 
                     <div class="card-header">
@@ -689,22 +902,31 @@
                                 Warranty Alerts
                             </h3>
 
+
                             <p>
-                                Keep track of your upcoming warranty expirations
+                                Keep track of your upcoming warranty
+                                expirations
                             </p>
 
                         </div>
 
 
-                        <a href="warranties.html">
+                        <a href="warranty.html">
+
                             View All →
+
                         </a>
+
 
                     </div>
 
 
 
-                    <div class="warranty-list">
+                    <!-- WARRANTY LIST -->
+
+                    <div
+                        class="warranty-list"
+                        id="dashboardWarrantyList">
 
 
                         <div class="warranty-row">
@@ -717,167 +939,19 @@
 
                             <div class="warranty-info">
 
-                                <strong>
-                                    Laptop
-                                </strong>
-
-                                <span>
-                                    Warranty expires in 12 days
-                                </span>
-
-                            </div>
-
-
-                            <span class="warranty-status">
-                                Expiring Soon
-                            </span>
-
-                        </div>
-
-
-
-                        <div class="warranty-row">
-
-
-                            <div class="warranty-icon">
-                                ♢
-                            </div>
-
-
-                            <div class="warranty-info">
 
                                 <strong>
-                                    Wireless Headphones
+                                    Loading warranties...
                                 </strong>
 
-                                <span>
-                                    Warranty expires in 28 days
-                                </span>
-
-                            </div>
-
-
-                            <span class="warranty-status">
-                                Active
-                            </span>
-
-                        </div>
-
-
-                    </div>
-
-
-                </div>
-
-
-                <!-- =========================
-                     SHOPPING OFFERS
-                ========================== -->
-
-                <div class="dashboard-card offers-card">
-
-
-                    <div class="card-header">
-
-                        <div>
-
-                            <h3>
-                                Shopping Offers
-                            </h3>
-
-                            <p>
-                                Deals and offers based on your shopping
-                            </p>
-
-                        </div>
-
-                        <a href="offers.html">
-                            View All →
-                        </a>
-
-                    </div>
-
-
-                    <div class="offers-list">
-
-
-                        <!-- OFFER 1 -->
-
-                        <div class="offer-row">
-
-                            <div class="offer-icon">
-                                🛍️
-                            </div>
-
-                            <div class="offer-info">
-
-                                <strong>
-                                    Electronics Deals
-                                </strong>
 
                                 <span>
-                                    Special offers on electronics and gadgets
+                                    Please wait
                                 </span>
 
-                            </div>
-
-                            <span class="offer-badge">
-                                Up to 20% Off
-                            </span>
-
-                        </div>
-
-
-                        <!-- OFFER 2 -->
-
-                        <div class="offer-row">
-
-                            <div class="offer-icon">
-                                👟
-                            </div>
-
-                            <div class="offer-info">
-
-                                <strong>
-                                    Fashion Offers
-                                </strong>
-
-                                <span>
-                                    Save on clothing, footwear and accessories
-                                </span>
 
                             </div>
 
-                            <span class="offer-badge">
-                                Up to 30% Off
-                            </span>
-
-                        </div>
-
-
-                        <!-- OFFER 3 -->
-
-                        <div class="offer-row">
-
-                            <div class="offer-icon">
-                                🏠
-                            </div>
-
-                            <div class="offer-info">
-
-                                <strong>
-                                    Home & Living
-                                </strong>
-
-                                <span>
-                                    Deals on home and everyday essentials
-                                </span>
-
-                            </div>
-
-                            <span class="offer-badge">
-                                Special Deal
-                            </span>
 
                         </div>
 
@@ -893,18 +967,261 @@
 
 
             <!-- =========================
+                 PROFILE MODAL
+            ========================== -->
+
+            <div
+                id="profileModal"
+                style="
+                    display:none;
+                    position:fixed;
+                    inset:0;
+                    background:rgba(0,0,0,0.45);
+                    z-index:9999;
+                    align-items:center;
+                    justify-content:center;
+                ">
+
+
+                <div
+                    style="
+                        width:90%;
+                        max-width:420px;
+                        background:white;
+                        border-radius:16px;
+                        padding:25px;
+                        box-shadow:0 20px 50px rgba(0,0,0,0.2);
+                    ">
+
+
+                    <!-- MODAL HEADER -->
+
+                    <div
+                        style="
+                            display:flex;
+                            justify-content:space-between;
+                            align-items:center;
+                            margin-bottom:20px;
+                        ">
+
+
+                        <h2 style="margin:0;">
+                            My Profile
+                        </h2>
+
+
+                        <button
+                            id="closeProfile"
+                            type="button"
+                            style="
+                                border:none;
+                                background:none;
+                                font-size:24px;
+                                cursor:pointer;
+                            ">
+
+                            ×
+
+                        </button>
+
+
+                    </div>
+
+
+
+                    <!-- PROFILE AVATAR -->
+
+                    <div
+                        style="
+                            text-align:center;
+                            margin-bottom:20px;
+                        ">
+
+
+                        <div
+                            id="profileLargeAvatar"
+                            style="
+                                width:75px;
+                                height:75px;
+                                margin:auto;
+                                border-radius:50%;
+                                display:flex;
+                                align-items:center;
+                                justify-content:center;
+                                background:#eef2ff;
+                                font-size:28px;
+                                font-weight:700;
+                                cursor:pointer;
+                                overflow:hidden;
+                            ">
+
+                            U
+
+                        </div>
+
+
+                        <button
+                            type="button"
+                            id="changeAvatarBtn"
+                            style="
+                                margin-top:10px;
+                                border:none;
+                                background:none;
+                                cursor:pointer;
+                                font-size:14px;
+                                font-weight:600;
+                            ">
+
+                            Change Avatar
+
+                        </button>
+
+
+                        <button
+                            type="button"
+                            id="removeAvatarBtn"
+                            style="
+                                display:block;
+                                margin:6px auto 0;
+                                border:none;
+                                background:none;
+                                color:red;
+                                cursor:pointer;
+                                font-size:14px;
+                                font-weight:600;
+                            ">
+
+                            Remove Avatar
+
+                        </button>
+
+
+                        <input
+                            type="file"
+                            id="avatarInput"
+                            accept="image/*"
+                            style="display:none;">
+
+                    </div>
+
+
+
+                    <!-- NAME -->
+
+                    <label
+                        for="profileNameInput"
+                        style="
+                            display:block;
+                            margin-bottom:7px;
+                            font-weight:600;
+                        ">
+
+                        Name
+
+                    </label>
+
+
+                    <input
+                        type="text"
+                        id="profileNameInput"
+                        placeholder="Enter your name"
+                        style="
+                            width:100%;
+                            box-sizing:border-box;
+                            padding:12px;
+                            border:1px solid #ddd;
+                            border-radius:8px;
+                            margin-bottom:15px;
+                        ">
+
+
+
+                    <!-- EMAIL -->
+
+                    <label
+                        for="profileEmailInput"
+                        style="
+                            display:block;
+                            margin-bottom:7px;
+                            font-weight:600;
+                        ">
+
+                        Email
+
+                    </label>
+
+
+                    <input
+                        type="email"
+                        id="profileEmailInput"
+                        readonly
+                        style="
+                            width:100%;
+                            box-sizing:border-box;
+                            padding:12px;
+                            border:1px solid #ddd;
+                            border-radius:8px;
+                            margin-bottom:15px;
+                            background:#f5f5f5;
+                        ">
+
+
+
+                    <!-- PROFILE MESSAGE -->
+
+                    <div
+                        id="profileMessage"
+                        style="
+                            min-height:20px;
+                            margin-bottom:12px;
+                            font-size:14px;
+                        ">
+                    </div>
+
+
+
+                    <!-- SAVE PROFILE -->
+
+                    <button
+                        id="saveProfile"
+                        type="button"
+                        style="
+                            width:100%;
+                            padding:12px;
+                            border:none;
+                            border-radius:8px;
+                            cursor:pointer;
+                            font-weight:600;
+                        ">
+
+                        Save Changes
+
+                    </button>
+
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =========================
                  FOOTER
             ========================== -->
 
             <footer class="dashboard-footer">
 
+
                 <span>
                     © 2026 SHOPIX
                 </span>
 
+
                 <span>
                     AI Powered Smart Receipt & Shopping Assistant
                 </span>
+
 
             </footer>
 
@@ -915,8 +1232,9 @@
     </div>
 
 
+
     <!-- =========================
-         DASHBOARD SCRIPT
+         DASHBOARD JAVASCRIPT
     ========================== -->
 
     <script
@@ -924,10 +1242,7 @@
         src="js/dashboard.js">
     </script>
 
-    <script type="module" src="js/offers.js"></script>
 
-    <script type="module" src="js/smart-insights.js"></script>
-<script src="js/theme.js"></script>
 </body>
 
 </html>

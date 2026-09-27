@@ -4,38 +4,60 @@
 <head>
 
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
     <title>SHOPIX - Receipt Scanner</title>
 
-    <link rel="stylesheet" href="css/receiptScanner.css">
+    <link
+        rel="stylesheet"
+        href="css/receiptScanner.css">
 
 </head>
 
 <body>
 
-    <!-- HEADER -->
+    <!-- =========================
+         HEADER
+    ========================== -->
 
     <header class="navbar">
 
         <div class="logo">
-            <span class="logo-icon">S</span>
+
+            <span class="logo-icon">
+                S
+            </span>
+
             SHOPIX
+
         </div>
 
+
         <nav>
-            <a href="dashboard.html">Dashboard</a>
+
+            <a href="dashboard.html">
+                Dashboard
+            </a>
+
         </nav>
 
     </header>
 
 
-    <!-- MAIN -->
+
+    <!-- =========================
+         MAIN
+    ========================== -->
 
     <main class="scanner-page">
 
 
-        <!-- PAGE HEADING -->
+        <!-- =========================
+             PAGE HEADING
+        ========================== -->
 
         <section class="page-heading">
 
@@ -56,12 +78,16 @@
 
 
 
-        <!-- UPLOAD + PREVIEW -->
+        <!-- =========================
+             UPLOAD + PREVIEW
+        ========================== -->
 
         <section class="scanner-card">
 
 
-            <!-- UPLOAD -->
+            <!-- =========================
+                 UPLOAD
+            ========================== -->
 
             <div class="upload-section">
 
@@ -79,6 +105,8 @@
                 </p>
 
 
+                <!-- UPLOAD -->
+
                 <label
                     for="receiptFileInput"
                     class="primary-btn">
@@ -87,12 +115,15 @@
 
                 </label>
 
+
                 <input
                     type="file"
                     id="receiptFileInput"
                     accept="image/jpeg,image/png,image/webp"
                     hidden>
 
+
+                <!-- CAMERA -->
 
                 <button
                     type="button"
@@ -104,15 +135,33 @@
                 </button>
 
 
+                <!-- MANUAL -->
+
+                <button
+                    type="button"
+                    id="manualReceiptBtn"
+                    class="manual-btn">
+
+                    ✎ Add Receipt Manually
+
+                </button>
+
+
                 <p class="file-note">
                     JPG, PNG or WEBP • Maximum 10 MB
+                </p>
+
+                <p class="manual-note">
+                    Don't have a receipt image? Add the details manually.
                 </p>
 
             </div>
 
 
 
-            <!-- PREVIEW -->
+            <!-- =========================
+                 PREVIEW
+            ========================== -->
 
             <div class="preview-section">
 
@@ -153,10 +202,29 @@
                     </div>
 
 
+                    <div
+                        id="manualPreviewText"
+                        class="manual-preview"
+                        style="display:none;">
+
+                        <div class="manual-preview-icon">
+                            ✎
+                        </div>
+
+                        <strong>
+                            Manual Receipt
+                        </strong>
+
+                        <span>
+                            Enter your receipt details below.
+                        </span>
+
+                    </div>
+
+
                     <img
                         id="receiptPreview"
                         alt="Receipt Preview">
-
 
                 </div>
 
@@ -166,7 +234,9 @@
 
 
 
-        <!-- SCAN -->
+        <!-- =========================
+             SCAN
+        ========================== -->
 
         <section class="scan-section">
 
@@ -206,18 +276,35 @@
 
 
 
-        <!-- EXTRACTED DATA -->
+        <!-- =========================
+             EXTRACTED / MANUAL DATA
+        ========================== -->
 
         <section
             id="extractedDataSection"
             class="extracted-section"
             style="display:none;">
 
+
             <div class="section-heading">
 
-                <h2>
-                    Extracted Receipt Information
-                </h2>
+                <div>
+
+                    <h2 id="dataSectionTitle">
+                        Receipt Information
+                    </h2>
+
+                    <p
+                        id="dataSectionDescription"
+                        class="data-section-description">
+
+                        Review and edit the receipt information
+                        before saving.
+
+                    </p>
+
+                </div>
+
 
                 <span>
                     Review & Edit
@@ -226,7 +313,15 @@
             </div>
 
 
+
+            <!-- =========================
+                 FORM
+            ========================== -->
+
             <div class="form-grid">
+
+
+                <!-- STORE -->
 
                 <div class="input-group">
 
@@ -242,6 +337,9 @@
                 </div>
 
 
+
+                <!-- DATE -->
+
                 <div class="input-group">
 
                     <label for="purchaseDate">
@@ -255,6 +353,9 @@
                 </div>
 
 
+
+                <!-- TOTAL -->
+
                 <div class="input-group">
 
                     <label for="totalAmount">
@@ -264,10 +365,15 @@
                     <input
                         type="number"
                         id="totalAmount"
-                        placeholder="0">
+                        placeholder="0"
+                        min="0"
+                        step="0.01">
 
                 </div>
 
+
+
+                <!-- CATEGORY -->
 
                 <div class="input-group">
 
@@ -317,21 +423,115 @@
 
                 </div>
 
+
+
+                <!-- CURRENCY -->
+
+                <div class="input-group">
+
+                    <label for="currency">
+                        Currency
+                    </label>
+
+                    <select id="currency">
+
+                        <option value="INR">
+                            ₹ INR - Indian Rupee
+                        </option>
+
+                        <option value="USD">
+                            $ USD - US Dollar
+                        </option>
+
+                        <option value="EUR">
+                            € EUR - Euro
+                        </option>
+
+                        <option value="GBP">
+                            £ GBP - British Pound
+                        </option>
+
+                        <option value="AED">
+                            د.إ AED - UAE Dirham
+                        </option>
+
+                        <option value="CAD">
+                            $ CAD - Canadian Dollar
+                        </option>
+
+                        <option value="AUD">
+                            $ AUD - Australian Dollar
+                        </option>
+
+                        <option value="Other">
+                            Other
+                        </option>
+
+                    </select>
+
+                </div>
+
+
             </div>
 
 
+
+            <!-- =========================
+                 PURCHASED ITEMS
+            ========================== -->
+
             <div class="items-section">
 
-                <h3>
-                    Purchased Items
-                </h3>
+                <div class="items-heading">
+
+                    <div>
+
+                        <h3>
+                            Purchased Items
+                        </h3>
+
+                        <p>
+                            Optional — add items if you want to keep
+                            detailed receipt information.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        id="addItemBtn"
+                        class="add-item-btn">
+
+                        + Add Item
+
+                    </button>
+
+                </div>
+
 
                 <div id="itemsList">
-                    <!-- AI extracted items will appear here -->
+
+                    <!-- AI extracted items or manual items -->
+
+                </div>
+
+
+                <div
+                    id="noItemsMessage"
+                    class="no-items-message">
+
+                    No items added.
+
                 </div>
 
             </div>
 
+
+
+            <!-- =========================
+                 SAVE
+            ========================== -->
 
             <div class="save-actions">
 
@@ -353,6 +553,10 @@
 
 
 
+    <!-- =========================
+         FOOTER
+    ========================== -->
+
     <footer>
 
         <strong>
@@ -369,13 +573,31 @@
 
     </footer>
 
+
+
+    <!-- FIREBASE APPCHECK -->
+
     <script>
         self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
     </script>
 
 
-    <script type="module" src="js/receiptScanner.js"></script>
-    <script type = "module" src="js/ai-test.js"></script>
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================== -->
+
+    <script
+        type="module"
+        src="js/receiptScanner.js">
+    </script>
+
+
+    <script
+        type="module"
+        src="js/ai-test.js">
+    </script>
+
 
 </body>
 
