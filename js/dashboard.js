@@ -1,11 +1,3 @@
-// ==========================================
-// SHOPIX - DASHBOARD
-// ==========================================
-
-// ==========================================
-// FIREBASE IMPORT
-// ==========================================
-
 import {
     auth,
     db,
@@ -1995,9 +1987,7 @@ async function loadRecentReceipts(user) {
                 user.uid,
                 "receipts"
             );
-
-
-        const receiptsQuery =
+const receiptsQuery =
             query(
                 receiptsRef,
                 orderBy(
