@@ -1,6 +1,7 @@
 import {
+    app,
     auth,
-    db,
+    db as realtimeDB,
     storage
 } from "./firebase.js";
 
@@ -24,6 +25,25 @@ import {
     getDownloadURL,
     deleteObject
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-storage.js";
+
+import {
+    getFirestore
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+
+const db = getFirestore(app);
+
+import {
+    ref as databaseRef,
+    remove
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
+
+import {
+    onAuthStateChanged,
+    signOut,
+    updateProfile,
+    deleteUser
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
 
 // ==========================================
@@ -2835,14 +2855,11 @@ if (saveProfile) {
 
 
 // ==========================================
-// LOGOUT
+// LOGOUT - DELETE ACCOUNT
 // ==========================================
 
 const logoutButton =
-    document.querySelector(
-        ".logout-btn"
-    );
-
+    document.querySelector(".logout-btn");
 
 if (logoutButton) {
 
@@ -2852,24 +2869,52 @@ if (logoutButton) {
 
             event.preventDefault();
 
+            const user = auth.currentUser;
+
+            if (!user) {
+                window.location.replace("loginpg.html");
+                return;
+            }
+
+            const confirmDelete = confirm(
+                "Are you sure? Your account will be permanently deleted."
+            );
+
+            if (!confirmDelete) {
+                return;
+            }
 
             try {
 
-                await signOut(
-                    auth
+                // ==================================
+                // DELETE USER DATA FROM REALTIME DATABASE
+                // ==================================
+
+                await remove(
+                    databaseRef(
+                        realtimeDB,
+                        "users/" + user.uid
+                    )
                 );
 
+                // ==================================
+                // DELETE USER ACCOUNT FROM FIREBASE AUTH
+                // ==================================
+
+                await deleteUser(user);
+
+                // ==================================
+                // REDIRECT TO LOGIN PAGE
+                // ==================================
 
                 sessionStorage.setItem(
                     "loggedOut",
                     "true"
                 );
 
-
-                console.log(
-                    "User logged out."
+                alert(
+                    "Your account has been deleted successfully."
                 );
-
 
                 window.location.replace(
                     "loginpg.html"
@@ -2879,9 +2924,28 @@ if (logoutButton) {
             catch (error) {
 
                 console.error(
-                    "Logout error:",
+                    "Account deletion error:",
                     error
                 );
+
+                if (
+                    error.code ===
+                    "auth/requires-recent-login"
+                ) {
+
+                    alert(
+                        "Please log in again and then try deleting your account."
+                    );
+
+                }
+
+                else {
+
+                    alert(
+                        "Unable to delete account. Please try again."
+                    );
+
+                }
 
             }
 
