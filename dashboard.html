@@ -40,6 +40,14 @@
         rel="stylesheet"
         href="css/dashboard.css">
 
+
+    <!-- =========================
+         GLOBAL SIDEBAR CSS
+    ========================== -->
+
+    <link
+        rel="stylesheet"
+        href="css/sidebar.css">
 </head>
 
 
@@ -50,10 +58,14 @@
          DASHBOARD LAYOUT
     ========================== -->
 
-    <div class="dashboard-layout">
+    <div class="app-shell">
 
 
         <!-- =========================
+             SIDEBAR
+        ========================== -->
+
+                <!-- =========================
              SIDEBAR
         ========================== -->
 
@@ -204,7 +216,9 @@
 
                 <!-- HELP -->
 
-                <div class="help-box">
+                <a
+                    href="help.html"
+                    class="help-box">
 
                     <div class="help-icon">
                         ?
@@ -220,29 +234,56 @@
                             We're here for you
                         </span>
 
-                        <a
-                            href="help.html"
-                            class="nav-item">
-                        
                     </div>
 
-                </div>
+                </a>
 
 
                 <!-- LOGOUT -->
 
-<button
-    type="button"
-    id="logoutBtn"
-    class="logout-btn">
+                <button
+                    type="button"
+                    id="logoutBtn"
+                    class="logout-btn">
 
-    <span>
-        ↪
-    </span>
+                    <span>
+                        ↪
+                    </span>
 
-    Logout
+                    Logout
 
-</button>
+                </button>
+
+
+                <!-- DELETE ACCOUNT -->
+
+                <button
+                    type="button"
+                    id="deleteAccountBtn"
+                    class="delete-account-btn">
+
+                    <span>
+                        <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            aria-hidden="true">
+
+                            <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+
+                        </svg>
+                    </span>
+
+                    Delete Account
+
+                </button>
 
             </div>
 
@@ -262,6 +303,17 @@
             ========================== -->
 
             <header class="top-header">
+
+
+                <!-- ==================================
+                     HEADER INNER
+
+                     Keeps the header row aligned with
+                     .dashboard-content, which uses the
+                     same max width and padding.
+                ================================== -->
+
+                <div class="header-inner">
 
 
                 <div class="header-left">
@@ -443,6 +495,10 @@
                     </div>
 
                 </div>
+
+
+                </div>
+
 
             </header>
 
@@ -1212,6 +1268,151 @@
 
 
             <!-- =========================
+                 DELETE ACCOUNT MODAL
+            ========================== -->
+
+            <div
+                id="deleteAccountModal"
+                class="delete-modal"
+                style="display:none;">
+
+
+                <div class="delete-modal-card">
+
+
+                    <!-- WARNING ICON -->
+
+                    <div class="delete-modal-icon">
+
+                        <svg
+                            width="22"
+                            height="22"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            aria-hidden="true">
+
+                            <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+
+                        </svg>
+
+                    </div>
+
+
+                    <!-- HEADING -->
+
+                    <h2>
+                        Delete Account
+                    </h2>
+
+
+                    <!-- WARNING TEXT -->
+
+                    <p class="delete-modal-text">
+                        This action is permanent and cannot be
+                        undone. Deleting your account will
+                        permanently erase the following data
+                        from SHOPIX.
+                    </p>
+
+
+                    <!-- WHAT WILL BE DELETED -->
+
+                    <ul class="delete-modal-list">
+
+                        <li>
+                            Your profile information
+                        </li>
+
+                        <li>
+                            All uploaded receipts
+                        </li>
+
+                        <li>
+                            All warranty records
+                        </li>
+
+                        <li>
+                            Your profile avatar
+                        </li>
+
+                    </ul>
+
+
+                    <!-- RE-AUTHENTICATION -->
+
+                    <div
+                        id="deleteAccountPasswordBlock"
+                        style="display:none;">
+
+                        <label
+                            class="delete-modal-label"
+                            for="deleteAccountPassword">
+
+                            Confirm your password
+
+                        </label>
+
+
+                        <input
+                            type="password"
+                            id="deleteAccountPassword"
+                            class="delete-modal-input"
+                            placeholder="Enter your password"
+                            autocomplete="current-password">
+
+                    </div>
+
+
+                    <!-- STATUS MESSAGE -->
+
+                    <div
+                        id="deleteAccountMessage"
+                        class="delete-modal-message">
+                    </div>
+
+
+                    <!-- ACTIONS -->
+
+                    <div class="delete-modal-actions">
+
+
+                        <button
+                            type="button"
+                            id="deleteAccountCancel"
+                            class="delete-modal-cancel">
+
+                            Cancel
+
+                        </button>
+
+
+                        <button
+                            type="button"
+                            id="deleteAccountConfirm"
+                            class="delete-modal-confirm">
+
+                            Delete Account
+
+                        </button>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =========================
                  FOOTER
             ========================== -->
 
@@ -1235,6 +1436,21 @@
 
 
     </div>
+
+
+
+    <!-- =========================
+         MOBILE SIDEBAR
+    ========================== -->
+
+        <!-- =========================
+         GLOBAL SIDEBAR
+    ========================== -->
+
+    <script
+        type="module"
+        src="js/sidebar.js">
+    </script>
 
 
 

@@ -1,29 +1,43 @@
 import {
     app,
     auth,
-    db as realtimeDB,
-    storage
+    storage,
+    rtdb
 } from "./firebase.js";
+
+import {
+    initDeleteAccount
+} from "./delete-account.js";
 
 import {
     collection,
     query,
     orderBy,
     limit,
-    getDocs
+    getDocs,
+    getDoc,
+    doc,
+    deleteDoc,
+    writeBatch
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
 import {
     onAuthStateChanged,
     signOut,
-    updateProfile
+    updateProfile,
+    deleteUser,
+    reauthenticateWithCredential,
+    reauthenticateWithPopup,
+    EmailAuthProvider,
+    GoogleAuthProvider
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
 import {
     ref as storageRef,
     uploadBytes,
     getDownloadURL,
-    deleteObject
+    deleteObject,
+    getMetadata
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-storage.js";
 
 import {
@@ -37,13 +51,6 @@ import {
     ref as databaseRef,
     remove
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
-
-import {
-    onAuthStateChanged,
-    signOut,
-    updateProfile,
-    deleteUser
-} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
 
 // ==========================================
@@ -2855,104 +2862,18 @@ if (saveProfile) {
 
 
 // ==========================================
-// LOGOUT - DELETE ACCOUNT
+// LOGOUT + DELETE ACCOUNT
+//
+// The Logout button and the Delete Account
+// button are part of the global sidebar, so
+// both are handled by the shared modules
+// js/sidebar.js and js/delete-account.js.
+//
+// The code was moved there without any change.
 // ==========================================
 
-const logoutButton =
-    document.querySelector(".logout-btn");
+initDeleteAccount();
 
-if (logoutButton) {
-
-    logoutButton.addEventListener(
-        "click",
-        async function (event) {
-
-            event.preventDefault();
-
-            const user = auth.currentUser;
-
-            if (!user) {
-                window.location.replace("loginpg.html");
-                return;
-            }
-
-            const confirmDelete = confirm(
-                "Are you sure? Your account will be permanently deleted."
-            );
-
-            if (!confirmDelete) {
-                return;
-            }
-
-            try {
-
-                // ==================================
-                // DELETE USER DATA FROM REALTIME DATABASE
-                // ==================================
-
-                await remove(
-                    databaseRef(
-                        realtimeDB,
-                        "users/" + user.uid
-                    )
-                );
-
-                // ==================================
-                // DELETE USER ACCOUNT FROM FIREBASE AUTH
-                // ==================================
-
-                await deleteUser(user);
-
-                // ==================================
-                // REDIRECT TO LOGIN PAGE
-                // ==================================
-
-                sessionStorage.setItem(
-                    "loggedOut",
-                    "true"
-                );
-
-                alert(
-                    "Your account has been deleted successfully."
-                );
-
-                window.location.replace(
-                    "loginpg.html"
-                );
-
-            }
-            catch (error) {
-
-                console.error(
-                    "Account deletion error:",
-                    error
-                );
-
-                if (
-                    error.code ===
-                    "auth/requires-recent-login"
-                ) {
-
-                    alert(
-                        "Please log in again and then try deleting your account."
-                    );
-
-                }
-
-                else {
-
-                    alert(
-                        "Unable to delete account. Please try again."
-                    );
-
-                }
-
-            }
-
-        }
-    );
-
-}
 
 
 // ==========================================

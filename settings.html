@@ -15,71 +15,240 @@
         rel="stylesheet">
 
     <link rel="stylesheet" href="css/settings.css">
+
+    <!-- =========================
+         GLOBAL SIDEBAR CSS
+    ========================== -->
+
+    <link
+        rel="stylesheet"
+        href="css/sidebar.css">
 </head>
 
 <body>
 
-    <div class="settings-layout">
+    <div class="app-shell">
 
         <!-- SIDEBAR -->
+                <!-- =========================
+             SIDEBAR
+        ========================== -->
+
         <aside class="sidebar">
 
-            <a href="dashboard.html" class="sidebar-logo">
-                <span class="logo-icon">S</span>
-                <span>SHOPIX</span>
+
+            <!-- LOGO -->
+
+            <a
+                href="index.html"
+                class="sidebar-logo">
+
+                <span class="logo-icon">
+                    S
+                </span>
+
+                <span>
+                    SHOPIX
+                </span>
+
             </a>
+
+
+            <!-- =========================
+                 NAVIGATION
+            ========================== -->
 
             <nav class="sidebar-nav">
 
-                <p class="nav-title">MAIN MENU</p>
+                <p class="nav-title">
+                    MAIN MENU
+                </p>
 
-                <a href="dashboard.html" class="nav-item">
-                    <span class="nav-icon">▦</span>
+
+                <!-- Dashboard -->
+
+                <a
+                    href="dashboard.html"
+                    class="nav-item">
+
+                    <span class="nav-icon">
+                        ▦
+                    </span>
+
                     Dashboard
+
                 </a>
 
-                <a href="receiptHistory.html" class="nav-item">
-                    <span class="nav-icon">▤</span>
+
+                <!-- Receipts -->
+
+                <a
+                    href="receiptHistory.html"
+                    class="nav-item">
+
+                    <span class="nav-icon">
+                        ▤
+                    </span>
+
                     Receipts
+
                 </a>
 
-                <a href="receiptScanner.html" class="nav-item">
-                    <span class="nav-icon">↑</span>
+
+                <!-- Upload Receipt -->
+
+                <a
+                    href="receiptScanner.html"
+                    class="nav-item">
+
+                    <span class="nav-icon">
+                        ↑
+                    </span>
+
                     Upload Receipt
+
                 </a>
 
-                <a href="expenses.html" class="nav-item">
-                    <span class="nav-icon">◫</span>
+
+                <!-- Expenses -->
+
+                <a
+                    href="expenseAnalytics.html"
+                    class="nav-item">
+
+                    <span class="nav-icon">
+                        ◫
+                    </span>
+
                     Expenses
+
                 </a>
 
-                <a href="warranties.html" class="nav-item">
-                    <span class="nav-icon">♢</span>
+
+                <!-- Reports -->
+
+                <a
+                    href="reports.html"
+                    class="nav-item">
+
+                    <span class="nav-icon">
+                        ▤
+                    </span>
+
+                    Reports
+
+                </a>
+
+
+                <!-- Warranties -->
+
+                <a
+                    href="warranty.html"
+                    class="nav-item">
+
+                    <span class="nav-icon">
+                        ♢
+                    </span>
+
                     Warranties
+
                 </a>
 
-                <a href="settings.html" class="nav-item active">
-                    <span class="nav-icon">⚙</span>
+
+                <!-- Settings -->
+
+                <a
+                    href="settings.html"
+                    class="nav-item active">
+
+                    <span class="nav-icon">
+                        ⚙
+                    </span>
+
                     Settings
+
                 </a>
 
             </nav>
 
+
+            <!-- =========================
+                 SIDEBAR BOTTOM
+            ========================== -->
+
             <div class="sidebar-bottom">
 
-                <a href="help.html" class="help-box">
-                    <div class="help-icon">?</div>
+
+                <!-- HELP -->
+
+                <a
+                    href="help.html"
+                    class="help-box">
+
+                    <div class="help-icon">
+                        ?
+                    </div>
 
                     <div>
-                        <strong>Need Help?</strong>
-                        <span>We're here for you</span>
+
+                        <strong>
+                            Need Help?
+                        </strong>
+
+                        <span>
+                            We're here for you
+                        </span>
+
                     </div>
+
                 </a>
 
-                <a href="index.html" class="logout-btn">
-                    <span>↪</span>
+
+                <!-- LOGOUT -->
+
+                <button
+                    type="button"
+                    id="logoutBtn"
+                    class="logout-btn">
+
+                    <span>
+                        ↪
+                    </span>
+
                     Logout
-                </a>
+
+                </button>
+
+
+                <!-- DELETE ACCOUNT -->
+
+                <button
+                    type="button"
+                    id="deleteAccountBtn"
+                    class="delete-account-btn">
+
+                    <span>
+                        <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            aria-hidden="true">
+
+                            <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+
+                        </svg>
+                    </span>
+
+                    Delete Account
+
+                </button>
 
             </div>
 
@@ -91,6 +260,14 @@
 
             <!-- TOP HEADER -->
             <header class="top-header">
+
+                <button
+                    class="mobile-menu-btn"
+                    type="button"
+                    aria-label="Open navigation menu">
+                    &#9776;
+                </button>
+
 
                 <div>
                     <span class="header-label">SHOPIX</span>
@@ -233,7 +410,16 @@
     </div>
 
 
-    <script type="module" src="js/settings.js"></script>
+        <!-- =========================
+         GLOBAL SIDEBAR
+    ========================== -->
+
+    <script
+        type="module"
+        src="js/sidebar.js">
+    </script>
+
+<script type="module" src="js/settings.js"></script>
 
 </body>
 

@@ -496,6 +496,33 @@
 
         function showLogoutMessage() {
 
+            // The account was deleted from the dashboard.
+
+            if (
+                sessionStorage.getItem("accountDeleted") ===
+                "true"
+            ) {
+
+                sessionStorage.removeItem(
+                    "accountDeleted"
+                );
+
+                loginMessage.textContent =
+                    "Your account has been deleted.";
+
+                loginMessage.className =
+                    "login-message error";
+
+                loginButtonText.textContent =
+                    "Login to SHOPIX";
+
+                loginButton.disabled =
+                    false;
+
+                return;
+
+            }
+
             loginMessage.textContent =
                 "❌ Please login first.";
 

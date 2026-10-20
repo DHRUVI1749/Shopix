@@ -15,15 +15,257 @@
         rel="stylesheet"
         href="css/receiptScanner.css">
 
+
+    <!-- =========================
+         GLOBAL SIDEBAR CSS
+    ========================== -->
+
+    <link
+        rel="stylesheet"
+        href="css/sidebar.css">
 </head>
 
 <body>
+
+        <!-- =========================
+             SIDEBAR
+        ========================== -->
+
+        <aside class="sidebar">
+
+
+            <!-- LOGO -->
+
+            <a
+                href="index.html"
+                class="sidebar-logo">
+
+                <span class="logo-icon">
+                    S
+                </span>
+
+                <span>
+                    SHOPIX
+                </span>
+
+            </a>
+
+
+            <!-- =========================
+                 NAVIGATION
+            ========================== -->
+
+            <nav class="sidebar-nav">
+
+                <p class="nav-title">
+                    MAIN MENU
+                </p>
+
+
+                <!-- Dashboard -->
+
+                <a
+                    href="dashboard.html"
+                    class="nav-item">
+
+                    <span class="nav-icon">
+                        ▦
+                    </span>
+
+                    Dashboard
+
+                </a>
+
+
+                <!-- Receipts -->
+
+                <a
+                    href="receiptHistory.html"
+                    class="nav-item">
+
+                    <span class="nav-icon">
+                        ▤
+                    </span>
+
+                    Receipts
+
+                </a>
+
+
+                <!-- Upload Receipt -->
+
+                <a
+                    href="receiptScanner.html"
+                    class="nav-item active">
+
+                    <span class="nav-icon">
+                        ↑
+                    </span>
+
+                    Upload Receipt
+
+                </a>
+
+
+                <!-- Expenses -->
+
+                <a
+                    href="expenseAnalytics.html"
+                    class="nav-item">
+
+                    <span class="nav-icon">
+                        ◫
+                    </span>
+
+                    Expenses
+
+                </a>
+
+
+                <!-- Reports -->
+
+                <a
+                    href="reports.html"
+                    class="nav-item">
+
+                    <span class="nav-icon">
+                        ▤
+                    </span>
+
+                    Reports
+
+                </a>
+
+
+                <!-- Warranties -->
+
+                <a
+                    href="warranty.html"
+                    class="nav-item">
+
+                    <span class="nav-icon">
+                        ♢
+                    </span>
+
+                    Warranties
+
+                </a>
+
+
+                <!-- Settings -->
+
+                <a
+                    href="settings.html"
+                    class="nav-item">
+
+                    <span class="nav-icon">
+                        ⚙
+                    </span>
+
+                    Settings
+
+                </a>
+
+            </nav>
+
+
+            <!-- =========================
+                 SIDEBAR BOTTOM
+            ========================== -->
+
+            <div class="sidebar-bottom">
+
+
+                <!-- HELP -->
+
+                <a
+                    href="help.html"
+                    class="help-box">
+
+                    <div class="help-icon">
+                        ?
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Need Help?
+                        </strong>
+
+                        <span>
+                            We're here for you
+                        </span>
+
+                    </div>
+
+                </a>
+
+
+                <!-- LOGOUT -->
+
+                <button
+                    type="button"
+                    id="logoutBtn"
+                    class="logout-btn">
+
+                    <span>
+                        ↪
+                    </span>
+
+                    Logout
+
+                </button>
+
+
+                <!-- DELETE ACCOUNT -->
+
+                <button
+                    type="button"
+                    id="deleteAccountBtn"
+                    class="delete-account-btn">
+
+                    <span>
+                        <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            aria-hidden="true">
+
+                            <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+
+                        </svg>
+                    </span>
+
+                    Delete Account
+
+                </button>
+
+            </div>
+
+        </aside>
+
+    <div class="app-shell">
 
     <!-- =========================
          HEADER
     ========================== -->
 
     <header class="navbar">
+
+                <button
+                    class="mobile-menu-btn"
+                    type="button"
+                    aria-label="Open navigation menu">
+                    &#9776;
+                </button>
+
 
         <div class="logo">
 
@@ -577,7 +819,16 @@
 
     <!-- FIREBASE APPCHECK -->
 
-    <script>
+        <!-- =========================
+         GLOBAL SIDEBAR
+    ========================== -->
+
+    <script
+        type="module"
+        src="js/sidebar.js">
+    </script>
+
+<script>
         self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
     </script>
 
@@ -598,6 +849,8 @@
         src="js/ai-test.js">
     </script>
 
+
+    </div>
 
 </body>
 

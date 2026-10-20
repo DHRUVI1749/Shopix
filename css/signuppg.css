@@ -64,8 +64,6 @@ a {
 
     position: relative;
 
-    overflow: hidden;
-
     background:
         radial-gradient(
             circle at 80% 20%,
@@ -268,7 +266,7 @@ a {
 
     display: flex;
 
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
 
     padding: 35px 7%;
@@ -285,6 +283,12 @@ a {
     width: 100%;
 
     max-width: 430px;
+
+    /* Centres the card when there is room and
+       keeps it fully visible when the form is
+       taller than the screen. */
+
+    margin: auto 0;
 }
 
 
@@ -323,7 +327,7 @@ a {
 ========================= */
 
 .signup-heading {
-    margin-bottom: 25px;
+    margin-bottom: 26px;
 }
 
 .signup-heading h2 {
@@ -331,9 +335,11 @@ a {
 
     font-size: 32px;
 
+    line-height: 1.2;
+
     letter-spacing: -1px;
 
-    margin-bottom: 8px;
+    margin-bottom: 7px;
 }
 
 .signup-heading p {
@@ -342,6 +348,8 @@ a {
     font-size: 13px;
 
     line-height: 1.6;
+
+    margin-bottom: 0;
 }
 
 
@@ -350,7 +358,7 @@ a {
 ========================= */
 
 .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 18px;
 }
 
 .form-group label {
@@ -362,19 +370,21 @@ a {
 
     font-weight: 600;
 
-    margin-bottom: 7px;
+    line-height: 1.4;
+
+    margin-bottom: 8px;
 }
 
 .form-group input {
     width: 100%;
 
-    height: 45px;
+    height: 46px;
 
     padding: 0 13px;
 
     border: 1px solid #d0d5dd;
 
-    border-radius: 8px;
+    border-radius: 9px;
 
     outline: none;
 
@@ -405,7 +415,9 @@ a {
 
     font-size: 9px;
 
-    margin-top: 5px;
+    line-height: 1.5;
+
+    margin-top: 6px;
 }
 
 
@@ -418,17 +430,23 @@ a {
 }
 
 .password-input input {
-    padding-right: 60px;
+    padding-right: 62px;
 }
 
 .show-password {
     position: absolute;
 
-    right: 11px;
+    right: 10px;
 
-    top: 50%;
+    top: 0;
 
-    transform: translateY(-50%);
+    height: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    padding: 0 2px;
 
     border: none;
 
@@ -439,6 +457,14 @@ a {
     font-size: 10px;
 
     font-weight: 600;
+
+    line-height: 1;
+
+    white-space: nowrap;
+}
+
+.show-password:hover {
+    color: #102a72;
 }
 
 
@@ -447,9 +473,9 @@ a {
 ========================= */
 
 .terms {
-    margin-top: 4px;
+    margin-top: 2px;
 
-    margin-bottom: 18px;
+    margin-bottom: 20px;
 }
 
 .terms label {
@@ -457,22 +483,22 @@ a {
 
     align-items: flex-start;
 
-    gap: 8px;
+    gap: 9px;
 
     color: #667085;
 
     font-size: 10px;
 
-    line-height: 1.5;
+    line-height: 1.55;
 
     cursor: pointer;
 }
 
 .terms input {
-    width: 14px;
-    height: 14px;
+    width: 15px;
+    height: 15px;
 
-    margin-top: 1px;
+    margin: 0;
 
     flex-shrink: 0;
 
@@ -495,7 +521,15 @@ a {
 .signup-button {
     width: 100%;
 
-    height: 47px;
+    height: 46px;
+
+    margin-top: 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 6px;
 
     border: none;
 
@@ -516,9 +550,8 @@ a {
 }
 
 .signup-button span {
-    margin-left: 7px;
-
-    font-size: 17px;
+    font-size: 15px;
+    line-height: 1;
 }
 
 .signup-button:hover {
@@ -567,7 +600,7 @@ a {
 .google-button {
     width: 100%;
 
-    height: 45px;
+    height: 46px;
 
     display: flex;
 
@@ -665,22 +698,68 @@ a {
 
 @media (max-width: 950px) {
 
+    /* The two sections are stacked instead of
+       being side by side. */
+
     .signup-page {
         grid-template-columns: 1fr;
     }
 
     .signup-left {
-        display: none;
+        min-height: auto;
+
+        padding: 38px 25px 30px;
+
+        justify-content: flex-start;
+    }
+
+    .left-content {
+        margin: 0;
+
+        max-width: 640px;
+    }
+
+    .left-content h1 {
+        font-size: clamp(32px, 7vw, 46px);
+
+        letter-spacing: -1.6px;
+
+        margin-bottom: 16px;
+    }
+
+    .left-content > p {
+        font-size: 15px;
+
+        margin-bottom: 26px;
+    }
+
+    .benefits {
+        display: grid;
+
+        grid-template-columns:
+            repeat(auto-fit, minmax(190px, 1fr));
+
+        gap: 14px;
+    }
+
+    .left-footer {
+        margin-top: 26px;
     }
 
     .signup-right {
-        min-height: 100vh;
+        min-height: auto;
 
-        padding: 35px 25px;
+        padding: 32px 25px 45px;
     }
 
+    .signup-card {
+        margin: 0;
+    }
+
+    /* The stacked panel already shows the brand. */
+
     .mobile-brand {
-        display: flex;
+        display: none;
     }
 
 }
@@ -688,12 +767,41 @@ a {
 
 @media (max-width: 480px) {
 
+    .signup-page {
+        grid-template-columns: 1fr;
+    }
+
+    .signup-left {
+        padding: 30px 20px 24px;
+    }
+
     .signup-right {
-        padding: 25px 20px;
+        padding: 26px 20px 38px;
     }
 
     .signup-heading h2 {
-        font-size: 28px;
+        font-size: 27px;
+    }
+
+    .signup-heading {
+        margin-bottom: 22px;
+    }
+
+    .form-group {
+        margin-bottom: 16px;
+    }
+
+    .benefits {
+        grid-template-columns: 1fr;
+
+        gap: 12px;
+    }
+
+    .benefit-icon {
+        width: 36px;
+        height: 36px;
+
+        font-size: 15px;
     }
 
     .signup-card {
@@ -706,11 +814,17 @@ a {
 
 .signup-message {
     min-height: 20px;
-    margin: 10px 0 14px;
-    font-size: 13px;
-    font-weight: 600;
-}
 
+    margin: 4px 0 0;
+
+    padding: 0;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    line-height: 1.55;
+}
 .signup-message.error {
     color: #dc2626;
 }
@@ -726,4 +840,62 @@ a {
 .signup-button:disabled {
     opacity: 0.65;
     cursor: not-allowed;
+}
+
+
+/* =========================
+   RETRY NOTICE
+========================== */
+
+.signup-retry-notice {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    margin: 12px 0 0;
+
+    padding: 11px 13px;
+
+    border: 1px solid #e6e9f2;
+
+    border-radius: 9px;
+
+    background: #f7f9fc;
+
+    color: #667085;
+
+    font-size: 11px;
+
+    line-height: 1.5;
+}
+
+.signup-retry-notice span {
+    flex: 1;
+}
+
+.signup-retry-button {
+    flex-shrink: 0;
+
+    padding: 7px 13px;
+
+    border: 1px solid #d0d5dd;
+
+    border-radius: 7px;
+
+    background: white;
+
+    color: #2853b8;
+
+    font-size: 11px;
+    font-weight: 600;
+
+    transition: 0.2s;
+}
+
+.signup-retry-button:hover {
+    border-color: #315bbd;
+
+    background: #f4f7ff;
 }

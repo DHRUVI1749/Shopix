@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>SHOPIX | Dashboard</title>
+
+    <meta
+        name="description"
+        content="SHOPIX Smart Receipt and Shopping Assistant Dashboard">
+
+
+    <!-- =========================
+         GOOGLE FONT
+    ========================== -->
+
+    <link rel="preconnect"
+        href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+
+    <!-- =========================
+         DASHBOARD CSS
+    ========================== -->
+
+    <link
+        rel="stylesheet"
+        href="css/dashboard.css">
+
+
+    <!-- =========================
+         GLOBAL SIDEBAR CSS
+    ========================== -->
+
+    <link
+        rel="stylesheet"
+        href="css/sidebar.css">
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         DASHBOARD LAYOUT
+    ========================== -->
+
+    <div class="app-shell">
+
+
+        <!-- =========================
+             SIDEBAR
+        ========================== -->
+
+                <!-- =========================
+             SIDEBAR
+        ========================== -->
+
+        <aside class="sidebar">
+
+
+            <!-- LOGO -->
+
+            <a
+                href="index.html"
+                class="sidebar-logo">
+
+                <span class="logo-icon">
+                    S
+                </span>
+
+                <span>
+                    SHOPIX
+                </span>
+
+            </a>
+
+
+            <!-- =========================
+                 NAVIGATION
+            ========================== -->
+
+            <nav class="sidebar-nav">
+
+                <p class="nav-title">
+                    MAIN MENU
+                </p>
+
+
+                <!-- Dashboard -->
+
+                <a
+                    href="dashboard.html"
+                    class="nav-item active">
+
+                    <span class="nav-icon">
+                        ▦
+                    </span>
+
+                    Dashboard
+
+                </a>
+
+
+                <!-- Receipts -->
+
+                <a
+                    href="receiptHistory.html"
+                    class="nav-item">
+
+                    <span class="nav-icon">
+                        ▤
+                    </span>
+
+                    Receipts
+
+                </a>
+
+
+                <!-- Upload Receipt -->
+
+                <a
+                    href="receiptScanner.html"
+                    class="nav-item">
+
+                    <span class="nav-icon">
+                        ↑
+                    </span>
+
+                    Upload Receipt
+
+                </a>
+
+
+                <!-- Expenses -->
+
+                <a
+                    href="expenseAnalytics.html"
+                    class="nav-item">
+
+                    <span class="nav-icon">
+                        ◫
+                    </span>
+
+                    Expenses
+
+                </a>
+
+
+                <!-- Reports -->
+
+                <a
+                    href="reports.html"
+                    class="nav-item">
+
+                    <span class="nav-icon">
+                        ▤
+                    </span>
+
+                    Reports
+
+                </a>
+
+
+                <!-- Warranties -->
+
+                <a
+                    href="warranty.html"
+                    class="nav-item">
+
+                    <span class="nav-icon">
+                        ♢
+                    </span>
+
+                    Warranties
+
+                </a>
+
+
+                <!-- Settings -->
+
+                <a
+                    href="settings.html"
+                    class="nav-item">
+
+                    <span class="nav-icon">
+                        ⚙
+                    </span>
+
+                    Settings
+
+                </a>
+
+            </nav>
+
+
+            <!-- =========================
+                 SIDEBAR BOTTOM
+            ========================== -->
+
+            <div class="sidebar-bottom">
+
+
+                <!-- HELP -->
+
+                <a
+                    href="help.html"
+                    class="help-box">
+
+                    <div class="help-icon">
+                        ?
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Need Help?
+                        </strong>
+
+                        <span>
+                            We're here for you
+                        </span>
+
+                    </div>
+
+                </a>
+
+
+                <!-- LOGOUT -->
+
+                <button
+                    type="button"
+                    id="logoutBtn"
+                    class="logout-btn">
+
+                    <span>
+                        ↪
+                    </span>
+
+                    Logout
+
+                </button>
+
+
+                <!-- DELETE ACCOUNT -->
+
+                <button
+                    type="button"
+                    id="deleteAccountBtn"
+                    class="delete-account-btn">
+
+                    <span>
+                        <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            aria-hidden="true">
+
+                            <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+
+                        </svg>
+                    </span>
+
+                    Delete Account
+
+                </button>
+
+            </div>
+
+        </aside>
+
+
+
+        <!-- =========================
+             MAIN AREA
+        ========================== -->
+
+        <main class="main-content">
+
+
+            <!-- =========================
+                 TOP HEADER
+            ========================== -->
+
+            <header class="top-header">
+
+
+                <div class="header-left">
+
+
+                    <!-- MOBILE MENU -->
+
+                    <button
+                        class="mobile-menu-btn"
+                        type="button">
+
+                        ☰
+
+                    </button>
+
+
+                    <div>
+
+                        <span class="header-label">
+                            SHOPIX DASHBOARD
+                        </span>
+
+                        <h2>
+                            Overview
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================
+                     HEADER RIGHT
+                ========================== -->
+
+                <div class="header-right">
+
+
+                    <!-- =========================
+                         NOTIFICATION
+                    ========================== -->
+
+                    <div class="notification-wrapper">
+
+
+                        <button
+                            class="notification-btn"
+                            id="notificationButton"
+                            type="button"
+                            aria-label="Notifications">
+
+                            🔔
+
+                            <span
+                                id="notificationBadge"
+                                class="notification-badge"
+                                style="display:none;">
+
+                                0
+
+                            </span>
+
+                        </button>
+
+
+                        <!-- =========================
+                             NOTIFICATION PANEL
+                        ========================== -->
+
+                        <div
+                            class="notification-panel"
+                            id="notificationPanel">
+
+
+                            <!-- PANEL HEADER -->
+
+                            <div
+                                class="notification-panel-header">
+
+
+                                <div>
+
+                                    <h3>
+                                        Notifications
+                                    </h3>
+
+                                    <p
+                                        id="notificationSummary">
+
+                                        No new notifications
+
+                                    </p>
+
+                                </div>
+
+
+                                <button
+                                    type="button"
+                                    id="markAllNotificationsRead">
+
+                                    Mark all read
+
+                                </button>
+
+                            </div>
+
+
+                            <!-- NOTIFICATION LIST -->
+
+                            <div
+                                class="notification-list"
+                                id="notificationList">
+
+
+                                <div
+                                    class="notification-empty">
+
+
+                                    <div
+                                        class="notification-empty-icon">
+
+                                        🔔
+
+                                    </div>
+
+
+                                    <strong>
+                                        No notifications
+                                    </strong>
+
+
+                                    <span>
+                                        Your warranty reminders
+                                        will appear here.
+                                    </span>
+
+
+                                </div>
+
+
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =========================
+                         PROFILE BUTTON
+                    ========================== -->
+
+                    <div
+                        class="top-user"
+                        id="profileButton"
+                        style="cursor:pointer;">
+
+                        <div
+                            class="top-avatar"
+                            id="profileAvatar">
+
+                            U
+
+                        </div>
+
+
+                        <div>
+
+                            <strong id="profileName">
+                                User
+                            </strong>
+
+                            <small>
+                                Account
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+
+
+            <!-- =========================
+                 PAGE CONTENT
+            ========================== -->
+
+            <section class="dashboard-content">
+
+
+                <!-- =========================
+                     WELCOME SECTION
+                ========================== -->
+
+                <div class="welcome-section">
+
+
+                    <div>
+
+                        <p class="welcome-small">
+                            Welcome back 👋
+                        </p>
+
+
+                        <h1>
+                            Your Shopping Overview
+                        </h1>
+
+
+                        <p class="welcome-description">
+                            Manage your receipts, expenses and warranties
+                            from one smart dashboard.
+                        </p>
+
+                    </div>
+
+
+                    <!-- UPLOAD RECEIPT -->
+
+                    <a
+                        href="receiptScanner.html"
+                        class="upload-main-btn">
+
+                        <span>
+                            ↑
+                        </span>
+
+                        Upload Receipt
+
+                    </a>
+
+                </div>
+
+
+
+                <!-- =========================
+                     STAT CARDS
+                ========================== -->
+
+                <div
+                    class="stats-grid"
+                    style="
+                        grid-template-columns:
+                        repeat(2, minmax(0, 1fr));
+                    ">
+
+
+                    <!-- TOTAL EXPENSE -->
+
+                    <div class="stat-card">
+
+
+                        <div class="stat-top">
+
+
+                            <div class="stat-icon blue">
+                                ¤
+                            </div>
+
+
+                            <span class="stat-label">
+                                TOTAL EXPENSE
+                            </span>
+
+
+                        </div>
+
+
+                        <h2 id="totalExpense">
+                            --
+                        </h2>
+
+
+                        <p
+                            class="stat-change positive"
+                            id="totalExpenseNote">
+
+                            Based on saved receipts
+
+                        </p>
+
+
+                    </div>
+
+
+
+                    <!-- WARRANTIES -->
+
+                    <div class="stat-card">
+
+
+                        <div class="stat-top">
+
+
+                            <div class="stat-icon green">
+                                ♢
+                            </div>
+
+
+                            <span class="stat-label">
+                                WARRANTIES
+                            </span>
+
+
+                        </div>
+
+
+                        <h2 id="dashboardWarrantyTotal">
+                            See warranties
+                        </h2>
+
+
+                        <p
+                            class="stat-change warning"
+                            id="dashboardWarrantyExpiring">
+
+                            See warranties.
+
+                        </p>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- =========================
+                     CHART + CURRENCY SUMMARY
+                ========================== -->
+
+                <div class="middle-grid">
+
+
+                    <!-- =========================
+                         SPENDING OVERVIEW
+                    ========================== -->
+
+                    <div
+                        class="dashboard-card spending-card">
+
+
+                        <div class="card-header">
+
+
+                            <div>
+
+                                <h3>
+                                    Spending Overview
+                                </h3>
+
+
+                                <p id="chartDescription">
+                                    Your monthly spending activity
+                                </p>
+
+                            </div>
+
+
+                            <!-- CHART CONTROLS -->
+
+                            <div
+                                style="
+                                    display:flex;
+                                    gap:8px;
+                                    align-items:center;
+                                    flex-wrap:wrap;
+                                ">
+
+
+                                <!-- CURRENCY -->
+
+                                <select id="chartCurrency">
+
+                                    <option value="all">
+                                        All currencies
+                                    </option>
+
+                                </select>
+
+
+                                <!-- PERIOD -->
+
+                                <select id="chartPeriod">
+
+                                    <option value="6">
+                                        Last 6 months
+                                    </option>
+
+                                    <option value="12">
+                                        This year
+                                    </option>
+
+                                    <option value="all">
+                                        All time
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                        </div>
+
+
+
+                        <!-- CHART -->
+
+                        <div class="chart">
+
+
+                            <!-- Y AXIS -->
+
+                            <div class="chart-values">
+
+                                <span id="chartY1">
+                                    0
+                                </span>
+
+                                <span id="chartY2">
+                                    0
+                                </span>
+
+                                <span id="chartY3">
+                                    0
+                                </span>
+
+                                <span id="chartY4">
+                                    0
+                                </span>
+
+                            </div>
+
+
+
+                            <!-- CHART AREA -->
+
+                            <div class="chart-area">
+
+
+                                <!-- GRID LINES -->
+
+                                <div class="chart-grid-line"></div>
+
+                                <div class="chart-grid-line"></div>
+
+                                <div class="chart-grid-line"></div>
+
+                                <div class="chart-grid-line"></div>
+
+
+                                <!-- DYNAMIC BARS -->
+
+                                <div
+                                    class="bars"
+                                    id="spendingBars">
+                                </div>
+
+
+                            </div>
+
+
+                        </div>
+
+
+                    </div>
+
+
+
+                    <!-- =========================
+                         CURRENCY SUMMARY
+                    ========================== -->
+
+                    <div
+                        class="dashboard-card ai-card currency-summary-card">
+
+
+                        <!-- TOP -->
+
+                        <div class="ai-card-top">
+
+
+                            <div class="ai-icon">
+                                ¤
+                            </div>
+
+
+                            <span>
+                                CURRENCY SUMMARY
+                            </span>
+
+
+                        </div>
+
+
+                        <!-- HEADING -->
+
+                        <div class="currency-summary-heading">
+
+                            <h3>
+                                Currency Summary
+                            </h3>
+
+
+                            <p id="currencySummaryText">
+                                Your spending grouped by original currency
+                            </p>
+
+                        </div>
+
+
+                        <!-- CURRENCY LIST -->
+
+                        <div
+                            id="currencySummaryList"
+                            class="currency-summary-list">
+
+                            <div
+                                class="currency-summary-loading">
+
+                                Loading currency data...
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- =========================
+                     RECENT RECEIPTS
+                ========================== -->
+
+                <div
+                    class="dashboard-card receipts-card">
+
+
+                    <!-- HEADER -->
+
+                    <div class="card-header">
+
+
+                        <div>
+
+                            <h3>
+                                Recent Receipts
+                            </h3>
+
+
+                            <p>
+                                Your latest uploaded receipts
+                            </p>
+
+                        </div>
+
+
+                        <!-- VIEW ALL -->
+
+                        <a
+                            href="receiptHistory.html"
+                            class="view-all-link">
+
+                            View All →
+
+                        </a>
+
+
+                    </div>
+
+
+
+                    <!-- RECEIPT LIST -->
+
+                    <div
+                        class="receipt-list"
+                        id="dashboardReceiptList">
+
+
+                        <!-- LOADING -->
+
+                        <div class="receipt-row">
+
+
+                            <div class="receipt-store-icon">
+                                ▣
+                            </div>
+
+
+                            <div class="receipt-info">
+
+
+                                <strong>
+                                    Loading receipts...
+                                </strong>
+
+
+                                <span>
+                                    Please wait
+                                </span>
+
+
+                            </div>
+
+
+                            <div class="receipt-price">
+                                —
+                            </div>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- =========================
+                     WARRANTY ALERTS
+                ========================== -->
+
+                <div
+                    class="dashboard-card warranty-card">
+
+
+                    <div class="card-header">
+
+
+                        <div>
+
+                            <h3>
+                                Warranty Alerts
+                            </h3>
+
+
+                            <p>
+                                Keep track of your upcoming warranty
+                                expirations
+                            </p>
+
+                        </div>
+
+
+                        <a href="warranty.html">
+
+                            View All →
+
+                        </a>
+
+
+                    </div>
+
+
+
+                    <!-- WARRANTY LIST -->
+
+                    <div
+                        class="warranty-list"
+                        id="dashboardWarrantyList">
+
+
+                        <div class="warranty-row">
+
+
+                            <div class="warranty-icon">
+                                ♢
+                            </div>
+
+
+                            <div class="warranty-info">
+
+
+                                <strong>
+                                    Loading warranties...
+                                </strong>
+
+
+                                <span>
+                                    Please wait
+                                </span>
+
+
+                            </div>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </section>
+
+
+
+            <!-- =========================
+                 PROFILE MODAL
+            ========================== -->
+
+            <div
+                id="profileModal"
+                style="
+                    display:none;
+                    position:fixed;
+                    inset:0;
+                    background:rgba(0,0,0,0.45);
+                    z-index:9999;
+                    align-items:center;
+                    justify-content:center;
+                ">
+
+
+                <div
+                    style="
+                        width:90%;
+                        max-width:420px;
+                        background:white;
+                        border-radius:16px;
+                        padding:25px;
+                        box-shadow:0 20px 50px rgba(0,0,0,0.2);
+                    ">
+
+
+                    <!-- MODAL HEADER -->
+
+                    <div
+                        style="
+                            display:flex;
+                            justify-content:space-between;
+                            align-items:center;
+                            margin-bottom:20px;
+                        ">
+
+
+                        <h2 style="margin:0;">
+                            My Profile
+                        </h2>
+
+
+                        <button
+                            id="closeProfile"
+                            type="button"
+                            style="
+                                border:none;
+                                background:none;
+                                font-size:24px;
+                                cursor:pointer;
+                            ">
+
+                            ×
+
+                        </button>
+
+
+                    </div>
+
+
+
+                    <!-- PROFILE AVATAR -->
+
+                    <div
+                        style="
+                            text-align:center;
+                            margin-bottom:20px;
+                        ">
+
+
+                        <div
+                            id="profileLargeAvatar"
+                            style="
+                                width:75px;
+                                height:75px;
+                                margin:auto;
+                                border-radius:50%;
+                                display:flex;
+                                align-items:center;
+                                justify-content:center;
+                                background:#eef2ff;
+                                font-size:28px;
+                                font-weight:700;
+                                cursor:pointer;
+                                overflow:hidden;
+                            ">
+
+                            U
+
+                        </div>
+
+
+                        <button
+                            type="button"
+                            id="changeAvatarBtn"
+                            style="
+                                margin-top:10px;
+                                border:none;
+                                background:none;
+                                cursor:pointer;
+                                font-size:14px;
+                                font-weight:600;
+                            ">
+
+                            Change Avatar
+
+                        </button>
+
+
+                        <button
+                            type="button"
+                            id="removeAvatarBtn"
+                            style="
+                                display:block;
+                                margin:6px auto 0;
+                                border:none;
+                                background:none;
+                                color:red;
+                                cursor:pointer;
+                                font-size:14px;
+                                font-weight:600;
+                            ">
+
+                            Remove Avatar
+
+                        </button>
+
+
+                        <input
+                            type="file"
+                            id="avatarInput"
+                            accept="image/*"
+                            style="display:none;">
+
+                    </div>
+
+
+
+                    <!-- NAME -->
+
+                    <label
+                        for="profileNameInput"
+                        style="
+                            display:block;
+                            margin-bottom:7px;
+                            font-weight:600;
+                        ">
+
+                        Name
+
+                    </label>
+
+
+                    <input
+                        type="text"
+                        id="profileNameInput"
+                        placeholder="Enter your name"
+                        style="
+                            width:100%;
+                            box-sizing:border-box;
+                            padding:12px;
+                            border:1px solid #ddd;
+                            border-radius:8px;
+                            margin-bottom:15px;
+                        ">
+
+
+
+                    <!-- EMAIL -->
+
+                    <label
+                        for="profileEmailInput"
+                        style="
+                            display:block;
+                            margin-bottom:7px;
+                            font-weight:600;
+                        ">
+
+                        Email
+
+                    </label>
+
+
+                    <input
+                        type="email"
+                        id="profileEmailInput"
+                        readonly
+                        style="
+                            width:100%;
+                            box-sizing:border-box;
+                            padding:12px;
+                            border:1px solid #ddd;
+                            border-radius:8px;
+                            margin-bottom:15px;
+                            background:#f5f5f5;
+                        ">
+
+
+
+                    <!-- PROFILE MESSAGE -->
+
+                    <div
+                        id="profileMessage"
+                        style="
+                            min-height:20px;
+                            margin-bottom:12px;
+                            font-size:14px;
+                        ">
+                    </div>
+
+
+
+                    <!-- SAVE PROFILE -->
+
+                    <button
+                        id="saveProfile"
+                        type="button"
+                        style="
+                            width:100%;
+                            padding:12px;
+                            border:none;
+                            border-radius:8px;
+                            cursor:pointer;
+                            font-weight:600;
+                        ">
+
+                        Save Changes
+
+                    </button>
+
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =========================
+                 FOOTER
+            ========================== -->
+
+            <footer class="dashboard-footer">
+
+
+                <span>
+                    © 2026 SHOPIX
+                </span>
+
+
+                <span>
+                    AI Powered Smart Receipt & Shopping Assistant
+                </span>
+
+
+            </footer>
+
+
+        </main>
+
+
+    </div>
+
+
+
+    <!-- =========================
+         DASHBOARD JAVASCRIPT
+    ========================== -->
+
+        <!-- =========================
+         GLOBAL SIDEBAR
+    ========================== -->
+
+    <script
+        type="module"
+        src="js/sidebar.js">
+    </script>
+
+<script
+        type="module"
+        src="js/dashboard.js">
+    </script>
+
+
+</body>
+</html>

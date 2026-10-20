@@ -370,6 +370,27 @@
                     ></div>
 
 
+                    <!-- RETRY NOTICE -->
+
+                    <div
+                        id="signupRetryNotice"
+                        class="signup-retry-notice"
+                        style="display:none;">
+
+                        <span id="signupRetryText"></span>
+
+                        <button
+                            type="button"
+                            id="signupRetryButton"
+                            class="signup-retry-button">
+
+                            Retry
+
+                        </button>
+
+                    </div>
+
+
 
                     <!-- SIGNUP BUTTON -->
 
@@ -476,12 +497,14 @@
 
         import {
             app,
-            auth
+            auth,
+            db
         } from "./js/firebase.js";
 
 
         import {
             createUserWithEmailAndPassword,
+            signInWithEmailAndPassword,
             updateProfile,
             GoogleAuthProvider,
             signInWithPopup
@@ -490,6 +513,9 @@
 
         // ==========================================
         // REALTIME DATABASE
+        //
+        // This is the existing SHOPIX profile
+        // mirror. It is written on every signup.
         // ==========================================
 
         import {
@@ -499,7 +525,20 @@
         } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
 
 
-        const db = getDatabase(app);
+        // ==========================================
+        // FIRESTORE
+        //
+        // The user profile record that the app
+        // itself reads (see js/settings.js).
+        // ==========================================
+
+        import {
+            doc,
+            setDoc
+        } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+
+        const realtimeDb = getDatabase(app);
 
 
 
@@ -547,8 +586,34 @@
             document.getElementById("signupMessage");
 
 
+        const signupRetryNotice =
+            document.getElementById("signupRetryNotice");
+
+
+        const signupRetryText =
+            document.getElementById("signupRetryText");
+
+
+        const signupRetryButton =
+            document.getElementById("signupRetryButton");
+
+
         const googleButton =
             document.getElementById("googleButton");
+
+
+        // ==========================================
+        // SIGNUP STATE
+        //
+        // pendingProfile keeps the profile of an
+        // account that exists but whose profile
+        // could not be saved, so the save can be
+        // retried without making a second account.
+        // ==========================================
+
+        let pendingProfile = null;
+
+        let signupRedirectTimer = null;
 
 
 
@@ -631,6 +696,296 @@
 
         }
 
+
+
+        // ==========================================
+        // SAVE USER PROFILE
+        //
+        // The profile is written to the store the
+        // app reads (Firestore, users/{uid} - the
+        // same path and fields js/settings.js
+        // uses) and mirrored into the existing
+        // Realtime Database copy (users/{uid}).
+        //
+        // Both use the same data structure, so
+        // nothing new is introduced. The result
+        // of each store is reported separately so
+        // a partial save is never hidden.
+        // ==========================================
+
+        async function saveUserProfile(user, profile) {
+
+            const result = {
+                firestore: false,
+                realtime: false,
+                firestoreError: null,
+                realtimeError: null
+            };
+
+
+            // --------------------------------
+            // FIRESTORE - required
+            // --------------------------------
+
+            try {
+
+                await setDoc(
+                    doc(db, "users", user.uid),
+                    profile,
+                    { merge: true }
+                );
+
+                result.firestore = true;
+
+                console.log(
+                    "[SHOPIX signup] Profile saved to Firestore (users/" + user.uid + ")"
+                );
+
+            }
+            catch (error) {
+
+                result.firestoreError = error;
+
+                console.error(
+                    "[SHOPIX signup] Firestore profile save failed:",
+                    error && error.code ? error.code : error
+                );
+
+            }
+
+
+            // --------------------------------
+            // REALTIME DATABASE - existing mirror
+            // --------------------------------
+
+            try {
+
+                await set(
+                    ref(
+                        realtimeDb,
+                        "users/" + user.uid
+                    ),
+                    profile
+                );
+
+                result.realtime = true;
+
+                console.log(
+                    "[SHOPIX signup] Profile mirrored to Realtime Database (users/" + user.uid + ")"
+                );
+
+            }
+            catch (error) {
+
+                result.realtimeError = error;
+
+                console.error(
+                    "[SHOPIX signup] Realtime Database profile mirror failed:",
+                    error && error.code ? error.code : error
+                );
+
+            }
+
+            return result;
+
+        }
+
+
+        // ==========================================
+        // PROFILE SAVE OUTCOME
+        //
+        // The account is only reported as created
+        // once the profile is really stored. When it
+        // is not, the account is kept and the profile
+        // can be saved again, so no duplicate account
+        // is ever created.
+        // ==========================================
+
+        function showRetryNotice(text) {
+
+            if (!signupRetryNotice) {
+                return;
+            }
+
+            if (text) {
+
+                signupRetryNotice.style.display =
+                    "flex";
+
+                signupRetryText.textContent =
+                    text;
+
+            } else {
+
+                signupRetryNotice.style.display =
+                    "none";
+
+                signupRetryText.textContent =
+                    "";
+
+            }
+
+        }
+
+
+        function scheduleLoginRedirect(page) {
+
+            if (signupRedirectTimer) {
+                clearTimeout(signupRedirectTimer);
+            }
+
+            signupRedirectTimer =
+                setTimeout(
+                    function () {
+
+                        window.location.href =
+                            page || "loginpg.html";
+
+                    },
+                    pendingProfile ? 2000 : 1200
+                );
+
+        }
+
+
+        async function saveProfileAndReport(user, profile) {
+
+            const result =
+                await saveUserProfile(
+                    user,
+                    profile
+                );
+
+
+            // --------------------------------
+            // REQUIRED PROFILE NOT SAVED
+            // --------------------------------
+
+            if (!result.firestore) {
+
+                pendingProfile = {
+                    user: user,
+                    profile: profile
+                };
+
+                showMessage(
+                    "❌ Your account was created, but your profile could not be saved. Please try again.",
+                    "error"
+                );
+
+                showRetryNotice(
+                    "Your account is safe. Retry to save your profile."
+                );
+
+                return false;
+
+            }
+
+
+            // --------------------------------
+            // PROFILE SAVED
+            // --------------------------------
+
+            if (!result.realtime) {
+
+                // The profile is stored and the app can
+                // use it. The Realtime Database copy is
+                // a backup, so this is reported without
+                // blocking the signup.
+
+                pendingProfile = {
+                    user: user,
+                    profile: profile
+                };
+
+                showMessage(
+                    "✅ Account created successfully!",
+                    "success"
+                );
+
+                showRetryNotice(
+                    "A backup copy of your profile could not be saved. You can retry."
+                );
+
+                return true;
+
+            }
+
+            pendingProfile = null;
+
+            showRetryNotice("");
+
+            showMessage(
+                "✅ Account created successfully!",
+                "success"
+            );
+
+            return true;
+
+        }
+
+
+        // ==========================================
+        // RETRY PROFILE SAVE
+        // ==========================================
+
+        signupRetryButton.addEventListener(
+            "click",
+            async function () {
+
+                if (!pendingProfile) {
+                    return;
+                }
+
+                const user =
+                    auth.currentUser;
+
+                if (!user) {
+
+                    showMessage(
+                        "❌ Please log in again before retrying.",
+                        "error"
+                    );
+
+                    return;
+
+                }
+
+                signupButton.disabled = true;
+
+                signupButtonText.textContent =
+                    "Saving Profile...";
+
+                showMessage(
+                    "Saving your profile...",
+                    "loading"
+                );
+
+                const saved =
+                    await saveProfileAndReport(
+                        user,
+                        pendingProfile.profile
+                    );
+
+                signupButton.disabled = false;
+
+                if (saved) {
+
+                    signupButtonText.textContent =
+                        "Account Created ✓";
+
+                    scheduleLoginRedirect();
+
+                }
+                else {
+
+                    signupButtonText.textContent =
+                        "Retry Saving Profile";
+
+                }
+
+            }
+        );
 
 
         // ==========================================
@@ -724,87 +1079,152 @@
 
                     // ==================================
                     // CREATE FIREBASE ACCOUNT
+                    //
+                    // If the account already exists the
+                    // signup was interrupted earlier.
+                    // Signing in with the same password
+                    // recovers that account instead of
+                    // creating a duplicate one.
                     // ==================================
 
-                    const userCredential =
-                        await createUserWithEmailAndPassword(
-                            auth,
-                            email,
-                            password
-                        );
+                    let user = null;
 
+                    try {
 
-                    const user =
-                        userCredential.user;
+                        const userCredential =
+                            await createUserWithEmailAndPassword(
+                                auth,
+                                email,
+                                password
+                            );
 
+                        user =
+                            userCredential.user;
+
+                    }
+                    catch (createError) {
+
+                        if (
+                            createError.code ===
+                            "auth/email-already-in-use"
+                        ) {
+
+                            const existingCredential =
+                                await signInWithEmailAndPassword(
+                                    auth,
+                                    email,
+                                    password
+                                );
+
+                            user =
+                                existingCredential.user;
+
+                            console.log(
+                                "[SHOPIX signup] Existing account recovered, saving the profile."
+                            );
+
+                        }
+                        else {
+                            throw createError;
+                        }
+
+                    }
 
 
                     // ==================================
                     // SAVE NAME IN AUTH PROFILE
                     // ==================================
 
-                    await updateProfile(
-                        user,
-                        {
-                            displayName: fullname
-                        }
-                    );
+                    try {
 
+                        await updateProfile(
+                            user,
+                            {
+                                displayName: fullname
+                            }
+                        );
+
+                    }
+                    catch (profileError) {
+
+                        // A fresh sign-in is needed to
+                        // change the display name.
+
+                        if (
+                            profileError.code ===
+                            "auth/requires-recent-login"
+                        ) {
+
+                            const refreshed =
+                                await signInWithEmailAndPassword(
+                                    auth,
+                                    email,
+                                    password
+                                );
+
+                            await updateProfile(
+                                refreshed.user,
+                                {
+                                    displayName: fullname
+                                }
+                            );
+
+                        }
+                        else {
+                            throw profileError;
+                        }
+
+                    }
 
 
                     // ==================================
-                    // SAVE USER DATA IN REALTIME DATABASE
+                    // SAVE USER PROFILE
                     // ==================================
 
-                    await set(
-                        ref(
-                            db,
-                            "users/" + user.uid
-                        ),
-                        {
+                    const profile = {
+                        uid: user.uid,
+                        name: fullname,
+                        email: email,
+                        createdAt: Date.now()
+                    };
 
-                            uid: user.uid,
 
-                            name: fullname,
+                    const profileSaved =
+                        await saveProfileAndReport(
+                            user,
+                            profile
+                        );
 
-                            email: email,
 
-                            createdAt: Date.now()
+                    if (!profileSaved) {
 
-                        }
-                    );
+                        // The account stays, so the profile
+                        // can be saved with the retry button.
 
+                        signupButton.disabled =
+                            false;
+
+                        signupButtonText.textContent =
+                            "Retry Saving Profile";
+
+                        return;
+
+                    }
 
 
                     // ==================================
                     // SUCCESS
                     // ==================================
 
-                    showMessage(
-                        "✅ Account created successfully!",
-                        "success"
-                    );
-
-
                     signupButtonText.textContent =
                         "Account Created ✓";
-
 
 
                     // ==================================
                     // GO TO LOGIN
                     // ==================================
 
-                    setTimeout(
-                        function () {
-
-                            window.location.href =
-                                "loginpg.html";
-
-                        },
-                        1200
-                    );
-
+                    scheduleLoginRedirect();
 
                 }
 
@@ -897,6 +1317,10 @@
 
                     // ==================================
                     // DATABASE PERMISSION ERROR
+                    //
+                    // The technical reason is written to
+                    // the console. The user only gets a
+                    // short, friendly message.
                     // ==================================
 
                     else if (
@@ -905,7 +1329,7 @@
                     ) {
 
                         errorMessage =
-                            "❌ Account created, but user data could not be saved. Check Realtime Database Rules.";
+                            "❌ We couldn't save your details just now. Please try again.";
 
                     }
 
@@ -922,7 +1346,7 @@
                     ) {
 
                         errorMessage =
-                            "❌ Account created, but database permission was denied.";
+                            "❌ We couldn't save your details just now. Please try again.";
 
                     }
 
@@ -942,7 +1366,13 @@
                         false;
 
 
+                    // The account may already exist, so the
+                    // button retries the profile save instead
+                    // of asking for a new account.
+
                     signupButtonText.textContent =
+                        pendingProfile ?
+                        "Retry Saving Profile" :
                         "Create Account";
 
                 }
@@ -981,35 +1411,43 @@
                     const user =
                         result.user;
 
-                    // Save Google user data in Realtime Database
+                    // Save the user profile using the same
+                    // routine as the email signup, so both
+                    // paths behave identically.
 
-                    await set(
-                        ref(
-                            db,
-                            "users/" + user.uid
-                        ),
-                        {
-                            uid: user.uid,
-                            name: user.displayName || "",
-                            email: user.email || "",
-                            createdAt: Date.now()
-                        }
-                    );
+                    const profile = {
+                        uid: user.uid,
+                        name: user.displayName || "",
+                        email: user.email || "",
+                        createdAt: Date.now()
+                    };
+
+                    const profileSaved =
+                        await saveProfileAndReport(
+                            user,
+                            profile
+                        );
+
+                    if (!profileSaved) {
+
+                        signupButton.disabled = false;
+
+                        signupButtonText.textContent =
+                            "Retry Saving Profile";
+
+                        return;
+
+                    }
 
                     showMessage(
                         "✅ Google account connected successfully!",
                         "success"
                     );
 
-                    setTimeout(
-                        function () {
+                    // The Google user is already signed in,
+                    // so it goes straight to the dashboard.
 
-                            window.location.href =
-                                "dashboard.html";
-
-                        },
-                        1000
-                    );
+                    scheduleLoginRedirect("dashboard.html");
 
                 }
 
