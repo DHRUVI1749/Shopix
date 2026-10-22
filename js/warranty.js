@@ -1642,23 +1642,30 @@ function renderStats() {
         warranties.length;
 
 
-    if (expiring > 0) {
+    
+const reminderWarranties = warranties.filter(warranty => {
+    const expiry = normalizeDate(
+    warranty.warrantyExpiryDate
+);
 
-        warrantyReminderText.textContent =
-            `${expiring} warranty ${
-                expiring === 1
-                    ? "is"
-                    : "are"
-            } expiring within the next 30 days.`;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-    }
+    const daysLeft = Math.round(
+        (expiry - today) / (1000 * 60 * 60 * 24)
+    );
 
-    else {
+    return [15, 7, 1, 0].includes(daysLeft);
+});
 
-        warrantyReminderText.textContent =
-            "No warranties are currently expiring soon.";
+if (reminderWarranties.length > 0) {
+    warrantyReminderText.textContent =
+        `${reminderWarranties.length} warranty reminder(s) due today.`;
+} else {
+    warrantyReminderText.textContent =
+        "No warranty reminders are due today.";
+}
 
-    }
 
 }
 
@@ -1753,6 +1760,31 @@ function renderWarrantyTable() {
                     "tr"
                 );
 
+            
+const expiryDate = new Date(
+    warranty.warrantyExpiryDate + "T00:00:00"
+);
+
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+
+const daysLeft = Math.round(
+    (expiryDate - today) / (1000 * 60 * 60 * 24)
+);
+
+let reminderMessage = "";
+
+if (daysLeft === 15) {
+    reminderMessage = "Reminder: Expires in 15 days";
+} else if (daysLeft === 7) {
+    reminderMessage = "Reminder: Expires in 7 days";
+} else if (daysLeft === 1) {
+    reminderMessage = "Reminder: Expires tomorrow";
+} else if (daysLeft === 0) {
+    reminderMessage = "Warranty expires today!";
+}
+
+
 
             row.innerHTML = `
 
@@ -1801,11 +1833,14 @@ function renderWarrantyTable() {
                 </td>
 
 
-                <td>
-                    ${formatDate(
-                        warranty.warrantyExpiryDate
-                    )}
-                </td>
+                
+<td>
+    ${formatDate(warranty.warrantyExpiryDate)}
+    ${reminderMessage
+        ? `<br><small>${escapeHTML(reminderMessage)}</small>`
+        : ""}
+</td>
+
 
 
                 <td>
