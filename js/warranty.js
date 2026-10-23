@@ -1634,10 +1634,11 @@ function renderStats() {
 
 
     
+
 const reminderWarranties = warranties.filter(warranty => {
     const expiry = normalizeDate(
-    warranty.warrantyExpiryDate
-);
+        warranty.warrantyExpiryDate
+    );
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -1646,8 +1647,14 @@ const reminderWarranties = warranties.filter(warranty => {
         (expiry - today) / (1000 * 60 * 60 * 24)
     );
 
-    return [15, 7, 1, 0].includes(daysLeft);
+    if ([15, 7, 1, 0].includes(daysLeft)) {
+        sendWarrantyNotification(warranty, daysLeft);
+        return true;
+    }
+
+    return false;
 });
+
 
 if (reminderWarranties.length > 0) {
     warrantyReminderText.textContent =
@@ -2293,3 +2300,58 @@ onAuthStateChanged(
 
     }
 );
+
+async function requestWarrantyNotificationPermission() {
+    if (!("Notification" in window)) {
+        alert("Your browser does not support notifications.");
+        return;
+    }
+
+    if (Notification.permission === "granted") {
+        return;
+    }
+
+    if (Notification.permission === "denied") {
+        alert("Notifications are blocked. Allow them in your browser site settings.");
+        return;
+    }
+
+    const permission = await Notification.requestPermission();
+
+    if (permission === "granted") {
+        alert("SHOPIX notifications enabled!");
+    }
+}
+window.requestWarrantyNotificationPermission =
+    requestWarrantyNotificationPermission;
+
+
+function sendWarrantyNotification(warranty, daysLeft) {
+    if (!("Notification" in window)) return;
+    if (Notification.permission !== "granted") return;
+
+    let message;
+
+    if (daysLeft === 15) {
+        message = "Your warranty expires in 15 days.";
+    } else if (daysLeft === 7) {
+        message = "Your warranty expires in 7 days.";
+    } else if (daysLeft === 1) {
+        message = "Your warranty expires tomorrow.";
+    } else if (daysLeft === 0) {
+        message = "Your warranty expires today!";
+    } else {
+        return;
+    }
+
+    const key = `shopix-reminder-${warranty.id}-${warranty.warrantyExpiryDate}-${daysLeft}`;
+
+    if (localStorage.getItem(key)) return;
+
+    new Notification("SHOPIX Warranty Reminder", {
+        body: `${warranty.productName || "Your product"}: ${message}`
+    });
+
+    localStorage.setItem(key, "sent");
+}
+
