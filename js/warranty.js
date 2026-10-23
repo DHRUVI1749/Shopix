@@ -427,7 +427,7 @@ function calculateExpiry(
 
     const match =
         duration.match(
-            /^(\d+)\s+(Month|Months|Year|Years)$/
+            /^(\d+)\s+(Day|Days|Month|Months|Year|Years)$/i
         );
 
 
@@ -443,24 +443,15 @@ function calculateExpiry(
         match[2].toLowerCase();
 
 
-    if (
-        unit === "month" ||
-        unit === "months"
-    ) {
-
-        result.setMonth(
-            result.getMonth() + amount
-        );
-
-    }
-
-    else {
-
-        result.setFullYear(
-            result.getFullYear() + amount
-        );
-
-    }
+    if (unit === "day" || unit === "days") {
+    result.setDate(result.getDate() + amount);
+}
+else if (unit === "month" || unit === "months") {
+    result.setMonth(result.getMonth() + amount);
+}
+else {
+    result.setFullYear(result.getFullYear() + amount);
+}
 
 
     return result;
