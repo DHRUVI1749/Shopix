@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
 
     <meta
@@ -14,844 +13,515 @@
     <link
         rel="stylesheet"
         href="css/receiptScanner.css">
+    <link rel="stylesheet" href="css/shopix.css">
 
-
-    <!-- =========================
-         GLOBAL SIDEBAR CSS
-    ========================== -->
-
-    <link
-        rel="stylesheet"
-        href="css/sidebar.css">
 </head>
 
-<body>
+<body class="app-page">
 
-        <!-- =========================
-             SIDEBAR
-        ========================== -->
-
-        <aside class="sidebar">
-
-
-            <!-- LOGO -->
-
-            <a
-                href="index.html"
-                class="sidebar-logo">
-
-                <span class="logo-icon">
-                    S
-                </span>
-
-                <span>
-                    SHOPIX
-                </span>
-
+    <header class="site-header">
+        <div class="site-header-inner">
+            <a href="dashboard.html" class="site-brand" aria-label="SHOPIX dashboard">
+                <img src="images/logo.png" alt="" class="site-logo" width="40" height="40">
+                <span class="site-brand-name">SHOPIX</span>
             </a>
 
-
-            <!-- =========================
-                 NAVIGATION
-            ========================== -->
-
-            <nav class="sidebar-nav">
-
-                <p class="nav-title">
-                    MAIN MENU
-                </p>
-
-
-                <!-- Dashboard -->
-
-                <a
-                    href="dashboard.html"
-                    class="nav-item">
-
-                    <span class="nav-icon">
-                        ▦
-                    </span>
-
-                    Dashboard
-
-                </a>
-
-
-                <!-- Receipts -->
-
-                <a
-                    href="receiptHistory.html"
-                    class="nav-item">
-
-                    <span class="nav-icon">
-                        ▤
-                    </span>
-
-                    Receipts
-
-                </a>
-
-
-                <!-- Upload Receipt -->
-
-                <a
-                    href="receiptScanner.html"
-                    class="nav-item active">
-
-                    <span class="nav-icon">
-                        ↑
-                    </span>
-
-                    Upload Receipt
-
-                </a>
-
-
-                <!-- Expenses -->
-
-                <a
-                    href="expenseAnalytics.html"
-                    class="nav-item">
-
-                    <span class="nav-icon">
-                        ◫
-                    </span>
-
-                    Expenses
-
-                </a>
-
-
-                <!-- Reports -->
-
-                <a
-                    href="reports.html"
-                    class="nav-item">
-
-                    <span class="nav-icon">
-                        ▤
-                    </span>
-
-                    Reports
-
-                </a>
-
-
-                <!-- Warranties -->
-
-                <a
-                    href="warranty.html"
-                    class="nav-item">
-
-                    <span class="nav-icon">
-                        ♢
-                    </span>
-
-                    Warranties
-
-                </a>
-
-
-                <!-- Settings -->
-
-                <a
-                    href="settings.html"
-                    class="nav-item">
-
-                    <span class="nav-icon">
-                        ⚙
-                    </span>
-
-                    Settings
-
-                </a>
-
-            </nav>
-
-
-            <!-- =========================
-                 SIDEBAR BOTTOM
-            ========================== -->
-
-            <div class="sidebar-bottom">
-
-
-                <!-- HELP -->
-
-                <a
-                    href="help.html"
-                    class="help-box">
-
-                    <div class="help-icon">
-                        ?
-                    </div>
-
-                    <div>
-
-                        <strong>
-                            Need Help?
-                        </strong>
-
-                        <span>
-                            We're here for you
-                        </span>
-
-                    </div>
-
-                </a>
-
-
-                <!-- LOGOUT -->
-
-                <button
-                    type="button"
-                    id="logoutBtn"
-                    class="logout-btn">
-
-                    <span>
-                        ↪
-                    </span>
-
-                    Logout
-
-                </button>
-
-
-                <!-- DELETE ACCOUNT -->
-
-                <button
-                    type="button"
-                    id="deleteAccountBtn"
-                    class="delete-account-btn">
-
-                    <span>
-                        <svg
-                            width="14"
-                            height="14"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            aria-hidden="true">
-
-                            <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-                            <line x1="12" y1="9" x2="12" y2="13"></line>
-                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
-
-                        </svg>
-                    </span>
-
-                    Delete Account
-
-                </button>
-
-            </div>
-
-        </aside>
+            <a href="settings.html" class="account-link" aria-label="Open account settings" title="Account settings">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="8" r="3.5"></circle>
+                    <path d="M5.5 20c.6-3.2 2.9-5 6.5-5s5.9 1.8 6.5 5"></path>
+                </svg>
+            </a>
+        </div>
+    </header>
 
     <div class="app-shell">
 
-    <!-- =========================
-         HEADER
-    ========================== -->
+        <!-- MAIN -->
 
-    <header class="navbar">
+        <main class="scanner-page">
 
-                <button
-                    class="mobile-menu-btn"
-                    type="button"
-                    aria-label="Open navigation menu">
-                    &#9776;
-                </button>
+            <!-- PAGE HEADING -->
 
+            <section class="page-heading">
 
-        <div class="logo">
+                <span class="small-label">
+                    AI-POWERED RECEIPT MANAGEMENT
+                </span>
 
-            <span class="logo-icon">
-                S
-            </span>
-
-            SHOPIX
-
-        </div>
-
-
-        <nav>
-
-            <a href="dashboard.html">
-                Dashboard
-            </a>
-
-        </nav>
-
-    </header>
-
-
-
-    <!-- =========================
-         MAIN
-    ========================== -->
-
-    <main class="scanner-page">
-
-
-        <!-- =========================
-             PAGE HEADING
-        ========================== -->
-
-        <section class="page-heading">
-
-            <span class="small-label">
-                AI-POWERED RECEIPT MANAGEMENT
-            </span>
-
-            <h1>
-                Receipt Scanner
-            </h1>
-
-            <p>
-                Upload or capture your receipt and let SHOPIX
-                extract important information automatically.
-            </p>
-
-        </section>
-
-
-
-        <!-- =========================
-             UPLOAD + PREVIEW
-        ========================== -->
-
-        <section class="scanner-card">
-
-
-            <!-- =========================
-                 UPLOAD
-            ========================== -->
-
-            <div class="upload-section">
-
-                <div class="section-icon">
-                    ↑
-                </div>
-
-                <h2>
-                    Upload or Capture Receipt
-                </h2>
+                <h1>Receipt Scanner</h1>
 
                 <p>
-                    Choose a receipt image from your device
-                    or capture one using your camera.
+                    Upload or capture your receipt and let SHOPIX
+                    extract important information automatically.
                 </p>
 
+            </section>
+
+
+            <!-- UPLOAD + PREVIEW -->
+
+            <section class="scanner-card">
 
                 <!-- UPLOAD -->
 
-                <label
-                    for="receiptFileInput"
-                    class="primary-btn">
+                <div class="upload-section">
 
-                    Choose Receipt
-
-                </label>
-
-
-                <input
-                    type="file"
-                    id="receiptFileInput"
-                    accept="image/jpeg,image/png,image/webp"
-                    hidden>
-
-
-                <!-- CAMERA -->
-
-                <button
-                    type="button"
-                    id="captureBtn"
-                    class="camera-btn">
-
-                    📷 Capture from Camera
-
-                </button>
-
-
-                <!-- MANUAL -->
-
-                <button
-                    type="button"
-                    id="manualReceiptBtn"
-                    class="manual-btn">
-
-                    ✎ Add Receipt Manually
-
-                </button>
-
-
-                <p class="file-note">
-                    JPG, PNG or WEBP • Maximum 10 MB
-                </p>
-
-                <p class="manual-note">
-                    Don't have a receipt image? Add the details manually.
-                </p>
-
-            </div>
-
-
-
-            <!-- =========================
-                 PREVIEW
-            ========================== -->
-
-            <div class="preview-section">
-
-                <div class="section-heading">
-
-                    <h2>
-                        Receipt Preview
-                    </h2>
-
-                    <span id="previewStatus">
-                        No receipt
-                    </span>
-
-                </div>
-
-
-                <div
-                    class="preview-box"
-                    id="previewBox">
-
-
-                    <div
-                        id="noPreviewText"
-                        class="empty-preview">
-
-                        <div class="empty-icon">
-                            🧾
-                        </div>
-
-                        <strong>
-                            No receipt selected
-                        </strong>
-
-                        <span>
-                            Your receipt preview will appear here.
-                        </span>
-
+                    <div class="section-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 16V4M7 9l5-5 5 5"></path>
+                            <path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"></path>
+                        </svg>
                     </div>
 
-
-                    <div
-                        id="manualPreviewText"
-                        class="manual-preview"
-                        style="display:none;">
-
-                        <div class="manual-preview-icon">
-                            ✎
-                        </div>
-
-                        <strong>
-                            Manual Receipt
-                        </strong>
-
-                        <span>
-                            Enter your receipt details below.
-                        </span>
-
-                    </div>
-
-
-                    <img
-                        id="receiptPreview"
-                        alt="Receipt Preview">
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- =========================
-             SCAN
-        ========================== -->
-
-        <section class="scan-section">
-
-            <div class="scan-info">
-
-                <div class="ai-icon">
-                    ✦
-                </div>
-
-                <div>
-
-                    <h2>
-                        Ready to Scan?
-                    </h2>
+                    <h2>Upload or Capture Receipt</h2>
 
                     <p>
-                        SHOPIX AI will read your receipt and
-                        extract store, date, amount, items and category.
+                        Choose a receipt image from your device
+                        or capture one using your camera.
+                    </p>
+
+                    <!-- UPLOAD -->
+
+                    <label
+                        for="receiptFileInput"
+                        class="primary-btn">
+
+                        Choose Receipt
+
+                    </label>
+
+                    <input
+                        type="file"
+                        id="receiptFileInput"
+                        accept="image/jpeg,image/png,image/webp"
+                        hidden>
+
+                    <!-- CAMERA -->
+
+                    <button
+                        type="button"
+                        id="captureBtn"
+                        class="camera-btn">
+
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M4 8h3l1.5-2h7L17 8h3a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2Z"></path>
+                            <circle cx="12" cy="14" r="3.5"></circle>
+                        </svg>
+                        Capture from Camera
+
+                    </button>
+
+                    <!-- MANUAL -->
+
+                    <button
+                        type="button"
+                        id="manualReceiptBtn"
+                        class="manual-btn">
+
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 20h9"></path>
+                            <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+                        </svg>
+                        Add Receipt Manually
+
+                    </button>
+
+                    <p class="file-note">
+                        JPG, PNG or WEBP • Maximum 10 MB
+                    </p>
+
+                    <p class="manual-note">
+                        Don't have a receipt image? Add the details manually.
                     </p>
 
                 </div>
 
-            </div>
 
+                <!-- PREVIEW -->
 
-            <button
-                type="button"
-                id="scanBtn"
-                class="scan-btn"
-                disabled>
+                <div class="preview-section">
 
-                ✨ Scan Receipt with AI
+                    <div class="section-heading">
 
-            </button>
+                        <h2>Receipt Preview</h2>
 
-        </section>
+                        <span id="previewStatus">
+                            No receipt
+                        </span>
 
+                    </div>
 
+                    <div
+                        class="preview-box"
+                        id="previewBox">
 
-        <!-- =========================
-             EXTRACTED / MANUAL DATA
-        ========================== -->
+                        <div
+                            id="noPreviewText"
+                            class="empty-preview">
 
-        <section
-            id="extractedDataSection"
-            class="extracted-section"
-            style="display:none;">
+                            <div class="empty-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3Z"></path>
+                                    <path d="M9 8h6M9 12h6"></path>
+                                </svg>
+                            </div>
 
+                            <strong>
+                                No receipt selected
+                            </strong>
 
-            <div class="section-heading">
+                            <span>
+                                Your receipt preview will appear here.
+                            </span>
 
-                <div>
+                        </div>
 
-                    <h2 id="dataSectionTitle">
-                        Receipt Information
-                    </h2>
+                        <div
+                            id="manualPreviewText"
+                            class="manual-preview"
+                            style="display:none;">
 
-                    <p
-                        id="dataSectionDescription"
-                        class="data-section-description">
+                            <div class="manual-preview-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M12 20h9"></path>
+                                    <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+                                </svg>
+                            </div>
 
-                        Review and edit the receipt information
-                        before saving.
+                            <strong>Manual Receipt</strong>
 
-                    </p>
+                            <span>
+                                Enter your receipt details below.
+                            </span>
 
-                </div>
+                        </div>
 
+                        <img
+                            id="receiptPreview"
+                            alt="Receipt Preview">
 
-                <span>
-                    Review & Edit
-                </span>
-
-            </div>
-
-
-
-            <!-- =========================
-                 FORM
-            ========================== -->
-
-            <div class="form-grid">
-
-
-                <!-- STORE -->
-
-                <div class="input-group">
-
-                    <label for="storeName">
-                        Store Name
-                    </label>
-
-                    <input
-                        type="text"
-                        id="storeName"
-                        placeholder="Store name">
+                    </div>
 
                 </div>
 
+            </section>
 
 
-                <!-- DATE -->
+            <!-- SCAN -->
 
-                <div class="input-group">
+            <section class="scan-section">
 
-                    <label for="purchaseDate">
-                        Purchase Date
-                    </label>
+                <div class="scan-info">
 
-                    <input
-                        type="date"
-                        id="purchaseDate">
-
-                </div>
-
-
-
-                <!-- TOTAL -->
-
-                <div class="input-group">
-
-                    <label for="totalAmount">
-                        Total Amount
-                    </label>
-
-                    <input
-                        type="number"
-                        id="totalAmount"
-                        placeholder="0"
-                        min="0"
-                        step="0.01">
-
-                </div>
-
-
-
-                <!-- CATEGORY -->
-
-                <div class="input-group">
-
-                    <label for="category">
-                        Category
-                    </label>
-
-                    <select id="category">
-
-                        <option value="">
-                            Select Category
-                        </option>
-
-                        <option value="Food">
-                            Food
-                        </option>
-
-                        <option value="Grocery">
-                            Grocery
-                        </option>
-
-                        <option value="Shopping">
-                            Shopping
-                        </option>
-
-                        <option value="Electronics">
-                            Electronics
-                        </option>
-
-                        <option value="Clothing">
-                            Clothing
-                        </option>
-
-                        <option value="Travel">
-                            Travel
-                        </option>
-
-                        <option value="Medical">
-                            Medical
-                        </option>
-
-                        <option value="Other">
-                            Other
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-
-                <!-- CURRENCY -->
-
-                <div class="input-group">
-
-                    <label for="currency">
-                        Currency
-                    </label>
-
-                    <select id="currency">
-
-                        <option value="INR">
-                            ₹ INR - Indian Rupee
-                        </option>
-
-                        <option value="USD">
-                            $ USD - US Dollar
-                        </option>
-
-                        <option value="EUR">
-                            € EUR - Euro
-                        </option>
-
-                        <option value="GBP">
-                            £ GBP - British Pound
-                        </option>
-
-                        <option value="AED">
-                            د.إ AED - UAE Dirham
-                        </option>
-
-                        <option value="CAD">
-                            $ CAD - Canadian Dollar
-                        </option>
-
-                        <option value="AUD">
-                            $ AUD - Australian Dollar
-                        </option>
-
-                        <option value="Other">
-                            Other
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-            </div>
-
-
-
-            <!-- =========================
-                 PURCHASED ITEMS
-            ========================== -->
-
-            <div class="items-section">
-
-                <div class="items-heading">
+                    <div class="ai-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 3v18M3 12h18"></path>
+                            <path d="m5.6 5.6 12.8 12.8M18.4 5.6 5.6 18.4"></path>
+                        </svg>
+                    </div>
 
                     <div>
 
-                        <h3>
-                            Purchased Items
-                        </h3>
+                        <h2>Ready to Scan?</h2>
 
                         <p>
-                            Optional — add items if you want to keep
-                            detailed receipt information.
+                            SHOPIX AI will read your receipt and
+                            extract store, date, amount, items and category.
                         </p>
 
                     </div>
 
+                </div>
+
+                <button
+                    type="button"
+                    id="scanBtn"
+                    class="scan-btn"
+                    disabled>
+
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M12 3v18M3 12h18"></path>
+                        <path d="m5.6 5.6 12.8 12.8M18.4 5.6 5.6 18.4"></path>
+                    </svg>
+                    Scan Receipt with AI
+
+                </button>
+
+            </section>
+
+
+            <!-- EXTRACTED / MANUAL DATA -->
+
+            <section
+                id="extractedDataSection"
+                class="extracted-section"
+                style="display:none;">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <h2 id="dataSectionTitle">
+                            Receipt Information
+                        </h2>
+
+                        <p
+                            id="dataSectionDescription"
+                            class="data-section-description">
+
+                            Review and edit the receipt information
+                            before saving.
+
+                        </p>
+
+                    </div>
+
+                    <span>Review &amp; Edit</span>
+
+                </div>
+
+
+                <!-- FORM -->
+
+                <div class="form-grid">
+
+                    <!-- STORE -->
+
+                    <div class="input-group">
+
+                        <label for="storeName">
+                            Store Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="storeName"
+                            placeholder="Store name">
+
+                    </div>
+
+
+                    <!-- DATE -->
+
+                    <div class="input-group">
+
+                        <label for="purchaseDate">
+                            Purchase Date
+                        </label>
+
+                        <input
+                            type="date"
+                            id="purchaseDate">
+
+                    </div>
+
+
+                    <!-- TOTAL -->
+
+                    <div class="input-group">
+
+                        <label for="totalAmount">
+                            Total Amount
+                        </label>
+
+                        <input
+                            type="number"
+                            id="totalAmount"
+                            placeholder="0"
+                            min="0"
+                            step="0.01">
+
+                    </div>
+
+
+                    <!-- CATEGORY -->
+
+                    <div class="input-group">
+
+                        <label for="category">
+                            Category
+                        </label>
+
+                        <select id="category">
+
+                            <option value="">
+                                Select Category
+                            </option>
+
+                            <option value="Food">Food</option>
+
+                            <option value="Grocery">Grocery</option>
+
+                            <option value="Shopping">Shopping</option>
+
+                            <option value="Electronics">Electronics</option>
+
+                            <option value="Clothing">Clothing</option>
+
+                            <option value="Travel">Travel</option>
+
+                            <option value="Medical">Medical</option>
+
+                            <option value="Other">Other</option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- CURRENCY -->
+
+                    <div class="input-group">
+
+                        <label for="currency">
+                            Currency
+                        </label>
+
+                        <select id="currency">
+
+                            <option value="INR">
+                                ₹ INR - Indian Rupee
+                            </option>
+
+                            <option value="USD">
+                                $ USD - US Dollar
+                            </option>
+
+                            <option value="EUR">
+                                € EUR - Euro
+                            </option>
+
+                            <option value="GBP">
+                                £ GBP - British Pound
+                            </option>
+
+                            <option value="AED">
+                                د.إ AED - UAE Dirham
+                            </option>
+
+                            <option value="CAD">
+                                $ CAD - Canadian Dollar
+                            </option>
+
+                            <option value="AUD">
+                                $ AUD - Australian Dollar
+                            </option>
+
+                            <option value="Other">Other</option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PURCHASED ITEMS -->
+
+                <div class="items-section">
+
+                    <div class="items-heading">
+
+                        <div>
+
+                            <h3>Purchased Items</h3>
+
+                            <p>
+                                Optional — add items if you want to keep
+                                detailed receipt information.
+                            </p>
+
+                        </div>
+
+                        <button
+                            type="button"
+                            id="addItemBtn"
+                            class="add-item-btn">
+
+                            + Add Item
+
+                        </button>
+
+                    </div>
+
+                    <div id="itemsList">
+                        <!-- AI extracted items or manual items -->
+                    </div>
+
+                    <div
+                        id="noItemsMessage"
+                        class="no-items-message">
+
+                        No items added.
+
+                    </div>
+
+                </div>
+
+
+                <!-- SAVE -->
+
+                <div class="save-actions">
 
                     <button
                         type="button"
-                        id="addItemBtn"
-                        class="add-item-btn">
+                        id="saveReceiptBtn"
+                        class="save-btn">
 
-                        + Add Item
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="m5 12 4 4L19 6"></path>
+                        </svg>
+                        Save Receipt
 
                     </button>
 
                 </div>
 
+            </section>
 
-                <div id="itemsList">
-
-                    <!-- AI extracted items or manual items -->
-
-                </div>
+        </main>
 
 
-                <div
-                    id="noItemsMessage"
-                    class="no-items-message">
+        <!-- FOOTER -->
 
-                    No items added.
+        <footer>
 
-                </div>
+            <strong>SHOPIX</strong>
 
-            </div>
+            <p>
+                AI Powered Smart Receipt &amp; Shopping Assistant
+            </p>
 
+            <span>© 2026 SHOPIX</span>
 
-
-            <!-- =========================
-                 SAVE
-            ========================== -->
-
-            <div class="save-actions">
-
-                <button
-                    type="button"
-                    id="saveReceiptBtn"
-                    class="save-btn">
-
-                    ✓ Save Receipt
-
-                </button>
-
-            </div>
-
-        </section>
+        </footer>
 
 
-    </main>
+        <!-- FIREBASE APPCHECK -->
+
+        <script>
+            self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+        </script>
 
 
+        <!-- JAVASCRIPT -->
 
-    <!-- =========================
-         FOOTER
-    ========================== -->
+        <script
+            type="module"
+            src="js/receiptScanner.js">
+        </script>
 
-    <footer>
-
-        <strong>
-            SHOPIX
-        </strong>
-
-        <p>
-            AI Powered Smart Receipt & Shopping Assistant
-        </p>
-
-        <span>
-            © 2026 SHOPIX
-        </span>
-
-    </footer>
-
-
-
-    <!-- FIREBASE APPCHECK -->
-
-        <!-- =========================
-         GLOBAL SIDEBAR
-    ========================== -->
-
-    <script
-        type="module"
-        src="js/sidebar.js">
-    </script>
-
-<script>
-        self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
-    </script>
-
-
-
-    <!-- =========================
-         JAVASCRIPT
-    ========================== -->
-
-    <script
-        type="module"
-        src="js/receiptScanner.js">
-    </script>
-
-
-    <script
-        type="module"
-        src="js/ai-test.js">
-    </script>
-
+        <script
+            type="module"
+            src="js/ai-test.js">
+        </script>
 
     </div>
 
+
+    <!-- SHOPIX COMMON HEADER -->
+    <script type="module" src="js/header.js"></script>
 </body>
 
 </html>

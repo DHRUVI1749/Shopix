@@ -627,7 +627,11 @@ function showEmptyCategoryState() {
 
     categoryList.innerHTML = `
         <div class="empty-state">
-            <div class="empty-icon">📊</div>
+            <div class="empty-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path>
+                </svg>
+            </div>
             <h3>No expense data yet</h3>
             <p>
                 Save some receipts to see your
@@ -648,7 +652,11 @@ function showEmptyChartState() {
 
     spendingChart.innerHTML = `
         <div class="empty-state">
-            <div class="empty-icon">📊</div>
+            <div class="empty-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path>
+                </svg>
+            </div>
             <h3>No spending data yet</h3>
             <p>
                 Save some receipts to see the
@@ -664,7 +672,12 @@ function showEmptyRecentState() {
 
     recentExpenses.innerHTML = `
         <div class="empty-state">
-            <div class="empty-icon">🧾</div>
+            <div class="empty-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3Z"></path>
+                    <path d="M9 8h6M9 12h6"></path>
+                </svg>
+            </div>
             <h3>No expenses yet</h3>
             <p>
                 Your saved receipts will appear here.
@@ -683,22 +696,22 @@ function getCategoryIcon(category) {
 
     const icons = {
 
-        "Electronics": "💻",
+        "Electronics": "E",
 
-        "Grocery": "🛒",
+        "Grocery": "G",
 
-        "Clothing": "👕",
+        "Clothing": "C",
 
-        "Travel": "✈️",
+        "Travel": "T",
 
-        "Food": "🍴",
+        "Food": "F",
 
-        "Other": "📦"
+        "Other": "O"
 
     };
 
 
-    return icons[category] || "📦";
+    return icons[category] || "O";
 
 }
 

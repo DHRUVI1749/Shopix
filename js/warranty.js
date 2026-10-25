@@ -1633,7 +1633,7 @@ function renderStats() {
         warranties.length;
 
 
-    
+
 
 const reminderWarranties = warranties.filter(warranty => {
     const expiry = normalizeDate(
@@ -1758,7 +1758,7 @@ function renderWarrantyTable() {
                     "tr"
                 );
 
-            
+
 const expiryDate = new Date(
     warranty.warrantyExpiryDate + "T00:00:00"
 );
@@ -1831,7 +1831,7 @@ if (daysLeft === 15) {
                 </td>
 
 
-                
+
 <td>
     ${formatDate(warranty.warrantyExpiryDate)}
     ${reminderMessage
@@ -2230,8 +2230,10 @@ saveProfile?.addEventListener(
         }
 
 
-        profileName.textContent =
-            name;
+        if (profileName) {
+            profileName.textContent =
+                name;
+        }
 
 
         profileMessage.textContent =
@@ -2267,31 +2269,37 @@ onAuthStateChanged(
             user;
 
 
-        const initial =
-            user.email
-                ?.charAt(0)
-                ?.toUpperCase() ||
-            "U";
+        if (profileAvatar) {
+            profileAvatar.textContent =
+                user.email
+                    ?.charAt(0)
+                    ?.toUpperCase() ||
+                "U";
+        }
 
+        if (profileLargeAvatar) {
+            profileLargeAvatar.textContent =
+                user.email
+                    ?.charAt(0)
+                    ?.toUpperCase() ||
+                "U";
+        }
 
-        profileAvatar.textContent =
-            initial;
+        if (profileName) {
+            profileName.textContent =
+                user.displayName ||
+                "User";
+        }
 
-        profileLargeAvatar.textContent =
-            initial;
+        if (profileNameInput) {
+            profileNameInput.value =
+                user.displayName || "";
+        }
 
-
-        profileName.textContent =
-            user.displayName ||
-            "User";
-
-
-        profileNameInput.value =
-            user.displayName || "";
-
-
-        profileEmailInput.value =
-            user.email || "";
+        if (profileEmailInput) {
+            profileEmailInput.value =
+                user.email || "";
+        }
 
 
         await loadWarranties();
@@ -2354,4 +2362,3 @@ function sendWarrantyNotification(warranty, daysLeft) {
 
     localStorage.setItem(key, "sent");
 }
-

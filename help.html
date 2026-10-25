@@ -25,246 +25,36 @@
     <link rel="stylesheet" href="css/help.css">
 
 
-    <!-- =========================
-         GLOBAL SIDEBAR CSS
-    ========================== -->
 
-    <link
-        rel="stylesheet"
-        href="css/sidebar.css">
+    <link rel="stylesheet" href="css/shopix.css">
+
 </head>
 
 
-<body>
+<body class="app-page">
+
+    <header class="site-header">
+        <div class="site-header-inner">
+            <a href="dashboard.html" class="site-brand" aria-label="SHOPIX dashboard">
+                <img src="images/logo.png" alt="" class="site-logo" width="40" height="40">
+                <span class="site-brand-name">SHOPIX</span>
+            </a>
+
+            <a href="settings.html" class="account-link" aria-label="Open account settings" title="Account settings">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="8" r="3.5"></circle>
+                    <path d="M5.5 20c.6-3.2 2.9-5 6.5-5s5.9 1.8 6.5 5"></path>
+                </svg>
+            </a>
+        </div>
+    </header>
 
     <div class="app-shell">
 
 
-        <!-- SIDEBAR -->
 
-                <!-- =========================
-             SIDEBAR
-        ========================== -->
 
-        <aside class="sidebar">
 
-
-            <!-- LOGO -->
-
-            <a
-                href="index.html"
-                class="sidebar-logo">
-
-                <span class="logo-icon">
-                    S
-                </span>
-
-                <span>
-                    SHOPIX
-                </span>
-
-            </a>
-
-
-            <!-- =========================
-                 NAVIGATION
-            ========================== -->
-
-            <nav class="sidebar-nav">
-
-                <p class="nav-title">
-                    MAIN MENU
-                </p>
-
-
-                <!-- Dashboard -->
-
-                <a
-                    href="dashboard.html"
-                    class="nav-item">
-
-                    <span class="nav-icon">
-                        ▦
-                    </span>
-
-                    Dashboard
-
-                </a>
-
-
-                <!-- Receipts -->
-
-                <a
-                    href="receiptHistory.html"
-                    class="nav-item">
-
-                    <span class="nav-icon">
-                        ▤
-                    </span>
-
-                    Receipts
-
-                </a>
-
-
-                <!-- Upload Receipt -->
-
-                <a
-                    href="receiptScanner.html"
-                    class="nav-item">
-
-                    <span class="nav-icon">
-                        ↑
-                    </span>
-
-                    Upload Receipt
-
-                </a>
-
-
-                <!-- Expenses -->
-
-                <a
-                    href="expenseAnalytics.html"
-                    class="nav-item">
-
-                    <span class="nav-icon">
-                        ◫
-                    </span>
-
-                    Expenses
-
-                </a>
-
-
-                <!-- Reports -->
-
-                <a
-                    href="reports.html"
-                    class="nav-item">
-
-                    <span class="nav-icon">
-                        ▤
-                    </span>
-
-                    Reports
-
-                </a>
-
-
-                <!-- Warranties -->
-
-                <a
-                    href="warranty.html"
-                    class="nav-item">
-
-                    <span class="nav-icon">
-                        ♢
-                    </span>
-
-                    Warranties
-
-                </a>
-
-
-                <!-- Settings -->
-
-                <a
-                    href="settings.html"
-                    class="nav-item">
-
-                    <span class="nav-icon">
-                        ⚙
-                    </span>
-
-                    Settings
-
-                </a>
-
-            </nav>
-
-
-            <!-- =========================
-                 SIDEBAR BOTTOM
-            ========================== -->
-
-            <div class="sidebar-bottom">
-
-
-                <!-- HELP -->
-
-                <a
-                    href="help.html"
-                    class="help-box active">
-
-                    <div class="help-icon">
-                        ?
-                    </div>
-
-                    <div>
-
-                        <strong>
-                            Need Help?
-                        </strong>
-
-                        <span>
-                            We're here for you
-                        </span>
-
-                    </div>
-
-                </a>
-
-
-                <!-- LOGOUT -->
-
-                <button
-                    type="button"
-                    id="logoutBtn"
-                    class="logout-btn">
-
-                    <span>
-                        ↪
-                    </span>
-
-                    Logout
-
-                </button>
-
-
-                <!-- DELETE ACCOUNT -->
-
-                <button
-                    type="button"
-                    id="deleteAccountBtn"
-                    class="delete-account-btn">
-
-                    <span>
-                        <svg
-                            width="14"
-                            height="14"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            aria-hidden="true">
-
-                            <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-                            <line x1="12" y1="9" x2="12" y2="13"></line>
-                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
-
-                        </svg>
-                    </span>
-
-                    Delete Account
-
-                </button>
-
-            </div>
-
-        </aside>
 
 
 
@@ -275,14 +65,7 @@
 
             <!-- HEADER -->
 
-            <header class="top-header">
-
-                <button
-                    class="mobile-menu-btn"
-                    type="button"
-                    aria-label="Open navigation menu">
-                    &#9776;
-                </button>
+            <div class="top-header">
 
 
                 <div>
@@ -310,7 +93,7 @@
 
                 </a>
 
-            </header>
+            </div>
 
 
 
@@ -324,7 +107,11 @@
                 <div class="welcome-card">
 
                     <div class="welcome-icon">
-                        ?
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="12" cy="12" r="9"></circle>
+                            <path d="M9.5 9a2.5 2.5 0 1 1 4 2c-.9.7-1.5 1.2-1.5 2.5"></path>
+                            <path d="M12 17.5h.01"></path>
+                        </svg>
                     </div>
 
                     <div>
@@ -351,7 +138,11 @@
                     <div class="card-heading">
 
                         <div class="heading-icon">
-                            ❓
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <circle cx="12" cy="12" r="9"></circle>
+                                <path d="M9.5 9a2.5 2.5 0 1 1 4 2c-.9.7-1.5 1.2-1.5 2.5"></path>
+                                <path d="M12 17.5h.01"></path>
+                            </svg>
                         </div>
 
                         <div>
@@ -543,38 +334,6 @@
 
 
 
-                        <!-- FAQ 6 -->
-
-                        <div class="faq-item">
-
-                            <button
-                                class="faq-question"
-                                type="button">
-
-                                <span>
-                                    Can I switch between light and dark mode?
-                                </span>
-
-                                <span class="faq-arrow">
-                                    +
-                                </span>
-
-                            </button>
-
-
-                            <div class="faq-answer">
-
-                                <p>
-                                    Yes. Open Settings and use the
-                                    Theme toggle in the Appearance
-                                    section.
-                                </p>
-
-                            </div>
-
-                        </div>
-
-
                     </div>
 
                 </div>
@@ -588,7 +347,10 @@
                     <div class="card-heading">
 
                         <div class="heading-icon">
-                            🔗
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M10 13a5 5 0 0 0 7.5.5l2-2a5 5 0 0 0-7-7l-1.2 1.2"></path>
+                                <path d="M14 11a5 5 0 0 0-7.5-.5l-2 2a5 5 0 0 0 7 7l1.2-1.2"></path>
+                            </svg>
                         </div>
 
                         <div>
@@ -680,20 +442,16 @@
 
 
 
-        <!-- =========================
-         GLOBAL SIDEBAR
-    ========================== -->
 
-    <script
-        type="module"
-        src="js/sidebar.js">
-    </script>
 
 <script
         type="module"
         src="js/help.js">
     </script>
 
+
+    <!-- SHOPIX COMMON HEADER -->
+    <script type="module" src="js/header.js"></script>
 </body>
 
 </html>

@@ -41,253 +41,152 @@
         href="css/dashboard.css">
 
 
-    <!-- =========================
-         GLOBAL SIDEBAR CSS
-    ========================== -->
 
-    <link
-        rel="stylesheet"
-        href="css/sidebar.css">
+    <link rel="stylesheet" href="css/shopix.css">
+
 </head>
 
 
-<body>
+<body class="app-page dashboard-page">
 
 
     <!-- =========================
          DASHBOARD LAYOUT
     ========================== -->
 
-    <div class="app-shell">
+    <div class="app-shell dashboard-shell">
 
+        <aside class="dashboard-sidebar" id="dashboardSidebar" aria-label="Dashboard navigation">
 
-        <!-- =========================
-             SIDEBAR
-        ========================== -->
+            <div class="sidebar-brand-row">
 
-                <!-- =========================
-             SIDEBAR
-        ========================== -->
-
-        <aside class="sidebar">
-
-
-            <!-- LOGO -->
-
-            <a
-                href="index.html"
-                class="sidebar-logo">
-
-                <span class="logo-icon">
-                    S
-                </span>
-
-                <span>
-                    SHOPIX
-                </span>
-
-            </a>
-
-
-            <!-- =========================
-                 NAVIGATION
-            ========================== -->
-
-            <nav class="sidebar-nav">
-
-                <p class="nav-title">
-                    MAIN MENU
-                </p>
-
-
-                <!-- Dashboard -->
-
-                <a
-                    href="dashboard.html"
-                    class="nav-item active">
-
-                    <span class="nav-icon">
-                        ▦
+                <a href="dashboard.html" class="sidebar-brand" aria-label="SHOPIX dashboard">
+                    <img src="images/logo.png" alt="" class="sidebar-logo" width="38" height="38">
+                    <span class="sidebar-brand-copy">
+                        <strong>SHOPIX</strong>
+                        <small>Smart receipt assistant</small>
                     </span>
-
-                    Dashboard
-
                 </a>
 
-
-                <!-- Receipts -->
-
-                <a
-                    href="receiptHistory.html"
-                    class="nav-item">
-
-                    <span class="nav-icon">
-                        ▤
-                    </span>
-
-                    Receipts
-
-                </a>
-
-
-                <!-- Upload Receipt -->
-
-                <a
-                    href="receiptScanner.html"
-                    class="nav-item">
-
-                    <span class="nav-icon">
-                        ↑
-                    </span>
-
-                    Upload Receipt
-
-                </a>
-
-
-                <!-- Expenses -->
-
-                <a
-                    href="expenseAnalytics.html"
-                    class="nav-item">
-
-                    <span class="nav-icon">
-                        ◫
-                    </span>
-
-                    Expenses
-
-                </a>
-
-
-                <!-- Reports -->
-
-                <a
-                    href="reports.html"
-                    class="nav-item">
-
-                    <span class="nav-icon">
-                        ▤
-                    </span>
-
-                    Reports
-
-                </a>
-
-
-                <!-- Warranties -->
-
-                <a
-                    href="warranty.html"
-                    class="nav-item">
-
-                    <span class="nav-icon">
-                        ♢
-                    </span>
-
-                    Warranties
-
-                </a>
-
-
-                <!-- Settings -->
-
-                <a
-                    href="settings.html"
-                    class="nav-item">
-
-                    <span class="nav-icon">
-                        ⚙
-                    </span>
-
-                    Settings
-
-                </a>
-
-            </nav>
-
-
-            <!-- =========================
-                 SIDEBAR BOTTOM
-            ========================== -->
-
-            <div class="sidebar-bottom">
-
-
-                <!-- HELP -->
-
-                <a
-                    href="help.html"
-                    class="help-box">
-
-                    <div class="help-icon">
-                        ?
-                    </div>
-
-                    <div>
-
-                        <strong>
-                            Need Help?
-                        </strong>
-
-                        <span>
-                            We're here for you
-                        </span>
-
-                    </div>
-
-                </a>
-
-
-                <!-- LOGOUT -->
-
-                <button
-                    type="button"
-                    id="logoutBtn"
-                    class="logout-btn">
-
-                    <span>
-                        ↪
-                    </span>
-
-                    Logout
-
-                </button>
-
-
-                <!-- DELETE ACCOUNT -->
-
-                <button
-                    type="button"
-                    id="deleteAccountBtn"
-                    class="delete-account-btn">
-
-                    <span>
-                        <svg
-                            width="14"
-                            height="14"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            aria-hidden="true">
-
-                            <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-                            <line x1="12" y1="9" x2="12" y2="13"></line>
-                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
-
-                        </svg>
-                    </span>
-
-                    Delete Account
-
+                <button type="button" class="sidebar-close" id="dashboardSidebarClose" aria-label="Close navigation">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                        <path d="M18 6 6 18M6 6l12 12"></path>
+                    </svg>
                 </button>
 
             </div>
 
+            <nav class="sidebar-nav" aria-label="Workspace">
+                <p class="sidebar-label">Workspace</p>
+
+                <a href="dashboard.html" class="sidebar-link active" aria-current="page">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+                        <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+                        <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+                        <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+                    </svg>
+                    <span>Dashboard</span>
+                </a>
+
+                <a href="receiptScanner.html" class="sidebar-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                    <span>Scan Receipt</span>
+                </a>
+
+                <a href="receiptHistory.html" class="sidebar-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3Z"></path>
+                        <path d="M9 8h6M9 12h6"></path>
+                    </svg>
+                    <span>Receipt History</span>
+                </a>
+
+                <a href="expenses.html" class="sidebar-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <rect x="3" y="6" width="18" height="13" rx="2.5"></rect>
+                        <path d="M3 10h18"></path>
+                        <path d="M7 15h4"></path>
+                    </svg>
+                    <span>Expenses</span>
+                </a>
+
+                <a href="reports.html" class="sidebar-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path>
+                    </svg>
+                    <span>Reports</span>
+                </a>
+
+                <a href="warranty.html" class="sidebar-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M12 3 4.5 6v5.5c0 4.4 3.2 7.9 7.5 9.5 4.3-1.6 7.5-5.1 7.5-9.5V6L12 3Z"></path>
+                        <path d="m9 12 2 2 4-4"></path>
+                    </svg>
+                    <span>Warranties</span>
+                </a>
+            </nav>
+
+            <nav class="sidebar-nav" aria-label="Account">
+                <p class="sidebar-label">Account</p>
+
+                <a href="settings.html" class="sidebar-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.6v-.2h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1Z"></path>
+                    </svg>
+                    <span>Settings</span>
+                </a>
+
+                <a href="help.html" class="sidebar-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="12" r="9"></circle>
+                        <path d="M9.5 9a2.5 2.5 0 1 1 4 2c-.9.7-1.5 1.2-1.5 2.5"></path>
+                        <path d="M12 17.5h.01"></path>
+                    </svg>
+                    <span>Help Center</span>
+                </a>
+            </nav>
+
+            <nav class="sidebar-account-actions" aria-label="Account actions">
+                <p class="sidebar-label">Account actions</p>
+
+                <button type="button" class="sidebar-link sidebar-logout-btn logout-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <path d="m16 17 5-5-5-5"></path>
+                        <path d="M21 12H9"></path>
+                    </svg>
+                    <span>Logout</span>
+                </button>
+
+                <button type="button" class="sidebar-link sidebar-delete-btn" id="deleteAccountBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M3 6h18"></path>
+                        <path d="M8 6V4h8v2"></path>
+                        <path d="M19 6l-1 14H6L5 6"></path>
+                        <path d="M10 11v5M14 11v5"></path>
+                    </svg>
+                    <span>Delete Account</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <span>SHOPIX</span>
+                <small>AI-powered receipt management</small>
+            </div>
+
         </aside>
+
+        <div class="sidebar-backdrop" id="dashboardSidebarBackdrop" aria-hidden="true"></div>
+
+
+
+
+
 
 
 
@@ -302,7 +201,7 @@
                  TOP HEADER
             ========================== -->
 
-            <header class="top-header">
+            <div class="top-header">
 
 
                 <!-- ==================================
@@ -318,22 +217,24 @@
 
                 <div class="header-left">
 
-
-                    <!-- MOBILE MENU -->
-
                     <button
-                        class="mobile-menu-btn"
-                        type="button">
+                        type="button"
+                        class="sidebar-toggle"
+                        id="dashboardSidebarToggle"
+                        aria-label="Open navigation"
+                        aria-controls="dashboardSidebar"
+                        aria-expanded="false">
 
-                        ☰
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                            <path d="M4 7h16M4 12h16M4 17h16"></path>
+                        </svg>
 
                     </button>
-
 
                     <div>
 
                         <span class="header-label">
-                            SHOPIX DASHBOARD
+                            SHOPIX Dashboard
                         </span>
 
                         <h2>
@@ -365,7 +266,10 @@
                             type="button"
                             aria-label="Notifications">
 
-                            🔔
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
+                                <path d="M10 21h4"></path>
+                            </svg>
 
                             <span
                                 id="notificationBadge"
@@ -435,7 +339,10 @@
                                     <div
                                         class="notification-empty-icon">
 
-                                        🔔
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
+                                            <path d="M10 21h4"></path>
+                                        </svg>
 
                                     </div>
 
@@ -462,37 +369,13 @@
                     </div>
 
 
-                    <!-- =========================
-                         PROFILE BUTTON
-                    ========================== -->
+                    <a href="settings.html" class="account-link dashboard-account-link" aria-label="Open account settings" title="Account settings">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="12" cy="8" r="3.5"></circle>
+                            <path d="M5.5 20c.6-3.2 2.9-5 6.5-5s5.9 1.8 6.5 5"></path>
+                        </svg>
+                    </a>
 
-                    <div
-                        class="top-user"
-                        id="profileButton"
-                        style="cursor:pointer;">
-
-                        <div
-                            class="top-avatar"
-                            id="profileAvatar">
-
-                            U
-
-                        </div>
-
-
-                        <div>
-
-                            <strong id="profileName">
-                                User
-                            </strong>
-
-                            <small>
-                                Account
-                            </small>
-
-                        </div>
-
-                    </div>
 
                 </div>
 
@@ -500,7 +383,7 @@
                 </div>
 
 
-            </header>
+            </div>
 
 
 
@@ -521,7 +404,7 @@
                     <div>
 
                         <p class="welcome-small">
-                            Welcome back 👋
+                            Welcome back
                         </p>
 
 
@@ -544,9 +427,10 @@
                         href="receiptScanner.html"
                         class="upload-main-btn">
 
-                        <span>
-                            ↑
-                        </span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 16V4M7 9l5-5 5 5"></path>
+                            <path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"></path>
+                        </svg>
 
                         Upload Receipt
 
@@ -577,7 +461,10 @@
 
 
                             <div class="stat-icon blue">
-                                ¤
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <rect x="3" y="6" width="18" height="13" rx="2.5"></rect>
+                                    <path d="M3 10h18M7 15h4"></path>
+                                </svg>
                             </div>
 
 
@@ -616,7 +503,10 @@
 
 
                             <div class="stat-icon green">
-                                ♢
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M12 3 4.5 6v5.5c0 4.4 3.2 7.9 7.5 9.5 4.3-1.6 7.5-5.1 7.5-9.5V6L12 3Z"></path>
+                                    <path d="m9 12 2 2 4-4"></path>
+                                </svg>
                             </div>
 
 
@@ -805,7 +695,10 @@
 
 
                             <div class="ai-icon">
-                                ¤
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M12 3v18M3 12h18"></path>
+                                    <path d="m5.6 5.6 12.8 12.8M18.4 5.6 5.6 18.4"></path>
+                                </svg>
                             </div>
 
 
@@ -994,7 +887,9 @@
 
 
                             <div class="warranty-icon">
-                                ♢
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M12 3 4.5 6v5.5c0 4.4 3.2 7.9 7.5 9.5 4.3-1.6 7.5-5.1 7.5-9.5V6L12 3Z"></path>
+                                </svg>
                             </div>
 
 
@@ -1268,151 +1163,6 @@
 
 
             <!-- =========================
-                 DELETE ACCOUNT MODAL
-            ========================== -->
-
-            <div
-                id="deleteAccountModal"
-                class="delete-modal"
-                style="display:none;">
-
-
-                <div class="delete-modal-card">
-
-
-                    <!-- WARNING ICON -->
-
-                    <div class="delete-modal-icon">
-
-                        <svg
-                            width="22"
-                            height="22"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            aria-hidden="true">
-
-                            <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-                            <line x1="12" y1="9" x2="12" y2="13"></line>
-                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
-
-                        </svg>
-
-                    </div>
-
-
-                    <!-- HEADING -->
-
-                    <h2>
-                        Delete Account
-                    </h2>
-
-
-                    <!-- WARNING TEXT -->
-
-                    <p class="delete-modal-text">
-                        This action is permanent and cannot be
-                        undone. Deleting your account will
-                        permanently erase the following data
-                        from SHOPIX.
-                    </p>
-
-
-                    <!-- WHAT WILL BE DELETED -->
-
-                    <ul class="delete-modal-list">
-
-                        <li>
-                            Your profile information
-                        </li>
-
-                        <li>
-                            All uploaded receipts
-                        </li>
-
-                        <li>
-                            All warranty records
-                        </li>
-
-                        <li>
-                            Your profile avatar
-                        </li>
-
-                    </ul>
-
-
-                    <!-- RE-AUTHENTICATION -->
-
-                    <div
-                        id="deleteAccountPasswordBlock"
-                        style="display:none;">
-
-                        <label
-                            class="delete-modal-label"
-                            for="deleteAccountPassword">
-
-                            Confirm your password
-
-                        </label>
-
-
-                        <input
-                            type="password"
-                            id="deleteAccountPassword"
-                            class="delete-modal-input"
-                            placeholder="Enter your password"
-                            autocomplete="current-password">
-
-                    </div>
-
-
-                    <!-- STATUS MESSAGE -->
-
-                    <div
-                        id="deleteAccountMessage"
-                        class="delete-modal-message">
-                    </div>
-
-
-                    <!-- ACTIONS -->
-
-                    <div class="delete-modal-actions">
-
-
-                        <button
-                            type="button"
-                            id="deleteAccountCancel"
-                            class="delete-modal-cancel">
-
-                            Cancel
-
-                        </button>
-
-
-                        <button
-                            type="button"
-                            id="deleteAccountConfirm"
-                            class="delete-modal-confirm">
-
-                            Delete Account
-
-                        </button>
-
-
-                    </div>
-
-
-                </div>
-
-
-            </div>
-
-
-
-            <!-- =========================
                  FOOTER
             ========================== -->
 
@@ -1439,18 +1189,7 @@
 
 
 
-    <!-- =========================
-         MOBILE SIDEBAR
-    ========================== -->
 
-        <!-- =========================
-         GLOBAL SIDEBAR
-    ========================== -->
-
-    <script
-        type="module"
-        src="js/sidebar.js">
-    </script>
 
 
 
@@ -1464,6 +1203,9 @@
     </script>
 
 
+
+    <!-- SHOPIX COMMON HEADER -->
+    <script type="module" src="js/header.js"></script>
 </body>
 
 </html>

@@ -8,458 +8,229 @@
     <title>Expense Analytics | SHOPIX</title>
 
     <link rel="stylesheet" href="css/expenseAnalytics.css">
+    <link rel="stylesheet" href="css/shopix.css">
 
-    <!-- =========================
-         GLOBAL SIDEBAR CSS
-    ========================== -->
-
-    <link
-        rel="stylesheet"
-        href="css/sidebar.css">
 </head>
 
-<body>
+<body class="app-page">
 
-        <!-- =========================
-             SIDEBAR
-        ========================== -->
-
-        <aside class="sidebar">
-
-
-            <!-- LOGO -->
-
-            <a
-                href="index.html"
-                class="sidebar-logo">
-
-                <span class="logo-icon">
-                    S
-                </span>
-
-                <span>
-                    SHOPIX
-                </span>
-
+    <header class="site-header">
+        <div class="site-header-inner">
+            <a href="dashboard.html" class="site-brand" aria-label="SHOPIX dashboard">
+                <img src="images/logo.png" alt="" class="site-logo" width="40" height="40">
+                <span class="site-brand-name">SHOPIX</span>
             </a>
 
-
-            <!-- =========================
-                 NAVIGATION
-            ========================== -->
-
-            <nav class="sidebar-nav">
-
-                <p class="nav-title">
-                    MAIN MENU
-                </p>
-
-
-                <!-- Dashboard -->
-
-                <a
-                    href="dashboard.html"
-                    class="nav-item">
-
-                    <span class="nav-icon">
-                        ▦
-                    </span>
-
-                    Dashboard
-
-                </a>
-
-
-                <!-- Receipts -->
-
-                <a
-                    href="receiptHistory.html"
-                    class="nav-item">
-
-                    <span class="nav-icon">
-                        ▤
-                    </span>
-
-                    Receipts
-
-                </a>
-
-
-                <!-- Upload Receipt -->
-
-                <a
-                    href="receiptScanner.html"
-                    class="nav-item">
-
-                    <span class="nav-icon">
-                        ↑
-                    </span>
-
-                    Upload Receipt
-
-                </a>
-
-
-                <!-- Expenses -->
-
-                <a
-                    href="expenseAnalytics.html"
-                    class="nav-item active">
-
-                    <span class="nav-icon">
-                        ◫
-                    </span>
-
-                    Expenses
-
-                </a>
-
-
-                <!-- Reports -->
-
-                <a
-                    href="reports.html"
-                    class="nav-item">
-
-                    <span class="nav-icon">
-                        ▤
-                    </span>
-
-                    Reports
-
-                </a>
-
-
-                <!-- Warranties -->
-
-                <a
-                    href="warranty.html"
-                    class="nav-item">
-
-                    <span class="nav-icon">
-                        ♢
-                    </span>
-
-                    Warranties
-
-                </a>
-
-
-                <!-- Settings -->
-
-                <a
-                    href="settings.html"
-                    class="nav-item">
-
-                    <span class="nav-icon">
-                        ⚙
-                    </span>
-
-                    Settings
-
-                </a>
-
-            </nav>
-
-
-            <!-- =========================
-                 SIDEBAR BOTTOM
-            ========================== -->
-
-            <div class="sidebar-bottom">
-
-
-                <!-- HELP -->
-
-                <a
-                    href="help.html"
-                    class="help-box">
-
-                    <div class="help-icon">
-                        ?
-                    </div>
-
-                    <div>
-
-                        <strong>
-                            Need Help?
-                        </strong>
-
-                        <span>
-                            We're here for you
-                        </span>
-
-                    </div>
-
-                </a>
-
-
-                <!-- LOGOUT -->
-
-                <button
-                    type="button"
-                    id="logoutBtn"
-                    class="logout-btn">
-
-                    <span>
-                        ↪
-                    </span>
-
-                    Logout
-
-                </button>
-
-
-                <!-- DELETE ACCOUNT -->
-
-                <button
-                    type="button"
-                    id="deleteAccountBtn"
-                    class="delete-account-btn">
-
-                    <span>
-                        <svg
-                            width="14"
-                            height="14"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            aria-hidden="true">
-
-                            <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-                            <line x1="12" y1="9" x2="12" y2="13"></line>
-                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
-
-                        </svg>
-                    </span>
-
-                    Delete Account
-
-                </button>
-
-            </div>
-
-        </aside>
+            <a href="settings.html" class="account-link" aria-label="Open account settings" title="Account settings">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="8" r="3.5"></circle>
+                    <path d="M5.5 20c.6-3.2 2.9-5 6.5-5s5.9 1.8 6.5 5"></path>
+                </svg>
+            </a>
+        </div>
+    </header>
 
     <div class="app-shell">
 
-    <!-- HEADER -->
-    <header class="page-header">
+        <!-- MAIN CONTENT -->
+        <main class="analytics-container">
 
-        <div class="header-left">
-
-                <button
-                    class="mobile-menu-btn"
-                    type="button"
-                    aria-label="Open navigation menu">
-                    &#9776;
-                </button>
-
-
-            <a href="dashboard.html" class="back-btn">
-                ←
-            </a>
-
-            <div>
-                <h1>Expense Analytics</h1>
-                <p>Understand your spending patterns</p>
-            </div>
-
-        </div>
-
-    </header>
-
-
-    <!-- MAIN CONTENT -->
-    <main class="analytics-container">
-
-        <!-- INTRO -->
-        <section class="analytics-intro">
-
-            <h2>Your Spending Overview</h2>
-
-            <p>
-                Track and understand your expenses from your saved receipts.
-            </p>
-
-        </section>
-
-
-        <!-- SUMMARY CARDS -->
-        <section class="summary-grid">
-
-            <!-- TOTAL SPENDING -->
-            <div class="summary-card">
-
-                <div class="summary-icon">
-                    ₹
-                </div>
-
-                <div class="summary-content">
-
-                    <span>Total Spending</span>
-
-                    <h3 id="totalSpending">
-                        ₹0
-                    </h3>
-
-                </div>
-
-            </div>
-
-
-            <!-- TOTAL RECEIPTS -->
-            <div class="summary-card">
-
-                <div class="summary-icon">
-                    🧾
-                </div>
-
-                <div class="summary-content">
-
-                    <span>Total Receipts</span>
-
-                    <h3 id="totalReceipts">
-                        0
-                    </h3>
-
-                </div>
-
-            </div>
-
-
-            <!-- TOP CATEGORY -->
-            <div class="summary-card">
-
-                <div class="summary-icon">
-                    📊
-                </div>
-
-                <div class="summary-content">
-
-                    <span>Top Category</span>
-
-                    <h3 id="topCategory">
-                        —
-                    </h3>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- CATEGORY SECTION -->
-        <section class="analytics-section">
-
-            <div class="section-header">
+            <!-- INTRO -->
+            <section class="analytics-intro">
 
                 <div>
-                    <h2>Category-wise Spending</h2>
-
+                    <p class="page-kicker">Spending analysis</p>
+                    <h1>Expense Analytics</h1>
                     <p>
-                        See how your expenses are distributed.
+                        Track and understand your expenses from your saved receipts.
                     </p>
                 </div>
 
-            </div>
-
-
-            <div id="categoryList" class="category-list">
-
-                <div class="empty-state">
-
-                    <div class="empty-icon">
-                        📊
-                    </div>
-
-                    <h3>No expense data yet</h3>
-
-                    <p>
-                        Save some receipts to see your spending analysis.
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <!-- SPENDING DISTRIBUTION -->
-            <div class="chart-section">
-
-                <h3>Spending Distribution</h3>
-
-                <div id="spendingChart" class="spending-chart">
-                    <!-- Chart will be generated automatically -->
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- RECENT EXPENSES -->
-        <section class="analytics-section">
-
-            <div class="section-header">
-
-                <div>
-                    <h2>Recent Expenses</h2>
-
-                    <p>
-                        Your latest saved receipt expenses.
-                    </p>
-                </div>
-
-                <a href="receiptHistory.html" class="view-all-btn">
-                    View All
+                <a href="receiptHistory.html" class="upload-main-btn">
+                    View Receipts
                 </a>
 
-            </div>
+            </section>
 
 
-            <div id="recentExpenses" class="recent-expenses">
+            <!-- SUMMARY CARDS -->
+            <section class="summary-grid">
 
-                <div class="empty-state">
+                <!-- TOTAL SPENDING -->
+                <div class="summary-card">
 
-                    <div class="empty-icon">
-                        🧾
+                    <div class="summary-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <rect x="3" y="6" width="18" height="13" rx="2.5"></rect>
+                            <path d="M3 10h18M7 15h4"></path>
+                        </svg>
                     </div>
 
-                    <h3>No expenses yet</h3>
+                    <div class="summary-content">
 
-                    <p>
-                        Your saved receipts will appear here.
-                    </p>
+                        <span>Total Spending</span>
+
+                        <h3 id="totalSpending">
+                            ₹0
+                        </h3>
+
+                    </div>
 
                 </div>
 
-            </div>
 
-        </section>
+                <!-- TOTAL RECEIPTS -->
+                <div class="summary-card">
+
+                    <div class="summary-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3Z"></path>
+                            <path d="M9 8h6M9 12h6"></path>
+                        </svg>
+                    </div>
+
+                    <div class="summary-content">
+
+                        <span>Total Receipts</span>
+
+                        <h3 id="totalReceipts">
+                            0
+                        </h3>
+
+                    </div>
+
+                </div>
 
 
-    </main>
+                <!-- TOP CATEGORY -->
+                <div class="summary-card">
+
+                    <div class="summary-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path>
+                        </svg>
+                    </div>
+
+                    <div class="summary-content">
+
+                        <span>Top Category</span>
+
+                        <h3 id="topCategory">
+                            —
+                        </h3>
+
+                    </div>
+
+                </div>
+
+            </section>
 
 
-    <!-- JAVASCRIPT -->
-        <!-- =========================
-         GLOBAL SIDEBAR
-    ========================== -->
+            <!-- CATEGORY SECTION -->
+            <section class="analytics-section">
 
-    <script
-        type="module"
-        src="js/sidebar.js">
-    </script>
+                <div class="section-header">
 
-<script type="module" src="js/expenseAnalytics.js"></script>
+                    <div>
+                        <h2>Category-wise Spending</h2>
+
+                        <p>
+                            See how your expenses are distributed.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div id="categoryList" class="category-list">
+
+                    <div class="empty-state">
+
+                        <div class="empty-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path>
+                            </svg>
+                        </div>
+
+                        <h3>No expense data yet</h3>
+
+                        <p>
+                            Save some receipts to see your spending analysis.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- SPENDING DISTRIBUTION -->
+                <div class="chart-section">
+
+                    <h3>Spending Distribution</h3>
+
+                    <div id="spendingChart" class="spending-chart">
+                        <!-- Chart will be generated automatically -->
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- RECENT EXPENSES -->
+            <section class="analytics-section">
+
+                <div class="section-header">
+
+                    <div>
+                        <h2>Recent Expenses</h2>
+
+                        <p>
+                            Your latest saved receipt expenses.
+                        </p>
+                    </div>
+
+                    <a href="receiptHistory.html" class="view-all-btn">
+                        View All
+                    </a>
+
+                </div>
+
+
+                <div id="recentExpenses" class="recent-expenses">
+
+                    <div class="empty-state">
+
+                        <div class="empty-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3Z"></path>
+                                <path d="M9 8h6M9 12h6"></path>
+                            </svg>
+                        </div>
+
+                        <h3>No expenses yet</h3>
+
+                        <p>
+                            Your saved receipts will appear here.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
 
     </div>
 
+
+    <!-- EXPENSE ANALYTICS JAVASCRIPT -->
+    <script type="module" src="js/expenseAnalytics.js"></script>
+
+
+    <!-- SHOPIX COMMON HEADER -->
+    <script type="module" src="js/header.js"></script>
 </body>
 
 </html>

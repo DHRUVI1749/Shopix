@@ -899,3 +899,8 @@ a {
 
     background: #f4f7ff;
 }
+.security-note svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+}

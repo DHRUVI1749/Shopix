@@ -1,0 +1,1816 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+
+/* =========================================================
+   SHOPIX - SHARED APPLICATION SHELL
+   =========================================================
+
+   One light theme for every signed-in page:
+
+   - design tokens
+   - the common sticky header
+   - shared page spacing and surfaces
+   - logout / delete-account controls
+   - the delete-account dialog
+
+   Page stylesheets still own their page-specific cards,
+   charts and tables. This file is loaded last so it can
+   keep the shell consistent without changing page logic.
+   ========================================================= */
+
+:root {
+    --site-bg: #f6f8fb;
+    --site-surface: #ffffff;
+    --site-surface-muted: #f9fafc;
+    --site-border: #e5eaf1;
+    --site-border-strong: #d5dce6;
+    --site-text: #172033;
+    --site-text-muted: #667085;
+    --site-primary: #2563eb;
+    --site-primary-dark: #1d4ed8;
+    --site-primary-soft: #eff6ff;
+    --site-danger: #d92d20;
+    --site-danger-soft: #fef3f2;
+    --site-success: #039855;
+    --site-radius: 16px;
+    --site-radius-sm: 11px;
+    --site-shadow: 0 1px 2px rgba(23, 32, 51, 0.04),
+                   0 10px 30px rgba(23, 32, 51, 0.05);
+    --site-content-width: 1320px;
+    --site-header-height: 72px;
+    --site-sidebar-width: 264px;
+}
+
+body.app-page {
+    --bg: var(--site-bg);
+    --card: var(--site-surface);
+    --text: var(--site-text);
+    --muted: var(--site-text-muted);
+    --border: var(--site-border);
+    --primary: var(--site-primary);
+    --primary-hover: var(--site-primary-dark);
+    --primary-soft: var(--site-primary-soft);
+    --danger: var(--site-danger);
+
+    margin: 0;
+    background: var(--site-bg);
+    color: var(--site-text);
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+        Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+
+/* =========================================================
+   COMMON HEADER
+   ========================================================= */
+
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 500;
+
+    width: 100%;
+
+    background: rgba(255, 255, 255, 0.96);
+    border-bottom: 1px solid var(--site-border);
+
+    -webkit-backdrop-filter: saturate(180%) blur(12px);
+    backdrop-filter: saturate(180%) blur(12px);
+}
+
+.site-header-inner {
+    width: 100%;
+    max-width: var(--site-content-width);
+
+    min-height: var(--site-header-height);
+
+    margin: 0 auto;
+    padding: 14px 28px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+
+    box-sizing: border-box;
+}
+
+.site-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 11px;
+
+    min-width: 0;
+
+    color: var(--site-text);
+    text-decoration: none;
+}
+
+.site-logo {
+    width: 40px;
+    height: 40px;
+
+    display: block;
+    flex-shrink: 0;
+
+    object-fit: contain;
+    border-radius: 10px;
+}
+
+.site-brand-name {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+
+    white-space: nowrap;
+}
+
+.site-brand:hover .site-brand-name {
+    color: var(--site-primary);
+}
+
+.account-link {
+    width: 42px;
+    height: 42px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    overflow: hidden;
+
+    border: 1px solid var(--site-border);
+    border-radius: 50%;
+
+    background: var(--site-surface);
+    color: #475467;
+
+    text-decoration: none;
+
+    transition: background 0.18s ease, border-color 0.18s ease,
+        color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.account-link:hover,
+.account-link:focus-visible,
+.account-link-active {
+    background: var(--site-primary-soft);
+    border-color: #bfdbfe;
+    color: var(--site-primary);
+
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.09);
+    outline: none;
+}
+
+.account-link svg {
+    width: 20px;
+    height: 20px;
+}
+
+.account-avatar {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+}
+
+.account-initial {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: var(--site-primary);
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+
+/* =========================================================
+   APPLICATION SHELL
+   ========================================================= */
+
+body.app-page .app-shell {
+    width: 100%;
+    min-height: calc(100vh - var(--site-header-height));
+
+    padding-left: 0;
+}
+
+body.app-page .main-content {
+    width: 100%;
+    max-width: var(--site-content-width);
+
+    min-height: calc(100vh - var(--site-header-height));
+
+    margin: 0 auto;
+    padding: 32px 28px 48px;
+
+    box-sizing: border-box;
+}
+
+/* Page title bars that used to sit under a separate
+   top bar now read as a normal page introduction. */
+
+body.app-page:not(.dashboard-page) .main-content > .top-header {
+    height: auto;
+
+    margin: 0 0 28px;
+    padding: 0;
+
+    background: transparent;
+    border: 0;
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+body.app-page:not(.dashboard-page) .main-content > .top-header .header-inner {
+    width: 100%;
+    max-width: none;
+
+    margin: 0;
+    padding: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+body.app-page .dashboard-content {
+    max-width: none;
+    margin: 0;
+    padding: 0 0 40px;
+}
+
+body.app-page .warranty-content {
+    max-width: none;
+    margin: 0;
+    padding: 0 0 40px;
+}
+
+body.app-page .reports-content {
+    padding: 0 0 20px;
+}
+
+body.app-page .page-header {
+    width: 100%;
+    max-width: var(--site-content-width);
+
+    margin: 0 auto;
+    padding: 30px 28px 0;
+
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+
+    color: var(--site-text);
+
+    box-sizing: border-box;
+}
+
+body.app-page .page-header h1 {
+    color: var(--site-text);
+}
+
+body.app-page .page-header p {
+    color: var(--site-text-muted);
+}
+
+body.app-page .page-header .back-btn {
+    background: var(--site-surface);
+    border: 1px solid var(--site-border);
+    color: var(--site-primary);
+}
+
+body.app-page .page-header .back-btn:hover {
+    background: var(--site-primary-soft);
+    border-color: #bfdbfe;
+}
+
+body.app-page .settings-content,
+body.app-page .help-content {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+
+/* =========================================================
+   SHARED SURFACES
+   ========================================================= */
+
+body.app-page .settings-card,
+body.app-page .help-card {
+    background: var(--site-surface);
+    border: 1px solid var(--site-border);
+    border-radius: var(--site-radius);
+    box-shadow: var(--site-shadow);
+}
+
+body.app-page .back-btn,
+body.app-page .secondary-btn,
+body.app-page .reset-filter-btn {
+    border-radius: var(--site-radius-sm);
+}
+
+body.app-page .upload-main-btn,
+body.app-page .primary-btn,
+body.app-page .scan-btn,
+body.app-page .view-btn,
+body.app-page .apply-report-btn,
+body.app-page .report-action-btn.primary {
+    background: var(--site-primary);
+    border-color: var(--site-primary);
+    color: #ffffff;
+}
+
+body.app-page .upload-main-btn:hover,
+body.app-page .primary-btn:hover,
+body.app-page .scan-btn:hover,
+body.app-page .view-btn:hover,
+body.app-page .apply-report-btn:hover,
+body.app-page .report-action-btn.primary:hover {
+    background: var(--site-primary-dark);
+    border-color: var(--site-primary-dark);
+}
+
+
+/* =========================================================
+   ACCOUNT ACTIONS (SETTINGS PAGE)
+   ========================================================= */
+
+.account-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    margin-top: 16px;
+}
+
+.logout-btn,
+.delete-account-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+
+    min-height: 42px;
+    padding: 10px 16px;
+
+    border-radius: var(--site-radius-sm);
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: background 0.18s ease, border-color 0.18s ease,
+        color 0.18s ease;
+}
+
+.logout-btn {
+    border: 1px solid var(--site-border);
+    background: var(--site-surface);
+    color: #344054;
+}
+
+.logout-btn:hover {
+    background: var(--site-danger-soft);
+    border-color: #fecdca;
+    color: var(--site-danger);
+}
+
+.delete-account-btn {
+    border: 1px solid #fecdca;
+    background: var(--site-danger-soft);
+    color: var(--site-danger);
+}
+
+.delete-account-btn:hover {
+    background: #fee4e2;
+    border-color: #fda29b;
+    color: #b42318;
+}
+
+.logout-btn:disabled,
+.delete-account-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.delete-account-btn span {
+    display: flex;
+    align-items: center;
+}
+
+.delete-account-btn svg,
+.delete-modal-icon svg {
+    display: block;
+}
+
+
+/* =========================================================
+   DELETE ACCOUNT DIALOG
+   ========================================================= */
+
+.delete-modal {
+    position: fixed;
+    inset: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    background: rgba(16, 24, 40, 0.5);
+
+    z-index: 10000;
+}
+
+.delete-modal-card {
+    width: 100%;
+    max-width: 440px;
+    max-height: 90vh;
+
+    overflow-y: auto;
+
+    padding: 26px;
+
+    background: var(--site-surface);
+    border-radius: 16px;
+    box-shadow: 0 20px 50px rgba(16, 24, 40, 0.25);
+
+    box-sizing: border-box;
+}
+
+.delete-modal-icon {
+    width: 44px;
+    height: 44px;
+
+    margin-bottom: 14px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: var(--site-danger-soft);
+    color: var(--site-danger);
+
+    font-size: 20px;
+}
+
+.delete-modal-card h2 {
+    margin: 0 0 8px;
+
+    color: var(--site-text);
+
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.delete-modal-text {
+    margin: 0 0 14px;
+
+    color: var(--site-text-muted);
+
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.delete-modal-list {
+    margin: 0 0 16px;
+    padding: 12px 14px;
+
+    list-style: none;
+
+    border: 1px solid #fecdca;
+    border-radius: var(--site-radius-sm);
+
+    background: var(--site-danger-soft);
+}
+
+.delete-modal-list li {
+    position: relative;
+
+    padding-left: 18px;
+
+    color: #b42318;
+
+    font-size: 12px;
+    line-height: 1.9;
+}
+
+.delete-modal-list li::before {
+    content: "";
+
+    position: absolute;
+    left: 2px;
+    top: 9px;
+
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background: var(--site-danger);
+}
+
+.delete-modal-label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: var(--site-text);
+
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.delete-modal-input {
+    width: 100%;
+
+    padding: 11px 12px;
+
+    border: 1px solid var(--site-border-strong);
+    border-radius: 8px;
+
+    box-sizing: border-box;
+
+    color: var(--site-text);
+
+    font-family: inherit;
+    font-size: 13px;
+}
+
+.delete-modal-input:focus {
+    outline: none;
+    border-color: var(--site-danger);
+    box-shadow: 0 0 0 3px rgba(217, 45, 32, 0.12);
+}
+
+.delete-modal-message {
+    min-height: 18px;
+    margin-top: 14px;
+
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.delete-modal-message.info {
+    color: var(--site-text-muted);
+}
+
+.delete-modal-message.error {
+    color: var(--site-danger);
+}
+
+.delete-modal-message.success {
+    color: var(--site-success);
+}
+
+.delete-modal-actions {
+    display: flex;
+    gap: 10px;
+
+    margin-top: 18px;
+}
+
+.delete-modal-cancel,
+.delete-modal-confirm {
+    flex: 1;
+
+    padding: 11px 14px;
+
+    border-radius: 8px;
+
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: background 0.18s ease, border-color 0.18s ease;
+}
+
+.delete-modal-cancel {
+    border: 1px solid var(--site-border-strong);
+    background: var(--site-surface);
+    color: #344054;
+}
+
+.delete-modal-cancel:hover {
+    background: var(--site-surface-muted);
+}
+
+.delete-modal-confirm {
+    border: 1px solid var(--site-danger);
+    background: var(--site-danger);
+    color: #ffffff;
+
+    box-shadow: 0 6px 16px rgba(217, 45, 32, 0.2);
+}
+
+.delete-modal-confirm:hover {
+    background: #b42318;
+    border-color: #b42318;
+}
+
+.delete-modal-cancel:disabled,
+.delete-modal-confirm:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+
+/* =========================================================
+   SHARED PAGE POLISH
+   ========================================================= */
+
+body.app-page .header-label,
+body.app-page .small-label,
+body.app-page .page-kicker,
+body.app-page .welcome-small {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: var(--site-primary);
+
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    line-height: 1.4;
+    text-transform: uppercase;
+}
+
+body.app-page .top-header h1,
+body.app-page .top-header h2,
+body.app-page .welcome-section h1,
+body.app-page .page-heading h1,
+body.app-page .history-intro h1,
+body.app-page .analytics-intro h1,
+body.app-page .warranty-page-header h1,
+body.app-page .insights-header h1 {
+    color: var(--site-text);
+
+    font-size: clamp(24px, 2.2vw, 30px);
+    font-weight: 750;
+    letter-spacing: -0.035em;
+    line-height: 1.18;
+}
+
+body.app-page .top-header p,
+body.app-page .welcome-description,
+body.app-page .page-heading p,
+body.app-page .history-intro p:not(.page-kicker),
+body.app-page .analytics-intro p:not(.page-kicker),
+body.app-page .warranty-page-header p:last-child,
+body.app-page .insights-header p {
+    color: var(--site-text-muted);
+
+    font-size: 13.5px;
+    line-height: 1.65;
+}
+
+body.app-page .welcome-section,
+body.app-page .history-intro,
+body.app-page .analytics-intro {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+
+    margin-bottom: 24px;
+}
+
+body.app-page .upload-main-btn,
+body.app-page .primary-btn,
+body.app-page .scan-btn,
+body.app-page .view-btn,
+body.app-page .apply-report-btn,
+body.app-page .report-action-btn.primary,
+body.app-page .primary-warranty-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    min-height: 42px;
+    padding: 10px 16px;
+
+    border-radius: var(--site-radius-sm);
+
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 1.2;
+
+    box-shadow: none;
+
+    transition: background 0.18s ease, border-color 0.18s ease,
+        color 0.18s ease, box-shadow 0.18s ease;
+}
+
+body.app-page .upload-main-btn:hover,
+body.app-page .primary-btn:hover,
+body.app-page .scan-btn:hover,
+body.app-page .view-btn:hover,
+body.app-page .apply-report-btn:hover,
+body.app-page .report-action-btn.primary:hover,
+body.app-page .primary-warranty-btn:hover {
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.16);
+    transform: none;
+}
+
+body.app-page .stat-card,
+body.app-page .card,
+body.app-page .dashboard-card,
+body.app-page .expense-section,
+body.app-page .settings-card,
+body.app-page .help-card,
+body.app-page .summary-card,
+body.app-page .analytics-section,
+body.app-page .details-card,
+body.app-page .receipt-card {
+    background: var(--site-surface);
+    border: 1px solid var(--site-border);
+    border-radius: var(--site-radius);
+    box-shadow: var(--site-shadow);
+}
+
+body.app-page input,
+body.app-page select,
+body.app-page textarea {
+    border-color: var(--site-border-strong);
+    border-radius: var(--site-radius-sm);
+
+    color: var(--site-text);
+
+    font-size: 13px;
+}
+
+body.app-page input:focus,
+body.app-page select:focus,
+body.app-page textarea:focus {
+    border-color: var(--site-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    outline: none;
+}
+
+body.app-page table th {
+    background: var(--site-surface-muted);
+    color: #475467;
+
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.055em;
+    text-transform: uppercase;
+}
+
+body.app-page table td {
+    color: #475467;
+    font-size: 12.5px;
+}
+
+body.app-page .dashboard-footer,
+body.app-page .settings-footer {
+    color: var(--site-text-muted);
+
+    font-size: 11.5px;
+}
+
+
+/* =========================================================
+   DASHBOARD SIDEBAR SHELL
+   ========================================================= */
+
+body.dashboard-page .app-shell.dashboard-shell {
+    width: 100%;
+    min-height: 100vh;
+
+    display: flex;
+    align-items: stretch;
+
+    padding-left: 0;
+}
+
+.dashboard-sidebar {
+    position: sticky;
+    top: 0;
+
+    width: var(--site-sidebar-width);
+    height: 100vh;
+    flex: 0 0 var(--site-sidebar-width);
+
+    display: flex;
+    flex-direction: column;
+
+    padding: 22px 16px 18px;
+
+    background: var(--site-surface);
+    border-right: 1px solid var(--site-border);
+
+    overflow-y: auto;
+
+    box-sizing: border-box;
+    z-index: 700;
+}
+
+.sidebar-brand-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    padding: 0 6px 24px;
+}
+
+.sidebar-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+
+    min-width: 0;
+
+    color: var(--site-text);
+    text-decoration: none;
+}
+
+.sidebar-logo {
+    width: 38px;
+    height: 38px;
+
+    display: block;
+    flex-shrink: 0;
+
+    border-radius: 10px;
+    object-fit: contain;
+}
+
+.sidebar-brand-copy {
+    display: flex;
+    flex-direction: column;
+
+    min-width: 0;
+
+    line-height: 1.25;
+}
+
+.sidebar-brand-copy strong {
+    font-size: 16.5px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+}
+
+.sidebar-brand-copy small {
+    margin-top: 3px;
+
+    color: var(--site-text-muted);
+
+    font-size: 10px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.sidebar-close {
+    width: 34px;
+    height: 34px;
+
+    display: none;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border: 1px solid var(--site-border);
+    border-radius: 9px;
+
+    background: var(--site-surface);
+    color: #475467;
+
+    cursor: pointer;
+}
+
+.sidebar-close:hover {
+    background: var(--site-surface-muted);
+    color: var(--site-text);
+}
+
+.sidebar-close svg {
+    width: 18px;
+    height: 18px;
+}
+
+.sidebar-nav {
+    display: grid;
+    gap: 3px;
+}
+
+.sidebar-nav + .sidebar-nav {
+    margin-top: 22px;
+}
+
+.sidebar-label {
+    margin: 0 0 9px;
+    padding: 0 12px;
+
+    color: #98a2b3;
+
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+
+    min-height: 42px;
+    padding: 9px 12px;
+
+    border: 1px solid transparent;
+    border-radius: 10px;
+
+    background: transparent;
+    color: #475467;
+
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 1.3;
+    text-decoration: none;
+
+    transition: background 0.16s ease, border-color 0.16s ease,
+        color 0.16s ease;
+}
+
+.sidebar-link svg {
+    width: 18px;
+    height: 18px;
+
+    flex-shrink: 0;
+
+    stroke-width: 1.9;
+}
+
+.sidebar-link:hover {
+    background: var(--site-surface-muted);
+    color: var(--site-text);
+}
+
+.sidebar-link.active {
+    border-color: #dbeafe;
+    background: var(--site-primary-soft);
+    color: var(--site-primary);
+
+    font-weight: 650;
+}
+
+.sidebar-account-actions {
+    display: grid;
+    gap: 3px;
+
+    margin-top: auto;
+    padding-top: 18px;
+
+    border-top: 1px solid var(--site-border);
+}
+
+.sidebar-account-actions .sidebar-label {
+    margin-bottom: 6px;
+}
+
+.sidebar-account-actions .sidebar-link {
+    width: 100%;
+
+    font-family: inherit;
+    text-align: left;
+
+    cursor: pointer;
+}
+
+.sidebar-logout-btn:hover {
+    border-color: var(--site-border);
+}
+
+.sidebar-delete-btn {
+    color: #b42318;
+}
+
+.sidebar-delete-btn:hover {
+    border-color: #fecdca;
+    background: #fef3f2;
+    color: #912018;
+}
+
+.sidebar-account-actions .sidebar-link:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.sidebar-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+
+    margin-top: 14px;
+    padding: 0 12px;
+}
+
+.sidebar-footer span {
+    color: #98a2b3;
+
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+}
+
+.sidebar-footer small {
+    color: var(--site-text-muted);
+
+    font-size: 10.5px;
+    line-height: 1.4;
+}
+
+.sidebar-backdrop {
+    display: none;
+}
+
+body.dashboard-page .main-content {
+    width: auto;
+    max-width: none;
+    flex: 1;
+
+    min-width: 0;
+    min-height: 100vh;
+
+    margin: 0;
+    padding: 0;
+
+    box-sizing: border-box;
+}
+
+body.dashboard-page .top-header {
+    position: sticky;
+    top: 0;
+    z-index: 450;
+
+    width: 100%;
+    height: var(--site-header-height);
+
+    margin: 0;
+    padding: 0 32px;
+
+    display: flex;
+    align-items: center;
+
+    background: rgba(255, 255, 255, 0.95);
+    border-bottom: 1px solid var(--site-border);
+
+    -webkit-backdrop-filter: saturate(180%) blur(12px);
+    backdrop-filter: saturate(180%) blur(12px);
+}
+
+body.dashboard-page .top-header .header-inner {
+    width: 100%;
+    max-width: none;
+    height: 100%;
+
+    margin: 0;
+    padding: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+body.dashboard-page .top-header .header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+body.dashboard-page .top-header .header-label {
+    margin-bottom: 4px;
+
+    color: var(--site-text-muted);
+
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+}
+
+body.dashboard-page .top-header h2 {
+    margin: 0;
+
+    color: var(--site-text);
+
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+}
+
+body.dashboard-page .top-header .header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+body.dashboard-page .notification-btn {
+    width: 42px;
+    height: 42px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid var(--site-border);
+    border-radius: 50%;
+
+    background: var(--site-surface);
+    color: #475467;
+}
+
+body.dashboard-page .notification-btn:hover {
+    border-color: #bfdbfe;
+    background: var(--site-primary-soft);
+    color: var(--site-primary);
+}
+
+body.dashboard-page .notification-btn svg {
+    width: 19px;
+    height: 19px;
+}
+
+body.dashboard-page .notification-btn span {
+    top: 4px;
+    right: 4px;
+
+    width: 8px;
+    height: 8px;
+}
+
+body.dashboard-page .dashboard-account-link {
+    margin-left: 2px;
+}
+
+.sidebar-toggle {
+    width: 40px;
+    height: 40px;
+
+    display: none;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border: 1px solid var(--site-border);
+    border-radius: 10px;
+
+    background: var(--site-surface);
+    color: #475467;
+
+    cursor: pointer;
+}
+
+.sidebar-toggle:hover {
+    background: var(--site-surface-muted);
+    color: var(--site-text);
+}
+
+.sidebar-toggle svg {
+    width: 19px;
+    height: 19px;
+}
+
+body.dashboard-page .dashboard-content {
+    max-width: none;
+
+    margin: 0;
+    padding: 30px 32px 36px;
+}
+
+body.dashboard-page .welcome-section {
+    align-items: flex-end;
+
+    margin-bottom: 24px;
+}
+
+body.dashboard-page .welcome-small {
+    margin-bottom: 8px;
+
+    color: var(--site-primary);
+}
+
+body.dashboard-page .welcome-section h1 {
+    font-size: clamp(26px, 2.3vw, 32px);
+}
+
+body.dashboard-page .welcome-description {
+    max-width: 620px;
+
+    margin-top: 8px;
+}
+
+body.dashboard-page .stats-grid {
+    gap: 16px;
+
+    margin-bottom: 20px;
+}
+
+body.dashboard-page .stat-card {
+    padding: 20px 22px;
+
+    transition: border-color 0.18s ease, box-shadow 0.18s ease,
+        transform 0.18s ease;
+}
+
+body.dashboard-page .stat-card:hover {
+    border-color: #cfd8e6;
+    box-shadow: 0 8px 24px rgba(23, 32, 51, 0.07);
+    transform: translateY(-1px);
+}
+
+body.dashboard-page .stat-top {
+    margin-bottom: 17px;
+}
+
+body.dashboard-page .stat-icon {
+    width: 40px;
+    height: 40px;
+
+    border-radius: 12px;
+}
+
+body.dashboard-page .stat-icon svg {
+    width: 19px;
+    height: 19px;
+}
+
+body.dashboard-page .stat-label {
+    color: #98a2b3;
+
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+}
+
+body.dashboard-page .stat-card h2 {
+    margin-bottom: 8px;
+
+    color: var(--site-text);
+
+    font-size: 25px;
+    font-weight: 700;
+    letter-spacing: -0.035em;
+}
+
+body.dashboard-page .stat-change {
+    font-size: 11.5px;
+}
+
+body.dashboard-page .middle-grid {
+    gap: 16px;
+}
+
+body.dashboard-page .dashboard-card {
+    border-radius: var(--site-radius);
+    box-shadow: var(--site-shadow);
+}
+
+body.dashboard-page .card-header h3 {
+    color: var(--site-text);
+
+    font-size: 15.5px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+}
+
+body.dashboard-page .card-header p {
+    color: var(--site-text-muted);
+    font-size: 11.5px;
+}
+
+body.dashboard-page .ai-icon svg,
+body.dashboard-page .warranty-icon svg {
+    width: 18px;
+    height: 18px;
+}
+
+body.dashboard-page .dashboard-footer {
+    margin: 0 32px;
+    padding: 20px 0 28px;
+
+    border-top: 1px solid var(--site-border);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+    .site-header-inner {
+        padding: 10px 20px;
+    }
+
+    body.app-page .main-content {
+        padding: 26px 20px 42px;
+    }
+
+    body.app-page .page-header {
+        padding: 26px 20px 0;
+    }
+}
+
+@media (max-width: 600px) {
+    :root {
+        --site-header-height: 61px;
+    }
+
+    .site-header-inner {
+        padding: 9px 16px;
+    }
+
+    .site-logo {
+        width: 36px;
+        height: 36px;
+    }
+
+    .site-brand-name {
+        font-size: 18px;
+    }
+
+    .account-link {
+        width: 40px;
+        height: 40px;
+    }
+
+    body.app-page .main-content {
+        padding: 22px 16px 36px;
+    }
+
+    body.app-page .page-header {
+        padding: 22px 16px 0;
+    }
+
+    body.app-page:not(.dashboard-page) .main-content > .top-header {
+        flex-direction: column;
+    }
+
+    body.app-page:not(.dashboard-page) .main-content > .top-header .header-inner {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .account-actions {
+        flex-direction: column;
+    }
+
+    .account-actions .logout-btn,
+    .account-actions .delete-account-btn {
+        width: 100%;
+    }
+
+    .delete-modal-actions {
+        flex-direction: column;
+    }
+}
+
+
+/* =========================================================
+   DASHBOARD RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1024px) {
+    .dashboard-sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+
+        height: 100dvh;
+
+        transform: translateX(-105%);
+        transition: transform 0.24s ease;
+
+        box-shadow: 20px 0 50px rgba(23, 32, 51, 0.16);
+
+        z-index: 900;
+    }
+
+    body.sidebar-open .dashboard-sidebar {
+        transform: translateX(0);
+    }
+
+    .sidebar-close,
+    .sidebar-toggle {
+        display: inline-flex;
+    }
+
+    .sidebar-backdrop {
+        position: fixed;
+        inset: 0;
+
+        display: block;
+
+        background: rgba(23, 32, 51, 0.46);
+
+        opacity: 0;
+        pointer-events: none;
+
+        transition: opacity 0.24s ease;
+
+        z-index: 850;
+    }
+
+    body.sidebar-open .sidebar-backdrop {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    body.sidebar-open {
+        overflow: hidden;
+    }
+
+    body.dashboard-page .main-content {
+        width: 100%;
+    }
+}
+
+@media (max-width: 900px) {
+    body.dashboard-page .main-content {
+        width: 100%;
+        padding: 0;
+    }
+
+    body.dashboard-page .top-header {
+        flex-direction: row;
+        align-items: center;
+
+        padding: 0 24px;
+    }
+
+    body.dashboard-page .top-header .header-inner {
+        flex-direction: row;
+        align-items: center;
+    }
+
+    body.dashboard-page .dashboard-content {
+        padding: 26px 24px 34px;
+    }
+
+    body.dashboard-page .dashboard-footer {
+        margin: 0 24px;
+    }
+}
+
+@media (max-width: 600px) {
+    body.dashboard-page .top-header {
+        height: 64px;
+        flex-direction: row;
+        align-items: center;
+
+        padding: 0 16px;
+    }
+
+    body.dashboard-page .top-header .header-inner {
+        flex-direction: row;
+        align-items: center;
+    }
+
+    body.dashboard-page .top-header h2 {
+        font-size: 17px;
+    }
+
+    body.dashboard-page .top-header .header-label {
+        display: none;
+    }
+
+    body.dashboard-page .dashboard-content {
+        padding: 22px 16px 30px;
+    }
+
+    body.dashboard-page .welcome-section {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    body.dashboard-page .welcome-section .upload-main-btn {
+        width: 100%;
+    }
+
+    body.dashboard-page .stats-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    body.dashboard-page .middle-grid {
+        grid-template-columns: 1fr;
+    }
+
+    body.dashboard-page .dashboard-footer {
+        margin: 0 16px;
+
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+
+    body.dashboard-page .notification-btn,
+    body.dashboard-page .dashboard-account-link {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+/* =========================================================
+   ICON AND COMPONENT ALIGNMENT
+   ========================================================= */
+
+body.app-page .topbar {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+body.app-page .topbar .page-kicker {
+    margin-bottom: 7px;
+}
+
+body.app-page .topbar p:last-child {
+    margin-top: 6px;
+
+    color: var(--site-text-muted);
+
+    font-size: 13.5px;
+    line-height: 1.6;
+}
+
+body.app-page .camera-btn,
+body.app-page .manual-btn,
+body.app-page .scan-btn,
+body.app-page .save-btn,
+body.app-page .add-item-btn,
+body.app-page .report-action-btn,
+body.app-page .view-all-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+body.app-page .camera-btn svg,
+body.app-page .manual-btn svg,
+body.app-page .scan-btn svg,
+body.app-page .save-btn svg,
+body.app-page .report-action-btn svg {
+    width: 17px;
+    height: 17px;
+
+    flex-shrink: 0;
+}
+
+body.app-page .full-width-btn svg {
+    width: 17px;
+    height: 17px;
+}
+
+body.app-page .section-icon svg,
+body.app-page .ai-icon svg,
+body.app-page .manual-preview-icon svg,
+body.app-page .welcome-icon svg,
+body.app-page .heading-icon svg {
+    width: 21px;
+    height: 21px;
+}
+
+body.app-page .section-icon svg {
+    width: 24px;
+    height: 24px;
+}
+
+body.app-page .empty-icon,
+body.app-page .manual-preview-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+body.app-page .empty-icon svg,
+body.app-page .manual-preview-icon svg,
+body.app-page .empty-table-icon svg,
+body.app-page .report-empty svg {
+    width: 40px;
+    height: 40px;
+
+    display: block;
+}
+
+body.app-page .heading-icon {
+    color: var(--site-primary);
+}
+
+body.app-page .report-stat-icon svg,
+body.app-page .summary-icon svg,
+body.app-page .category-icon svg,
+body.app-page .insights-icon svg {
+    width: 22px;
+    height: 22px;
+
+    display: block;
+}
+
+body.app-page .report-stat-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+body.app-page .report-stat-icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+body.app-page .notification-icon {
+    color: #475467;
+
+    font-size: 15px;
+    font-weight: 700;
+}
+
+body.app-page .notification-icon.warning,
+body.app-page .notification-icon.expired {
+    color: #b54708;
+}
+
+body.app-page .summary-icon {
+    color: var(--site-primary);
+}
+
+body.app-page .category-icon {
+    color: var(--site-primary);
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+body.app-page .welcome-icon svg {
+    width: 24px;
+    height: 24px;
+}
+
+body.app-page .insights-icon svg {
+    width: 21px;
+    height: 21px;
+}
+
+body.app-page .expenses .category-item span,
+body.app-page .category-item span {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+}
+
+body.app-page .category-item span::before {
+    content: "";
+
+    width: 7px;
+    height: 7px;
+
+    display: inline-block;
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: var(--site-primary);
+}
+
+body.app-page .category-item:nth-child(2) span::before {
+    background: #7c3aed;
+}
+
+body.app-page .category-item:nth-child(3) span::before {
+    background: #0891b2;
+}
+
+body.app-page .category-item:nth-child(4) span::before {
+    background: #d97706;
+}
+
+body.app-page .empty-table-icon {
+    color: var(--site-primary);
+}
+
+body.app-page .empty-icon,
+body.app-page .report-empty {
+    color: var(--site-primary);
+}
+
+@media (max-width: 700px) {
+    body.app-page .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    body.app-page .topbar .upload-main-btn {
+        width: 100%;
+    }
+
+    body.app-page .history-intro,
+    body.app-page .analytics-intro {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    body.app-page .history-intro .upload-main-btn,
+    body.app-page .analytics-intro .upload-main-btn {
+        width: 100%;
+    }
+}
+
+body.app-page .upload-main-btn svg {
+    width: 17px;
+    height: 17px;
+
+    flex-shrink: 0;
+}
+
+/* =========================================================
+   DASHBOARD NOTIFICATION POLISH
+   ========================================================= */
+
+body.dashboard-page .notification-panel {
+    border-color: var(--site-border);
+    border-radius: var(--site-radius-sm);
+
+    box-shadow: 0 18px 48px rgba(23, 32, 51, 0.14);
+}
+
+body.dashboard-page .notification-panel-header h3 {
+    color: var(--site-text);
+}
+
+body.dashboard-page .notification-panel-header p,
+body.dashboard-page .notification-content p,
+body.dashboard-page .notification-content small,
+body.dashboard-page .notification-empty span {
+    color: var(--site-text-muted);
+}
+
+body.dashboard-page .notification-panel-header button {
+    color: var(--site-primary);
+}
+
+body.dashboard-page .notification-item {
+    border-bottom-color: #f1f5f9;
+}
+
+body.dashboard-page .notification-item:hover {
+    background: #f8fafc;
+}
+
+body.dashboard-page .notification-item.unread {
+    background: #eff6ff;
+}
+
+body.dashboard-page .notification-item.unread:hover {
+    background: #e8f1ff;
+}
+
+body.dashboard-page .notification-content strong,
+body.dashboard-page .notification-empty strong {
+    color: var(--site-text);
+}
+
+body.dashboard-page .notification-unread-dot {
+    background: var(--site-primary);
+}
+
+body.dashboard-page .notification-empty-icon {
+    color: #98a2b3;
+}
+
+body.dashboard-page .notification-empty-icon svg {
+    width: 28px;
+    height: 28px;
+}

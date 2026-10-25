@@ -25,25 +25,3 @@ faqQuestions.forEach((question) => {
     });
 
 });
-
-
-// ===============================
-// THEME
-// ===============================
-
-function applyTheme(theme) {
-
-    if (theme === "dark") {
-        document.body.classList.add("dark-theme");
-    } else {
-        document.body.classList.remove("dark-theme");
-    }
-
-}
-
-
-// Load the theme saved from Settings
-const savedTheme =
-    localStorage.getItem("shopixTheme") || "light";
-
-applyTheme(savedTheme);

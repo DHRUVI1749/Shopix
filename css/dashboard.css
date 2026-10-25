@@ -36,100 +36,19 @@ button {
 
 
 
-.user-mini {
-    display: flex;
-    align-items: center;
-
-    gap: 10px;
-
-    padding: 12px;
-
-    margin-bottom: 8px;
-
-    border-top: 1px solid #eaecf0;
-}
-
-.user-avatar,
-.top-avatar {
-    width: 35px;
-    height: 35px;
-
-    flex-shrink: 0;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 50%;
-
-    background: #eaf0ff;
-
-    color: #102a72;
-
-    font-size: 12px;
-    font-weight: 700;
-}
-
-.user-info {
-    display: flex;
-    flex-direction: column;
-
-    min-width: 0;
-}
-
-.user-info strong {
-    font-size: 11px;
-}
-
-.user-info span {
-    margin-top: 2px;
-
-    color: #98a2b3;
-
-    font-size: 9px;
-
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
 
 /* =========================
    MAIN
 ========================= */
 
 .main-content {
-    /* The space for the fixed sidebar is reserved
-       by the shared .app-shell wrapper, so the
-       content only needs its own height here. */
-
     min-height: 100vh;
 }
 
 
 /* =========================
-   TOPBAR
+   NOTIFICATIONS
 ========================= */
-
-.topbar {
-    height: 72px;
-
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-
-    padding: 0 35px;
-
-    background: white;
-
-    border-bottom: 1px solid #eaecf0;
-}
-
-.topbar-right {
-    display: flex;
-    align-items: center;
-
-    gap: 22px;
-}
 
 .notification-btn {
     position: relative;
@@ -159,34 +78,6 @@ button {
 
     background: #d92d20;
 }
-
-.top-user {
-    display: flex;
-    align-items: center;
-
-    gap: 9px;
-}
-
-.top-user strong {
-    display: block;
-
-    font-size: 11px;
-}
-
-.top-user small {
-    display: block;
-
-    margin-top: 2px;
-
-    color: #98a2b3;
-
-    font-size: 9px;
-}
-
-.mobile-logo {
-    display: none;
-}
-
 
 /* =========================
    CONTENT
@@ -831,32 +722,6 @@ button {
 
 @media (max-width: 650px) {
 
-    .topbar {
-        justify-content: space-between;
-
-        padding: 0 20px;
-    }
-
-    .mobile-logo {
-        display: flex;
-
-        align-items: center;
-
-        gap: 8px;
-
-        color: #102a72;
-
-        font-size: 18px;
-        font-weight: 800;
-    }
-
-    .mobile-logo .logo-icon {
-        width: 30px;
-        height: 30px;
-
-        font-size: 15px;
-    }
-
     .dashboard-content {
         padding: 22px 17px;
     }
@@ -1128,10 +993,6 @@ button {
 
     .header-right {
         gap: 10px;
-    }
-
-    .top-user div:last-child {
-        display: none;
     }
 
     .dashboard-footer {

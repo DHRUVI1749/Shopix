@@ -1,8 +1,9 @@
-import { auth, db } from "./firebase.js";
+import { auth, db, storage } from "./firebase.js";
 
 import {
     onAuthStateChanged,
-    sendPasswordResetEmail
+    sendPasswordResetEmail,
+    updateProfile
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
 import {
@@ -10,6 +11,13 @@ import {
     getDoc,
     setDoc
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+import {
+    ref as storageRef,
+    uploadBytes,
+    getDownloadURL,
+    deleteObject
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-storage.js";
 
 
 // ===============================
@@ -20,42 +28,57 @@ const userName = document.getElementById("userName");
 const userEmail = document.getElementById("userEmail");
 
 const saveProfileBtn = document.getElementById("saveProfileBtn");
-const themeToggle = document.getElementById("themeToggle");
 const changePasswordBtn = document.getElementById("changePasswordBtn");
 
+const settingsAvatar = document.getElementById("settingsAvatar");
+const changeAvatarBtn = document.getElementById("changeAvatarBtn");
+const removeAvatarBtn = document.getElementById("removeAvatarBtn");
+const avatarInput = document.getElementById("avatarInput");
+const avatarMessage = document.getElementById("avatarMessage");
+
+let selectedAvatarFile = null;
+let avatarRemoved = false;
+
 
 // ===============================
-// THEME
+// AVATAR HELPERS
 // ===============================
 
-function applyTheme(theme) {
+function renderAvatar(photoURL, name) {
 
-    if (theme === "dark") {
-        document.body.classList.add("dark-theme");
-    } else {
-        document.body.classList.remove("dark-theme");
+    if (!settingsAvatar) {
+        return;
     }
+
+    if (photoURL) {
+
+        settingsAvatar.innerHTML = `
+            <img src="${photoURL}" alt="Profile photo">
+        `;
+
+        return;
+    }
+
+    settingsAvatar.textContent =
+        (name || "User")
+            .charAt(0)
+            .toUpperCase();
+
 }
 
+function setAvatarMessage(message, type) {
 
-// Load saved theme
-const savedTheme = localStorage.getItem("shopixTheme") || "light";
+    if (!avatarMessage) {
+        return;
+    }
 
-applyTheme(savedTheme);
+    avatarMessage.textContent = message;
 
+    avatarMessage.className =
+        "profile-avatar-message" +
+        (type ? " " + type : "");
 
-// Theme toggle
-themeToggle.addEventListener("click", () => {
-
-    const isDark = document.body.classList.contains("dark-theme");
-
-    const newTheme = isDark ? "light" : "dark";
-
-    applyTheme(newTheme);
-
-    localStorage.setItem("shopixTheme", newTheme);
-
-});
+}
 
 
 // ===============================
@@ -81,19 +104,105 @@ onAuthStateChanged(auth, async (user) => {
 
         const userSnap = await getDoc(userRef);
 
+        let profileName =
+            user.displayName || "";
+
         if (userSnap.exists()) {
 
             const userData = userSnap.data();
 
-            userName.value = userData.name || "";
+            profileName =
+                userData.name || profileName;
 
         }
+
+        userName.value = profileName;
+
+        avatarRemoved = false;
+
+        selectedAvatarFile = null;
+
+        renderAvatar(
+            user.photoURL,
+            profileName
+        );
 
     } catch (error) {
 
         console.error("Error loading user data:", error);
 
     }
+
+});
+
+
+// ===============================
+// AVATAR EVENTS
+// ===============================
+
+changeAvatarBtn?.addEventListener("click", () => {
+
+    avatarInput?.click();
+
+});
+
+avatarInput?.addEventListener("change", () => {
+
+    const file = avatarInput.files[0];
+
+    if (!file) {
+        return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+
+        setAvatarMessage(
+            "Please select an image file.",
+            "error"
+        );
+
+        avatarInput.value = "";
+
+        return;
+    }
+
+    selectedAvatarFile = file;
+
+    avatarRemoved = false;
+
+    renderAvatar(
+        URL.createObjectURL(file),
+        userName.value
+    );
+
+    setAvatarMessage(
+        "Photo selected. Click Save Changes to save it.",
+        "success"
+    );
+
+});
+
+removeAvatarBtn?.addEventListener("click", () => {
+
+    const user = auth.currentUser;
+
+    selectedAvatarFile = null;
+
+    avatarRemoved = true;
+
+    if (avatarInput) {
+        avatarInput.value = "";
+    }
+
+    renderAvatar(
+        null,
+        user?.displayName || userName.value
+    );
+
+    setAvatarMessage(
+        "Photo removed. Click Save Changes to confirm.",
+        "success"
+    );
 
 });
 
@@ -128,6 +237,53 @@ saveProfileBtn.addEventListener("click", async () => {
 
         saveProfileBtn.textContent = "Saving...";
 
+        let photoURL = user.photoURL || null;
+
+        if (avatarRemoved) {
+
+            try {
+
+                const oldAvatarRef = storageRef(
+                    storage,
+                    "avatars/" + user.uid + "/profile.jpg"
+                );
+
+                await deleteObject(oldAvatarRef);
+
+            } catch (error) {
+
+                console.log("No old avatar found.");
+
+            }
+
+            photoURL = null;
+
+        }
+
+        if (selectedAvatarFile) {
+
+            const avatarRef = storageRef(
+                storage,
+                "avatars/" + user.uid + "/profile.jpg"
+            );
+
+            await uploadBytes(
+                avatarRef,
+                selectedAvatarFile
+            );
+
+            photoURL = await getDownloadURL(avatarRef);
+
+        }
+
+        await updateProfile(
+            user,
+            {
+                displayName: name,
+                photoURL: photoURL
+            }
+        );
+
         const userRef = doc(db, "users", user.uid);
 
         await setDoc(
@@ -140,11 +296,29 @@ saveProfileBtn.addEventListener("click", async () => {
             }
         );
 
-        alert("Profile updated successfully.");
+        renderAvatar(photoURL, name);
+
+        selectedAvatarFile = null;
+
+        avatarRemoved = false;
+
+        if (avatarInput) {
+            avatarInput.value = "";
+        }
+
+        setAvatarMessage(
+            "Profile updated successfully.",
+            "success"
+        );
 
     } catch (error) {
 
         console.error("Error saving profile:", error);
+
+        setAvatarMessage(
+            "Unable to save profile. Please try again.",
+            "error"
+        );
 
         alert("Unable to save profile. Please try again.");
 

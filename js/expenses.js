@@ -1,6 +1,9 @@
 // ==========================================
 // SHOPIX - Expense Tracking & Analytics
-// Real Firestore Receipt Data
+//
+// Every amount is kept in the currency it was
+// saved with. Totals are grouped by currency
+// and are never converted or combined.
 // ==========================================
 
 import {
@@ -16,246 +19,652 @@ import {
     collection,
     getDocs
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+import {
+    OTHER_CURRENCY,
+    normalizeCurrency,
+    formatCurrency,
+    getCurrencyLabel,
+    compareCurrencies
+} from "./currency.js";
+
+import {
+    parseAmount,
+    parseReceiptDate,
+    filterExpenseRecords,
+    groupByCurrency,
+    getCategoryTotals,
+    isInMonth,
+    sortExpenseRecords,
+    formatExpenseDate
+} from "./expense-utils.js";
+
+
 // ==========================================
-// RECEIPTS
+// STATE
 // ==========================================
 
 let receipts = [];
+let filteredReceipts = [];
 
 let monthlyChart = null;
 let categoryChart = null;
 
+const CHART_COLORS = [
+    "#2563eb",
+    "#7c3aed",
+    "#0891b2",
+    "#d97706",
+    "#16a34a",
+    "#dc2626",
+    "#db2777",
+    "#64748b"
+];
+
 
 // ==========================================
-// CALCULATE TOTAL SPENDING
+// HELPERS
 // ==========================================
 
-function calculateTotalSpending() {
+function getFilterSelects() {
 
-    return receipts.reduce((total, receipt) => {
+    return {
+        currency: document.getElementById("expenseCurrencyFilter"),
+        category: document.getElementById("expenseCategoryFilter"),
+        from: document.getElementById("expenseFromDate"),
+        to: document.getElementById("expenseToDate")
+    };
+}
 
-        return total + Number(receipt.totalAmount || 0);
 
-    }, 0);
+function readFilters() {
+
+    const selects = getFilterSelects();
+
+    return {
+        currency: selects.currency ? selects.currency.value : "ALL",
+        category: selects.category ? selects.category.value : "ALL",
+        from: selects.from ? selects.from.value : "",
+        to: selects.to ? selects.to.value : ""
+    };
+}
+
+
+function renderEmpty(container, message) {
+
+    if (!container) {
+        return;
+    }
+
+    const empty = document.createElement("div");
+
+    empty.className = "expense-empty";
+    empty.textContent = message;
+
+    container.replaceChildren(empty);
+}
+
+
+function normalizeReceipt(rawReceipt, id) {
+
+    const category =
+        String(rawReceipt.category || "").trim() ||
+        "Other";
+
+    return {
+        ...rawReceipt,
+        id,
+        storeName:
+            String(rawReceipt.storeName || "").trim(),
+        category,
+        currency:
+            normalizeCurrency(rawReceipt.currency),
+        totalAmount:
+            parseAmount(rawReceipt.totalAmount),
+        dateObj:
+            parseReceiptDate(rawReceipt.purchaseDate)
+    };
+}
+
+
+function pluralize(count, word) {
+
+    return (
+        count +
+        " " +
+        word +
+        (count === 1 ? "" : "s")
+    );
+}
+
+
+function getChartCurrency(groups) {
+
+    if (groups.length === 1) {
+        return groups[0].currency;
+    }
+
+    return null;
+}
+
+
+function getCurrencyDisplayCode(currency) {
+
+    return currency === OTHER_CURRENCY ?
+        "OTHER" :
+        currency;
+}
+
+
+function formatChartTick(value, currency) {
+
+    if (currency === OTHER_CURRENCY) {
+
+        return new Intl.NumberFormat("en-IN", {
+            notation: "compact",
+            maximumFractionDigits: 1
+        }).format(value);
+    }
+
+    try {
+        return new Intl.NumberFormat("en-IN", {
+            style: "currency",
+            currency,
+            currencyDisplay: "narrowSymbol",
+            notation: "compact",
+            maximumFractionDigits: 1
+        }).format(value);
+    }
+    catch (error) {
+        return new Intl.NumberFormat("en-IN", {
+            notation: "compact",
+            maximumFractionDigits: 1
+        }).format(value);
+    }
 }
 
 
 // ==========================================
-// CURRENT MONTH SPENDING
+// RENDER SUMMARY CARDS
 // ==========================================
 
-function calculateMonthlySpending() {
+function renderCurrencyStack(container, groups, emptyText) {
 
-    const currentMonth = new Date().getMonth();
-    const currentYear = new Date().getFullYear();
+    if (!container) {
+        return;
+    }
 
-    return receipts
-        .filter(receipt => {
+    container.replaceChildren();
 
-            const date = new Date(receipt.purchaseDate);
+    if (!groups.length) {
 
-            return (
-                !isNaN(date.getTime()) &&
-                date.getMonth() === currentMonth &&
-                date.getFullYear() === currentYear
+        container.textContent = emptyText || "—";
+
+        return;
+    }
+
+    groups.forEach(function (group) {
+
+        const line = document.createElement("span");
+
+        line.className = "amount-line";
+
+        const code = document.createElement("span");
+
+        code.className = "amount-code";
+        code.textContent =
+            getCurrencyDisplayCode(group.currency);
+
+        const value = document.createElement("strong");
+
+        value.textContent =
+            formatCurrency(
+                group.total,
+                group.currency
             );
 
-        })
-        .reduce((total, receipt) => {
+        line.append(code, value);
 
-            return total + Number(receipt.totalAmount || 0);
-
-        }, 0);
-}
-
-
-// ==========================================
-// CATEGORY-WISE SPENDING
-// ==========================================
-
-function calculateCategorySpending() {
-
-    const categories = {};
-
-    receipts.forEach(receipt => {
-
-        const category =
-            receipt.category || "Other";
-
-        const amount =
-            Number(receipt.totalAmount || 0);
-
-        if (!categories[category]) {
-            categories[category] = 0;
-        }
-
-        categories[category] += amount;
-
+        container.appendChild(line);
     });
-
-    return categories;
 }
 
 
-// ==========================================
-// TOP CATEGORY
-// ==========================================
+function renderSummaryCards() {
 
-function getTopCategory(categorySpending) {
+    const groups =
+        groupByCurrency(filteredReceipts);
 
-    let topCategory = "-";
-    let highestAmount = 0;
+    const currencyCount =
+        document.getElementById("currencyCount");
 
-    for (const category in categorySpending) {
+    const currencyCountNote =
+        document.getElementById("currencyCountNote");
 
-        if (categorySpending[category] > highestAmount) {
+    const monthlyContainer =
+        document.getElementById("monthlyCurrencyTotals");
 
-            highestAmount =
-                categorySpending[category];
+    const receiptCount =
+        document.getElementById("receiptCount");
 
-            topCategory =
-                category;
-        }
+    const receiptCountNote =
+        document.getElementById("receiptCountNote");
 
+    const topCategoryValue =
+        document.getElementById("topCategoryValue");
+
+    const topCategoryNote =
+        document.getElementById("topCategoryNote");
+
+
+    if (currencyCount) {
+        currencyCount.textContent = groups.length;
     }
 
-    return topCategory;
-}
+    if (currencyCountNote) {
 
-
-// ==========================================
-// UPDATE EXPENSE PAGE
-// ==========================================
-
-function updateExpensePage() {
-
-    const totalSpending =
-        calculateTotalSpending();
-
-    const monthlySpending =
-        calculateMonthlySpending();
-
-    const categorySpending =
-        calculateCategorySpending();
-
-    const topCategory =
-        getTopCategory(categorySpending);
-
-
-    // ======================================
-    // SUMMARY CARDS
-    // ======================================
-
-    const amounts =
-        document.querySelectorAll(
-            ".summary-cards .amount"
-        );
-
-    if (amounts.length >= 4) {
-
-        amounts[0].textContent =
-            `₹${totalSpending.toLocaleString("en-IN")}`;
-
-        amounts[1].textContent =
-            `₹${monthlySpending.toLocaleString("en-IN")}`;
-
-        amounts[2].textContent =
-            receipts.length;
-
-        amounts[3].textContent =
-            topCategory;
+        currencyCountNote.textContent =
+            groups.length ?
+                "Separate totals, no conversion" :
+                "No matching currencies";
     }
 
 
-    // ======================================
-    // CATEGORY-WISE SPENDING
-    // ======================================
+    const currentMonth = new Date();
 
-    const categoryItems =
-        document.querySelectorAll(
-            ".category-item"
+    const monthlyGroups =
+        groupByCurrency(
+            filteredReceipts.filter(function (receipt) {
+                return isInMonth(receipt, currentMonth);
+            })
         );
 
-    categoryItems.forEach(item => {
+    renderCurrencyStack(
+        monthlyContainer,
+        monthlyGroups,
+        "—"
+    );
 
-        const categoryName =
-            item.querySelector("span").textContent
-                .replace("🛒", "")
-                .replace("👕", "")
-                .replace("💻", "")
-                .replace("🏠", "")
-                .trim();
 
-        const amountElement =
-            item.querySelector("strong");
+    if (receiptCount) {
+        receiptCount.textContent =
+            filteredReceipts.length;
+    }
 
-        if (amountElement) {
+    if (receiptCountNote) {
 
-            amountElement.textContent =
-                `₹${(
-                    categorySpending[categoryName] || 0
-                ).toLocaleString("en-IN")}`;
+        const hasFilters =
+            readFilters().currency !== "ALL" ||
+            readFilters().category !== "ALL" ||
+            readFilters().from ||
+            readFilters().to;
+
+        receiptCountNote.textContent =
+            hasFilters ?
+                "Matching receipts" :
+                "Total receipts";
+    }
+
+
+    if (!topCategoryValue || !topCategoryNote) {
+        return;
+    }
+
+    if (!groups.length) {
+
+        topCategoryValue.textContent = "-";
+        topCategoryNote.textContent =
+            "No category data";
+
+        return;
+    }
+
+    if (groups.length > 1) {
+
+        topCategoryValue.textContent =
+            "By currency";
+
+        topCategoryNote.textContent =
+            "Select a currency to rank categories";
+
+        return;
+    }
+
+    const group = groups[0];
+
+    const categories =
+        getCategoryTotals(group.receipts);
+
+    const topCategory = categories[0];
+
+    if (!topCategory) {
+
+        topCategoryValue.textContent = "-";
+        topCategoryNote.textContent =
+            "No category data";
+
+        return;
+    }
+
+    topCategoryValue.textContent =
+        topCategory.category;
+
+    topCategoryNote.textContent =
+        formatCurrency(
+            topCategory.total,
+            group.currency
+        ) +
+        " · " +
+        getCurrencyLabel(group.currency);
+}
+
+
+// ==========================================
+// RENDER CURRENCY-WISE SPENDING
+// ==========================================
+
+function renderCurrencySummary() {
+
+    const container =
+        document.getElementById("currencySummaryList");
+
+    if (!container) {
+        return;
+    }
+
+    const groups =
+        groupByCurrency(filteredReceipts);
+
+    if (!groups.length) {
+
+        renderEmpty(
+            container,
+            receipts.length ?
+                "No expenses match the selected filters." :
+                "No expenses saved yet. Scan a receipt to start tracking spending."
+        );
+
+        return;
+    }
+
+    container.replaceChildren();
+
+    groups.forEach(function (group) {
+
+        const row = document.createElement("div");
+
+        row.className = "currency-summary-row";
+
+        const main = document.createElement("div");
+
+        main.className = "currency-summary-main";
+
+        const badge = document.createElement("span");
+
+        badge.className =
+            "currency-badge" +
+            (
+                group.currency === OTHER_CURRENCY ?
+                    " currency-badge-other" :
+                    ""
+            );
+
+        badge.textContent =
+            getCurrencyDisplayCode(group.currency);
+
+        const details = document.createElement("div");
+
+        details.className = "currency-summary-details";
+
+        const label = document.createElement("strong");
+
+        label.textContent =
+            group.currency === OTHER_CURRENCY ?
+                "Currency not set" :
+                getCurrencyLabel(group.currency);
+
+        const count = document.createElement("small");
+
+        count.textContent =
+            pluralize(group.count, "receipt");
+
+        details.append(label, count);
+
+        main.append(badge, details);
+
+        const amount = document.createElement("div");
+
+        amount.className = "currency-summary-amount";
+
+        const total = document.createElement("strong");
+
+        total.textContent =
+            formatCurrency(
+                group.total,
+                group.currency
+            );
+
+        const separate = document.createElement("small");
+
+        separate.textContent =
+            "Original currency total";
+
+        amount.append(total, separate);
+
+        row.append(main, amount);
+
+        container.appendChild(row);
+    });
+}
+
+
+// ==========================================
+// RENDER CATEGORY BREAKDOWN
+// ==========================================
+
+function renderCategoryBreakdown(groups) {
+
+    const container =
+        document.getElementById("categoryList");
+
+    const note =
+        document.getElementById("categorySummaryNote");
+
+    if (!container) {
+        return;
+    }
+
+    if (!groups.length) {
+
+        renderEmpty(
+            container,
+            receipts.length ?
+                "No category data matches the selected filters." :
+                "No category data available yet."
+        );
+
+        if (note) {
+            note.textContent =
+                "Category totals follow the selected currency filter.";
         }
 
+        return;
+    }
+
+    const items = [];
+
+    groups.forEach(function (group) {
+
+        getCategoryTotals(group.receipts).forEach(
+            function (categoryTotal) {
+
+                items.push({
+                    ...categoryTotal,
+                    currency: group.currency
+                });
+
+            }
+        );
     });
 
+    items.sort(function (a, b) {
 
-    // ======================================
-    // EXPENSE HISTORY
-    // ======================================
+        const currencyOrder =
+            compareCurrencies(a.currency, b.currency);
+
+        if (currencyOrder !== 0) {
+            return currencyOrder;
+        }
+
+        return b.total - a.total;
+    });
+
+    container.replaceChildren();
+
+    items.forEach(function (item) {
+
+        const row = document.createElement("div");
+
+        row.className = "category-item";
+
+        const name = document.createElement("span");
+
+        const categoryLabel =
+            document.createTextNode(item.category);
+
+        const currencyChip =
+            document.createElement("em");
+
+        currencyChip.className = "currency-chip";
+        currencyChip.textContent =
+            getCurrencyDisplayCode(item.currency);
+
+        name.append(categoryLabel, currencyChip);
+
+        const amount = document.createElement("strong");
+
+        amount.textContent =
+            formatCurrency(
+                item.total,
+                item.currency
+            );
+
+        row.append(name, amount);
+
+        container.appendChild(row);
+    });
+
+    if (!note) {
+        return;
+    }
+
+    if (groups.length > 1) {
+
+        note.textContent =
+            "Showing each category per currency. Select one currency for a single-currency breakdown.";
+    }
+    else {
+
+        note.textContent =
+            "All category totals are shown in " +
+            getCurrencyLabel(groups[0].currency) +
+            ".";
+    }
+}
+
+
+// ==========================================
+// RENDER EXPENSE HISTORY
+// ==========================================
+
+function renderExpenseHistory() {
 
     const tableBody =
-        document.querySelector("tbody");
+        document.getElementById("expenseTableBody");
 
-    if (tableBody) {
-
-        tableBody.innerHTML = "";
-
-        if (receipts.length === 0) {
-
-            tableBody.innerHTML = `
-                <tr>
-                    <td colspan="4">
-                        No expenses available yet
-                    </td>
-                </tr>
-            `;
-
-        } else {
-
-            receipts.forEach(receipt => {
-
-                const row =
-                    document.createElement("tr");
-
-                row.innerHTML = `
-                    <td>
-                        ${receipt.purchaseDate || "-"}
-                    </td>
-
-                    <td>
-                        ${receipt.storeName || "-"}
-                    </td>
-
-                    <td>
-                        ${receipt.category || "Other"}
-                    </td>
-
-                    <td>
-                        ₹${Number(
-                            receipt.totalAmount || 0
-                        ).toLocaleString("en-IN")}
-                    </td>
-                `;
-
-                tableBody.appendChild(row);
-
-            });
-
-        }
-
+    if (!tableBody) {
+        return;
     }
 
+    const sortedReceipts =
+        sortExpenseRecords(filteredReceipts);
+
+    tableBody.replaceChildren();
+
+    if (!sortedReceipts.length) {
+
+        const row = document.createElement("tr");
+
+        const cell = document.createElement("td");
+
+        cell.colSpan = 5;
+        cell.textContent =
+            receipts.length ?
+                "No expenses match the selected filters." :
+                "No expenses available yet";
+
+        row.appendChild(cell);
+        tableBody.appendChild(row);
+
+        return;
+    }
+
+    sortedReceipts.forEach(function (receipt) {
+
+        const row = document.createElement("tr");
+
+        const dateCell = document.createElement("td");
+
+        dateCell.textContent =
+            formatExpenseDate(receipt);
+
+        const storeCell = document.createElement("td");
+
+        storeCell.textContent =
+            receipt.storeName || "-";
+
+        const categoryCell = document.createElement("td");
+
+        categoryCell.textContent =
+            receipt.category || "Other";
+
+        const currencyCell = document.createElement("td");
+
+        const currencyBadge =
+            document.createElement("span");
+
+        currencyBadge.className =
+            "table-currency-badge" +
+            (
+                receipt.currency === OTHER_CURRENCY ?
+                    " currency-badge-other" :
+                    ""
+            );
+
+        currencyBadge.textContent =
+            getCurrencyDisplayCode(receipt.currency);
+
+        currencyCell.appendChild(currencyBadge);
+
+        const amountCell = document.createElement("td");
+
+        amountCell.className = "expense-amount";
+        amountCell.textContent =
+            formatCurrency(
+                receipt.totalAmount,
+                receipt.currency
+            );
+
+        row.append(
+            dateCell,
+            storeCell,
+            categoryCell,
+            currencyCell,
+            amountCell
+        );
+
+        tableBody.appendChild(row);
+    });
 }
 
 
@@ -263,113 +672,179 @@ function updateExpensePage() {
 // MONTHLY EXPENSE CHART
 // ==========================================
 
-function createMonthlyExpenseChart() {
+function createMonthlyExpenseChart(filteredRecords, groups) {
 
     const ctx =
-        document.getElementById(
-            "monthlyExpenseChart"
-        );
+        document.getElementById("monthlyExpenseChart");
 
-    if (!ctx) {
+    const wrap =
+        document.getElementById("monthlyChartWrap");
+
+    const note =
+        document.getElementById("monthlyChartNote");
+
+    if (!ctx || !wrap || !note) {
         return;
     }
-
-
-    // Destroy old chart if it exists
 
     if (monthlyChart) {
 
         monthlyChart.destroy();
-
         monthlyChart = null;
     }
 
+    const chartCurrency =
+        getChartCurrency(groups);
 
-    // No receipt data
+    if (!chartCurrency) {
 
-    if (receipts.length === 0) {
+        wrap.style.display = "none";
 
-        ctx.style.display = "none";
+        note.hidden = false;
+        note.textContent =
+            groups.length > 1 ?
+                "Select a currency to view the monthly chart. Amounts in different currencies are not combined." :
+                "No dated expenses match the selected filters.";
 
         return;
     }
 
+    if (typeof Chart === "undefined") {
 
-    ctx.style.display = "block";
+        wrap.style.display = "none";
 
+        note.hidden = false;
+        note.textContent =
+            "The chart library could not load. The totals above are still available.";
 
-    const monthlyData = {};
+        return;
+    }
 
+    const monthlyData = new Map();
 
-    receipts.forEach(receipt => {
+    filteredRecords.forEach(function (record) {
 
-        const date =
-            new Date(receipt.purchaseDate);
-
-        if (isNaN(date.getTime())) {
+        if (!record.dateObj) {
             return;
         }
 
+        const key =
+            record.dateObj.getFullYear() +
+            "-" +
+            String(record.dateObj.getMonth() + 1)
+                .padStart(2, "0");
 
-        const month =
-            date.toLocaleString("en-US", {
-                month: "short"
-            });
-
-
-        if (!monthlyData[month]) {
-            monthlyData[month] = 0;
+        if (!monthlyData.has(key)) {
+            monthlyData.set(key, 0);
         }
 
-
-        monthlyData[month] +=
-            Number(receipt.totalAmount || 0);
-
+        monthlyData.set(
+            key,
+            monthlyData.get(key) +
+            record.totalAmount
+        );
     });
 
+    if (!monthlyData.size) {
 
-    monthlyChart =
-        new Chart(ctx, {
+        wrap.style.display = "none";
 
-            type: "bar",
+        note.hidden = false;
+        note.textContent =
+            "No dated expenses match the selected filters.";
 
-            data: {
+        return;
+    }
 
-                labels:
-                    Object.keys(monthlyData),
+    const entries =
+        Array.from(monthlyData.entries())
+            .sort(function (a, b) {
+                return a[0].localeCompare(b[0]);
+            });
 
-                datasets: [{
+    const labels = entries.map(function (entry) {
 
-                    label:
-                        "Monthly Spending",
+        const parts = entry[0].split("-");
 
-                    data:
-                        Object.values(monthlyData)
+        return new Date(
+            Number(parts[0]),
+            Number(parts[1]) - 1,
+            1
+        ).toLocaleDateString("en-IN", {
+            month: "short",
+            year: "numeric"
+        });
+    });
 
-                }]
+    wrap.style.display = "flex";
 
+    note.hidden = true;
+
+    ctx.style.display = "block";
+
+    monthlyChart = new Chart(ctx, {
+
+        type: "bar",
+
+        data: {
+            labels,
+            datasets: [{
+                label: "Monthly spending",
+                data: entries.map(function (entry) {
+                    return entry[1];
+                }),
+                backgroundColor: "#2563eb",
+                borderRadius: 8,
+                maxBarThickness: 42
+            }]
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+
+            plugins: {
+                legend: {
+                    display: false
+                },
+
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            return (
+                                "Spent: " +
+                                formatCurrency(
+                                    context.parsed.y,
+                                    chartCurrency
+                                )
+                            );
+                        }
+                    }
+                }
             },
 
-            options: {
-
-                responsive: true,
-
-                maintainAspectRatio: false,
-
-                scales: {
-
-                    y: {
-
-                        beginAtZero: true
-
+            scales: {
+                x: {
+                    grid: {
+                        display: false
                     }
+                },
 
+                y: {
+                    beginAtZero: true,
+
+                    ticks: {
+                        callback: function (value) {
+                            return formatChartTick(
+                                value,
+                                chartCurrency
+                            );
+                        }
+                    }
                 }
-
             }
-
-        });
-
+        }
+    });
 }
 
 
@@ -377,87 +852,312 @@ function createMonthlyExpenseChart() {
 // CATEGORY EXPENSE CHART
 // ==========================================
 
-function createCategoryExpenseChart() {
+function createCategoryExpenseChart(filteredRecords, groups) {
 
     const ctx =
-        document.getElementById(
-            "categoryExpenseChart"
-        );
+        document.getElementById("categoryExpenseChart");
 
-    if (!ctx) {
+    const wrap =
+        document.getElementById("categoryChartWrap");
+
+    const note =
+        document.getElementById("categoryChartNote");
+
+    if (!ctx || !wrap || !note) {
         return;
     }
-
-
-    // Destroy old chart if it exists
 
     if (categoryChart) {
 
         categoryChart.destroy();
-
         categoryChart = null;
     }
 
+    const chartCurrency =
+        getChartCurrency(groups);
 
-    const categorySpending =
-        calculateCategorySpending();
+    if (!chartCurrency) {
 
+        wrap.style.display = "none";
 
-    // No receipt data
+        note.hidden = false;
+        note.textContent =
+            groups.length > 1 ?
+                "Select a currency to view the category chart. Amounts in different currencies are not combined." :
+                "No category data matches the selected filters.";
 
-  if (receipts.length === 0) {
+        return;
+    }
 
-    ctx.parentElement.style.display = "none";
+    if (typeof Chart === "undefined") {
 
-    return;
-}  
+        wrap.style.display = "none";
 
+        note.hidden = false;
+        note.textContent =
+            "The chart library could not load. The category totals above are still available.";
 
-    ctx.parentElement.style.display = "flex";
-ctx.style.display = "block";
+        return;
+    }
 
-    categoryChart =
-        new Chart(ctx, {
+    const categories =
+        getCategoryTotals(filteredRecords);
 
-            type: "doughnut",
+    if (!categories.length) {
 
-            data: {
+        wrap.style.display = "none";
 
-                labels:
-                    Object.keys(categorySpending),
+        note.hidden = false;
+        note.textContent =
+            "No category data matches the selected filters.";
 
-                datasets: [{
+        return;
+    }
 
-                    label:
-                        "Category Spending",
+    wrap.style.display = "flex";
 
-                    data:
-                        Object.values(categorySpending)
+    note.hidden = true;
 
-                }]
+    ctx.style.display = "block";
 
-            },
+    categoryChart = new Chart(ctx, {
 
-            options: {
+        type: "doughnut",
 
-                responsive: true,
+        data: {
+            labels: categories.map(function (item) {
+                return item.category;
+            }),
 
-                maintainAspectRatio: false,
+            datasets: [{
+                label: "Category spending",
+                data: categories.map(function (item) {
+                    return item.total;
+                }),
+                backgroundColor:
+                    categories.map(function (item, index) {
+                        return CHART_COLORS[
+                            index % CHART_COLORS.length
+                        ];
+                    }),
+                borderColor: "#ffffff",
+                borderWidth: 2,
+                hoverOffset: 4
+            }]
+        },
 
-                plugins: {
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
 
-                    legend: {
+            plugins: {
+                legend: {
+                    position: "bottom",
 
-                        position: "bottom"
-
+                    labels: {
+                        boxWidth: 10,
+                        boxHeight: 10,
+                        usePointStyle: true,
+                        padding: 14
                     }
+                },
 
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            return (
+                                context.label +
+                                ": " +
+                                formatCurrency(
+                                    context.parsed,
+                                    chartCurrency
+                                )
+                            );
+                        }
+                    }
                 }
-
             }
+        }
+    });
+}
 
+
+// ==========================================
+// UPDATE THE WHOLE PAGE
+// ==========================================
+
+function updateExpensePage() {
+
+    const groups =
+        groupByCurrency(filteredReceipts);
+
+    renderSummaryCards();
+    renderCurrencySummary();
+    renderCategoryBreakdown(groups);
+    renderExpenseHistory();
+    createMonthlyExpenseChart(filteredReceipts, groups);
+    createCategoryExpenseChart(filteredReceipts, groups);
+}
+
+
+function applyFilters() {
+
+    filteredReceipts =
+        filterExpenseRecords(
+            receipts,
+            readFilters()
+        );
+
+    updateExpensePage();
+}
+
+
+// ==========================================
+// FILTER CONTROLS
+// ==========================================
+
+function populateFilters() {
+
+    const currencySelect =
+        document.getElementById("expenseCurrencyFilter");
+
+    const categorySelect =
+        document.getElementById("expenseCategoryFilter");
+
+    if (!currencySelect || !categorySelect) {
+        return;
+    }
+
+    const previousCurrency =
+        currencySelect.value || "ALL";
+
+    const previousCategory =
+        categorySelect.value || "ALL";
+
+    const currencies =
+        Array.from(
+            new Set(
+                receipts.map(function (receipt) {
+                    return receipt.currency;
+                })
+            )
+        ).sort(compareCurrencies);
+
+    const categories =
+        Array.from(
+            new Set(
+                receipts.map(function (receipt) {
+                    return receipt.category;
+                })
+            )
+        ).sort(function (a, b) {
+            return a.localeCompare(b);
         });
 
+
+    currencySelect.replaceChildren();
+
+    const allCurrencies =
+        document.createElement("option");
+
+    allCurrencies.value = "ALL";
+    allCurrencies.textContent = "All currencies";
+
+    currencySelect.appendChild(allCurrencies);
+
+    currencies.forEach(function (currency) {
+
+        const option =
+            document.createElement("option");
+
+        option.value = currency;
+        option.textContent = getCurrencyLabel(currency);
+
+        currencySelect.appendChild(option);
+    });
+
+    currencySelect.value =
+        currencies.includes(previousCurrency) ?
+            previousCurrency :
+            "ALL";
+
+
+    categorySelect.replaceChildren();
+
+    const allCategories =
+        document.createElement("option");
+
+    allCategories.value = "ALL";
+    allCategories.textContent = "All categories";
+
+    categorySelect.appendChild(allCategories);
+
+    categories.forEach(function (category) {
+
+        const option =
+            document.createElement("option");
+
+        option.value = category;
+        option.textContent = category;
+
+        categorySelect.appendChild(option);
+    });
+
+    categorySelect.value =
+        categories.includes(previousCategory) ?
+            previousCategory :
+            "ALL";
+}
+
+
+function setupFilterControls() {
+
+    const selects = getFilterSelects();
+
+    [
+        selects.currency,
+        selects.category,
+        selects.from,
+        selects.to
+    ].forEach(function (control) {
+
+        if (!control) {
+            return;
+        }
+
+        control.addEventListener(
+            "change",
+            applyFilters
+        );
+    });
+
+    const resetButton =
+        document.getElementById("resetExpenseFilters");
+
+    if (!resetButton) {
+        return;
+    }
+
+    resetButton.addEventListener("click", function () {
+
+        if (selects.currency) {
+            selects.currency.value = "ALL";
+        }
+
+        if (selects.category) {
+            selects.category.value = "ALL";
+        }
+
+        if (selects.from) {
+            selects.from.value = "";
+        }
+
+        if (selects.to) {
+            selects.to.value = "";
+        }
+
+        applyFilters();
+    });
 }
 
 
@@ -471,27 +1171,13 @@ async function loadReceipts(user) {
 
         if (!user) {
 
-            console.log(
-                "No logged-in user found."
-            );
-
             receipts = [];
 
-            updateExpensePage();
-
-            createMonthlyExpenseChart();
-
-            createCategoryExpenseChart();
+            populateFilters();
+            applyFilters();
 
             return;
         }
-
-
-        console.log(
-            "Loading receipts for user:",
-            user.uid
-        );
-
 
         const receiptsRef =
             collection(
@@ -501,41 +1187,20 @@ async function loadReceipts(user) {
                 "receipts"
             );
 
-
         const snapshot =
             await getDocs(receiptsRef);
 
-
-        receipts = [];
-
-
-        snapshot.forEach(doc => {
-
-            receipts.push({
-
-                id: doc.id,
-
-                ...doc.data()
-
+        receipts =
+            snapshot.docs.map(function (doc) {
+                return normalizeReceipt(
+                    doc.data(),
+                    doc.id
+                );
             });
 
-        });
-
-
-        console.log(
-            "SHOPIX Firestore Receipts:",
-            receipts
-        );
-
-
-        updateExpensePage();
-
-        createMonthlyExpenseChart();
-
-        createCategoryExpenseChart();
-
+        populateFilters();
+        applyFilters();
     }
-
     catch (error) {
 
         console.error(
@@ -543,12 +1208,16 @@ async function loadReceipts(user) {
             error
         );
 
+        receipts = [];
+        filteredReceipts = [];
+
+        populateFilters();
+        applyFilters();
+
         alert(
-            "Unable to load expense data."
+            "Unable to load expense data. Please try again."
         );
-
     }
-
 }
 
 
@@ -556,25 +1225,8 @@ async function loadReceipts(user) {
 // START
 // ==========================================
 
-onAuthStateChanged(auth, (user) => {
+setupFilterControls();
 
-    if (user) {
-
-        console.log(
-            "Logged-in user:",
-            user.uid
-        );
-
-        loadReceipts(user);
-
-    } else {
-
-        console.log(
-            "User is not logged in."
-        );
-
-        loadReceipts(null);
-
-    }
-
+onAuthStateChanged(auth, function (user) {
+    loadReceipts(user);
 });

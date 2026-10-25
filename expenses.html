@@ -2,535 +2,262 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>SHOPIX - Expense Tracking</title>
 
-    <!-- Expense CSS -->
     <link rel="stylesheet" href="css/expenses.css">
+    <link rel="stylesheet" href="css/shopix.css">
 
     <!-- Chart.js -->
-        <!-- =========================
-         GLOBAL SIDEBAR
-    ========================== -->
-
-    <script
-        type="module"
-        src="js/sidebar.js">
-    </script>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-
-    <!-- =========================
-         GLOBAL SIDEBAR CSS
-    ========================== -->
-
-    <link
-        rel="stylesheet"
-        href="css/sidebar.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
+<body class="app-page">
 
-<body class="dark-theme">
+    <header class="site-header">
+        <div class="site-header-inner">
+            <a href="dashboard.html" class="site-brand" aria-label="SHOPIX dashboard">
+                <img src="images/logo.png" alt="" class="site-logo" width="40" height="40">
+                <span class="site-brand-name">SHOPIX</span>
+            </a>
+
+            <a href="settings.html" class="account-link" aria-label="Open account settings" title="Account settings">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="8" r="3.5"></circle>
+                    <path d="M5.5 20c.6-3.2 2.9-5 6.5-5s5.9 1.8 6.5 5"></path>
+                </svg>
+            </a>
+        </div>
+    </header>
 
     <div class="app-shell">
 
-
-        <!-- ================= SIDEBAR ================= -->
-
-                <!-- =========================
-             SIDEBAR
-        ========================== -->
-
-        <aside class="sidebar">
-
-
-            <!-- LOGO -->
-
-            <a
-                href="index.html"
-                class="sidebar-logo">
-
-                <span class="logo-icon">
-                    S
-                </span>
-
-                <span>
-                    SHOPIX
-                </span>
-
-            </a>
-
-
-            <!-- =========================
-                 NAVIGATION
-            ========================== -->
-
-            <nav class="sidebar-nav">
-
-                <p class="nav-title">
-                    MAIN MENU
-                </p>
-
-
-                <!-- Dashboard -->
-
-                <a
-                    href="dashboard.html"
-                    class="nav-item">
-
-                    <span class="nav-icon">
-                        ▦
-                    </span>
-
-                    Dashboard
-
-                </a>
-
-
-                <!-- Receipts -->
-
-                <a
-                    href="receiptHistory.html"
-                    class="nav-item">
-
-                    <span class="nav-icon">
-                        ▤
-                    </span>
-
-                    Receipts
-
-                </a>
-
-
-                <!-- Upload Receipt -->
-
-                <a
-                    href="receiptScanner.html"
-                    class="nav-item">
-
-                    <span class="nav-icon">
-                        ↑
-                    </span>
-
-                    Upload Receipt
-
-                </a>
-
-
-                <!-- Expenses -->
-
-                <a
-                    href="expenseAnalytics.html"
-                    class="nav-item active">
-
-                    <span class="nav-icon">
-                        ◫
-                    </span>
-
-                    Expenses
-
-                </a>
-
-
-                <!-- Reports -->
-
-                <a
-                    href="reports.html"
-                    class="nav-item">
-
-                    <span class="nav-icon">
-                        ▤
-                    </span>
-
-                    Reports
-
-                </a>
-
-
-                <!-- Warranties -->
-
-                <a
-                    href="warranty.html"
-                    class="nav-item">
-
-                    <span class="nav-icon">
-                        ♢
-                    </span>
-
-                    Warranties
-
-                </a>
-
-
-                <!-- Settings -->
-
-                <a
-                    href="settings.html"
-                    class="nav-item">
-
-                    <span class="nav-icon">
-                        ⚙
-                    </span>
-
-                    Settings
-
-                </a>
-
-            </nav>
-
-
-            <!-- =========================
-                 SIDEBAR BOTTOM
-            ========================== -->
-
-            <div class="sidebar-bottom">
-
-
-                <!-- HELP -->
-
-                <a
-                    href="help.html"
-                    class="help-box">
-
-                    <div class="help-icon">
-                        ?
-                    </div>
-
-                    <div>
-
-                        <strong>
-                            Need Help?
-                        </strong>
-
-                        <span>
-                            We're here for you
-                        </span>
-
-                    </div>
-
-                </a>
-
-
-                <!-- LOGOUT -->
-
-                <button
-                    type="button"
-                    id="logoutBtn"
-                    class="logout-btn">
-
-                    <span>
-                        ↪
-                    </span>
-
-                    Logout
-
-                </button>
-
-
-                <!-- DELETE ACCOUNT -->
-
-                <button
-                    type="button"
-                    id="deleteAccountBtn"
-                    class="delete-account-btn">
-
-                    <span>
-                        <svg
-                            width="14"
-                            height="14"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            aria-hidden="true">
-
-                            <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-                            <line x1="12" y1="9" x2="12" y2="13"></line>
-                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
-
-                        </svg>
-                    </span>
-
-                    Delete Account
-
-                </button>
-
-            </div>
-
-        </aside>
-
-
-
-        <!-- ================= MAIN CONTENT ================= -->
+        <!-- MAIN CONTENT -->
 
         <main class="main-content">
 
+            <!-- PAGE HEADER -->
 
-            <!-- Page Header -->
-
-            <header class="topbar">
-
-                <button
-                    class="mobile-menu-btn"
-                    type="button"
-                    aria-label="Open navigation menu">
-                    &#9776;
-                </button>
-
+            <div class="topbar">
 
                 <div>
-
-                    <h1>
-                        Expense Tracking
-                    </h1>
-
-
-                    <p>
-                        Track and understand your shopping expenses
-                    </p>
-
+                    <p class="page-kicker">Spending overview</p>
+                    <h1>Expense Tracking</h1>
+                    <p>Track categories, monthly spending and every saved expense.</p>
                 </div>
 
-            </header>
+                <a href="receiptScanner.html" class="upload-main-btn">
+                    Add Receipt
+                </a>
+
+            </div>
 
 
-
-            <!-- ================= SUMMARY CARDS ================= -->
+            <!-- SUMMARY CARDS -->
 
             <section class="summary-cards">
 
-
-                <!-- Total Spending -->
-
                 <div class="card">
 
-                    <h3>
-                        TOTAL SPENDING
-                    </h3>
+                    <h3>CURRENCIES</h3>
 
+                    <div class="amount" id="currencyCount">0</div>
 
-                    <div class="amount">
-                        ₹0
-                    </div>
-
-
-                    <span>
-                        All time
-                    </span>
+                    <span id="currencyCountNote">Separate totals, no conversion</span>
 
                 </div>
 
 
-
-                <!-- This Month -->
-
                 <div class="card">
 
-                    <h3>
-                        THIS MONTH
-                    </h3>
+                    <h3>THIS MONTH</h3>
 
+                    <div class="amount amount-stack" id="monthlyCurrencyTotals">—</div>
 
-                    <div class="amount">
-                        ₹0
-                    </div>
-
-
-                    <span>
-                        Current month
-                    </span>
+                    <span>Original amounts by currency</span>
 
                 </div>
 
 
-
-                <!-- Receipts -->
-
                 <div class="card">
 
-                    <h3>
-                        RECEIPTS
-                    </h3>
+                    <h3>RECEIPTS</h3>
 
+                    <div class="amount" id="receiptCount">0</div>
 
-                    <div class="amount">
-                        0
-                    </div>
-
-
-                    <span>
-                        Total receipts
-                    </span>
+                    <span id="receiptCountNote">Total receipts</span>
 
                 </div>
 
 
-
-                <!-- Top Category -->
-
                 <div class="card">
 
-                    <h3>
-                        TOP CATEGORY
-                    </h3>
+                    <h3>TOP CATEGORY</h3>
 
+                    <div class="amount" id="topCategoryValue">-</div>
 
-                    <div class="amount">
-                        -
-                    </div>
-
-
-                    <span>
-                        Highest spending
-                    </span>
+                    <span id="topCategoryNote">Highest spending</span>
 
                 </div>
 
             </section>
 
 
-
-            <!-- ================= CATEGORY-WISE SPENDING ================= -->
+            <!-- CURRENCY-WISE SPENDING -->
 
             <section class="expense-section">
 
+                <div class="section-header">
+
+                    <h2>Currency-wise Spending</h2>
+
+                    <p>Each currency is totalled separately. Amounts are never converted or combined.</p>
+
+                </div>
+
+
+                <div class="currency-summary-list" id="currencySummaryList" aria-live="polite">
+
+                    <div class="expense-empty">
+                        Loading currency totals…
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- CATEGORY-WISE SPENDING -->
+
+            <section class="expense-section">
 
                 <div class="section-header">
 
-                    <h2>
-                        Category-wise Spending
-                    </h2>
+                    <h2>Category-wise Spending</h2>
+
+                    <p id="categorySummaryNote">Category totals follow the selected currency filter.</p>
 
                 </div>
 
 
+                <div class="category-list" id="categoryList">
 
-                <div class="category-list">
-
-
-                    <!-- Grocery -->
-
-                    <div class="category-item">
-
-                        <span>
-                            🛒 Grocery
-                        </span>
-
-
-                        <strong>
-                            ₹0
-                        </strong>
-
-                    </div>
-
-
-
-                    <!-- Clothing -->
-
-                    <div class="category-item">
-
-                        <span>
-                            👕 Clothing
-                        </span>
-
-
-                        <strong>
-                            ₹0
-                        </strong>
-
-                    </div>
-
-
-
-                    <!-- Electronics -->
-
-                    <div class="category-item">
-
-                        <span>
-                            💻 Electronics
-                        </span>
-
-
-                        <strong>
-                            ₹0
-                        </strong>
-
-                    </div>
-
-
-
-                    <!-- Home -->
-
-                    <div class="category-item">
-
-                        <span>
-                            🏠 Home
-                        </span>
-
-
-                        <strong>
-                            ₹0
-                        </strong>
-
+                    <div class="expense-empty">
+                        No category data available yet.
                     </div>
 
                 </div>
 
 
+                <!-- CATEGORY DOUGHNUT CHART -->
 
-                <!-- Category Doughnut Chart -->
-
-                <div class="category-chart">
+                <div class="category-chart" id="categoryChartWrap">
 
                     <canvas id="categoryExpenseChart"></canvas>
 
                 </div>
 
+                <p class="chart-note" id="categoryChartNote" hidden>
+                    Select a currency to view the category chart. Amounts in different currencies are not combined.
+                </p>
+
             </section>
 
 
-
-            <!-- ================= MONTHLY SPENDING ================= -->
+            <!-- MONTHLY SPENDING -->
 
             <section class="expense-section">
 
-
                 <div class="section-header">
 
-                    <h2>
-                        Monthly Spending
-                    </h2>
+                    <h2>Monthly Spending</h2>
+
+                    <p id="monthlySummaryNote">Monthly totals keep each currency separate.</p>
 
                 </div>
 
 
-                <div class="chart-placeholder">
+                <div class="chart-placeholder" id="monthlyChartWrap">
 
                     <canvas id="monthlyExpenseChart"></canvas>
 
                 </div>
 
+                <p class="chart-note" id="monthlyChartNote" hidden>
+                    Select a currency to view the monthly chart. Amounts in different currencies are not combined.
+                </p>
+
             </section>
 
 
-
-            <!-- ================= EXPENSE HISTORY ================= -->
+            <!-- EXPENSE HISTORY -->
 
             <section class="expense-section">
 
+                <div class="section-header expense-history-header">
 
-                <div class="section-header">
+                    <div>
 
-                    <h2>
-                        Expense History
-                    </h2>
+                        <h2>Expense History</h2>
+
+                        <p>Filter saved expenses without mixing currencies.</p>
+
+                    </div>
+
+
+                    <div class="expense-filters" role="search" aria-label="Filter expenses">
+
+                        <div class="filter-field">
+
+                            <label for="expenseCurrencyFilter">Currency</label>
+
+                            <select id="expenseCurrencyFilter">
+
+                                <option value="ALL">All currencies</option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="filter-field">
+
+                            <label for="expenseCategoryFilter">Category</label>
+
+                            <select id="expenseCategoryFilter">
+
+                                <option value="ALL">All categories</option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="filter-field">
+
+                            <label for="expenseFromDate">From</label>
+
+                            <input type="date" id="expenseFromDate">
+
+                        </div>
+
+
+                        <div class="filter-field">
+
+                            <label for="expenseToDate">To</label>
+
+                            <input type="date" id="expenseToDate">
+
+                        </div>
+
+
+                        <button type="button" class="filter-reset" id="resetExpenseFilters">
+                            Reset filters
+                        </button>
+
+                    </div>
 
                 </div>
 
@@ -539,38 +266,24 @@
 
                     <table>
 
-
                         <thead>
 
                             <tr>
-
-                                <th>
-                                    Date
-                                </th>
-
-                                <th>
-                                    Store
-                                </th>
-
-                                <th>
-                                    Category
-                                </th>
-
-                                <th>
-                                    Amount
-                                </th>
-
+                                <th>Date</th>
+                                <th>Store</th>
+                                <th>Category</th>
+                                <th>Currency</th>
+                                <th>Amount</th>
                             </tr>
 
                         </thead>
 
 
-
-                        <tbody>
+                        <tbody id="expenseTableBody">
 
                             <tr>
 
-                                <td colspan="4">
+                                <td colspan="5">
                                     No expenses available yet
                                 </td>
 
@@ -578,27 +291,26 @@
 
                         </tbody>
 
-
                     </table>
 
                 </div>
 
             </section>
 
-
         </main>
 
     </div>
 
 
-
-    <!-- Expense JavaScript -->
+    <!-- EXPENSE JAVASCRIPT -->
 
     <script
         type="module"
         src="js/expenses.js">
     </script>
-<script src="js/theme.js"></script>
+
+    <!-- SHOPIX COMMON HEADER -->
+    <script type="module" src="js/header.js"></script>
 
 </body>
 

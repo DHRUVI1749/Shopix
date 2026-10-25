@@ -53,8 +53,6 @@ const profileButton = document.getElementById("profileButton");
 const profileAvatar = document.getElementById("profileAvatar");
 const profileName = document.getElementById("profileName");
 
-const mobileMenuBtn = document.getElementById("mobileMenuBtn");
-
 
 // =====================================================
 // GLOBAL DATA
@@ -2744,33 +2742,6 @@ if (chartCurrency) {
         () => {
 
             renderBarChart();
-        }
-    );
-}
-
-
-// =====================================================
-// MOBILE MENU
-// =====================================================
-
-if (mobileMenuBtn) {
-
-    mobileMenuBtn.addEventListener(
-        "click",
-        () => {
-
-            const sidebar =
-                document.querySelector(
-                    ".sidebar"
-                );
-
-
-            if (sidebar) {
-
-                sidebar.classList.toggle(
-                    "mobile-open"
-                );
-            }
         }
     );
 }

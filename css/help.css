@@ -12,28 +12,14 @@
     --border: #e5e7eb;
     --primary: #5b5bd6;
     --primary-hover: #4d4dcc;
-    --sidebar: #ffffff;
-    --sidebar-hover: #f1f2ff;
+    --primary-soft: #f1f2ff;
     --danger: #dc3545;
-}
-
-body.dark-theme {
-    --bg: #111827;
-    --card: #1f2937;
-    --text: #f3f4f6;
-    --muted: #aab2c0;
-    --border: #374151;
-    --primary: #7777e8;
-    --primary-hover: #8888f0;
-    --sidebar: #172033;
-    --sidebar-hover: #283248;
 }
 
 body {
     font-family: "Inter", sans-serif;
     background: var(--bg);
     color: var(--text);
-    transition: background 0.25s ease, color 0.25s ease;
 }
 
 a {
@@ -43,10 +29,6 @@ a {
 
 /* =========================
    LAYOUT
-========================= */
-
-/* =========================
-   SIDEBAR
 ========================= */
 
 /* =========================
@@ -172,7 +154,7 @@ a {
     width: 40px;
     height: 40px;
     border-radius: 10px;
-    background: var(--sidebar-hover);
+    background: var(--primary-soft);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -217,7 +199,7 @@ a {
 }
 
 .faq-question:hover {
-    background: var(--sidebar-hover);
+    background: var(--primary-soft);
 }
 
 .faq-arrow {
@@ -265,7 +247,7 @@ a {
 
 .quick-link:hover {
     border-color: var(--primary);
-    background: var(--sidebar-hover);
+    background: var(--primary-soft);
 }
 
 .quick-link strong,

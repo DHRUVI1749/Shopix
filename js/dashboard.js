@@ -6,10 +6,6 @@ import {
 } from "./firebase.js";
 
 import {
-    initDeleteAccount
-} from "./delete-account.js";
-
-import {
     collection,
     query,
     orderBy,
@@ -2862,21 +2858,6 @@ if (saveProfile) {
 
 
 // ==========================================
-// LOGOUT + DELETE ACCOUNT
-//
-// The Logout button and the Delete Account
-// button are part of the global sidebar, so
-// both are handled by the shared modules
-// js/sidebar.js and js/delete-account.js.
-//
-// The code was moved there without any change.
-// ==========================================
-
-initDeleteAccount();
-
-
-
-// ==========================================
 // DASHBOARD WARRANTY DATA
 // ==========================================
 
@@ -3741,7 +3722,7 @@ function buildWarrantyNotifications(
                         "expired",
 
                     icon:
-                        "⚠️",
+                        "!",
 
                     title:
                         "Warranty expired",
@@ -3783,7 +3764,7 @@ function buildWarrantyNotifications(
                         "today",
 
                     icon:
-                        "🔴",
+                        "!",
 
                     title:
                         "Warranty expires today",
@@ -3825,7 +3806,7 @@ function buildWarrantyNotifications(
                         "warning",
 
                     icon:
-                        "⚠️",
+                        "!",
 
                     title:
                         "Warranty expiring soon",
@@ -3867,7 +3848,7 @@ function buildWarrantyNotifications(
                         "warning",
 
                     icon:
-                        "🔔",
+                        "i",
 
                     title:
                         "Warranty reminder",
@@ -3955,7 +3936,10 @@ function renderWarrantyNotifications(
             <div class="notification-empty">
 
                 <div class="notification-empty-icon">
-                    🔔
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
+                        <path d="M10 21h4"></path>
+                    </svg>
                 </div>
 
                 <strong>

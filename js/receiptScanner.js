@@ -813,12 +813,12 @@ saveReceiptButton.addEventListener(
             // ==========================================
 
             alert(
-                "✅ Receipt saved successfully!"
+                "Receipt saved successfully!"
             );
 
 
             saveReceiptButton.textContent =
-                "Saved ✓";
+                "Saved";
 
 
             // Keep button disabled after save
@@ -830,7 +830,7 @@ saveReceiptButton.addEventListener(
         } catch (error) {
 
             console.error(
-                "❌ Error saving receipt:",
+                "Error saving receipt:",
                 error
             );
 
@@ -845,7 +845,7 @@ saveReceiptButton.addEventListener(
 
 
             saveReceiptButton.textContent =
-                "✓ Save Receipt";
+                "Save Receipt";
 
         }
 
@@ -942,7 +942,7 @@ captureButton.addEventListener(
 
 
             capturePhoto.textContent =
-                "📸 Capture Photo";
+                "Capture Photo";
 
 
             capturePhoto.className =
@@ -960,7 +960,7 @@ captureButton.addEventListener(
 
 
             closeCamera.textContent =
-                "✕ Close";
+                "Close";
 
 
             closeCamera.className =
@@ -1218,7 +1218,7 @@ scanButton.addEventListener(
 
 
         scanButton.textContent =
-            "✨ Scanning Receipt...";
+            "Scanning Receipt...";
 
 
         try {
@@ -1312,7 +1312,7 @@ Use this exact format:
     "storeName": "",
     "purchaseDate": "",
     "totalAmount": 0,
-    "currency": "INR",
+    "currency": "Other",
     "category": "",
     "items": [
         {
@@ -1416,7 +1416,7 @@ Rules:
             ) {
 
                 data.currency =
-                    "INR";
+                    "Other";
 
             }
 
@@ -1496,14 +1496,14 @@ Rules:
 
 
             alert(
-                "✅ Receipt scanned successfully!"
+                "Receipt scanned successfully!"
             );
 
 
         } catch (error) {
 
             console.error(
-                "❌ AI receipt scanning failed:",
+                "AI receipt scanning failed:",
                 error
             );
 

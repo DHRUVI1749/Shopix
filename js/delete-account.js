@@ -7,9 +7,9 @@
 // cleanup, the avatar cleanup, the Realtime
 // Database cleanup and the error handling.
 //
-// The logic was moved here from dashboard.js
-// without any change, so every page that uses the
-// global sidebar gets exactly the same behaviour.
+// The flow is started from the Delete Account
+// button on the Settings page through
+// initDeleteAccount().
 // ==========================================
 
 import {
@@ -54,9 +54,8 @@ const db = getFirestore(app);
 
 
 // The dialog is created only when the page does not
-// already have it. The Dashboard page ships the
-// markup in its HTML, every other page gets the
-// exact same dialog from here.
+// already have it. Pages with a Delete Account button
+// get the exact same dialog from here.
 
 function ensureDeleteAccountModal() {
 
@@ -162,6 +161,10 @@ let deleteAccountReady = false;
 export function initDeleteAccount() {
 
     if (deleteAccountReady) {
+        return;
+    }
+
+    if (!document.getElementById("deleteAccountBtn")) {
         return;
     }
 

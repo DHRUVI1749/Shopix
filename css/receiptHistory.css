@@ -10,20 +10,23 @@
 
 body {
     font-family: Arial, sans-serif;
-    background: #f8fbff;
+    background: #f4f6fb;
     color: #1f2937;
     min-height: 100vh;
 }
 
+.app-shell {
+    width: 100%;
+    min-height: 100vh;
+}
 
-/* ==========================================
-   HEADER
-   ========================================== */
+/* HEADER */
 
 .page-header {
-    background: #1565c0;
-    color: white;
-    padding: 20px 6%;
+    background: #ffffff;
+    color: #172f78;
+    padding: 20px 5%;
+    border-bottom: 1px solid #e5eaf2;
 }
 
 .header-left {
@@ -32,94 +35,95 @@ body {
     gap: 15px;
 }
 
+.header-label {
+    display: block;
+    color: #7b8495;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    margin-bottom: 4px;
+}
+
 .back-btn {
     width: 42px;
     height: 42px;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-
-    color: white;
+    color: #172f78;
     text-decoration: none;
     font-size: 25px;
-
-    border: 1px solid rgba(255, 255, 255, 0.5);
+    border: 1px solid #e1e7f0;
     border-radius: 10px;
+    background: #ffffff;
 }
 
 .back-btn:hover {
-    background: rgba(255, 255, 255, 0.12);
+    background: #eef2ff;
 }
 
 .page-header h1 {
-    font-size: 25px;
+    font-size: 24px;
     margin-bottom: 4px;
 }
 
 .page-header p {
     font-size: 14px;
-    opacity: 0.9;
+    color: #7b8495;
 }
 
-
-/* ==========================================
-   MAIN CONTAINER
-   ========================================== */
+/* MAIN CONTAINER */
 
 .history-container {
-    width: 88%;
-    max-width: 1100px;
+    width: 90%;
+    max-width: 1250px;
     margin: 35px auto;
 }
 
-
-/* ==========================================
-   INTRO
-   ========================================== */
+/* INTRO */
 
 .history-intro {
     margin-bottom: 25px;
 }
 
 .history-intro h2 {
-    font-size: 24px;
+    font-size: 25px;
     margin-bottom: 7px;
+    color: #172033;
 }
 
 .history-intro p {
-    color: #6b7280;
+    color: #7b8495;
     font-size: 15px;
+    line-height: 1.5;
 }
 
-
-/* ==========================================
-   RECEIPT LIST
-   ========================================== */
+/* RECEIPT LIST */
 
 .receipt-list {
     display: flex;
     flex-direction: column;
     gap: 15px;
+    min-width: 0;
 }
 
-
-/* ==========================================
-   MESSAGE BOX
-   ========================================== */
+/* MESSAGE BOX */
 
 .message-box {
-    background: white;
-    border: 1px solid #e5e7eb;
-    border-radius: 14px;
+    background: #ffffff;
+    border: 1px solid #e5eaf2;
+    border-radius: 15px;
     padding: 45px 20px;
     text-align: center;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 4px 15px rgba(23, 47, 120, 0.04);
 }
 
 .message-box p {
-    color: #6b7280;
+    color: #7b8495;
     margin-top: 8px;
     font-size: 14px;
+    line-height: 1.6;
 }
 
 .empty-icon {
@@ -129,104 +133,117 @@ body {
 
 .message-box h3 {
     font-size: 20px;
+    color: #172033;
 }
 
-
-/* ==========================================
-   SCAN BUTTON
-   ========================================== */
+/* SCAN BUTTON */
 
 .scan-btn {
     display: inline-block;
     margin-top: 20px;
     padding: 11px 20px;
-
-    background: #1565c0;
-    color: white;
-
+    background: #172f78;
+    color: #ffffff;
     text-decoration: none;
     border-radius: 8px;
-
     font-size: 14px;
     font-weight: 600;
 }
 
 .scan-btn:hover {
-    background: #0d47a1;
+    background: #10245f;
 }
 
-
-/* ==========================================
-   RECEIPT CARD
-   ========================================== */
+/* RECEIPT CARD */
 
 .receipt-card {
-    background: white;
-
-    border: 1px solid #e5e7eb;
+    background: #ffffff;
+    border: 1px solid #e5eaf2;
     border-radius: 14px;
-
-    padding: 18px 20px;
-
+    padding: 20px 23px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 20px;
+    min-width: 0;
+    box-shadow: 0 4px 15px rgba(23, 47, 120, 0.04);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
 
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+.receipt-card:hover {
+    border-color: #cfd8ee;
+    box-shadow: 0 7px 20px rgba(23, 47, 120, 0.07);
 }
 
 .receipt-info {
     flex: 1;
+    min-width: 0;
 }
 
 .receipt-store {
     font-size: 17px;
-    font-weight: 600;
-    margin-bottom: 6px;
+    font-weight: 700;
+    margin-bottom: 7px;
+    overflow-wrap: anywhere;
 }
 
 .receipt-meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
-
-    color: #6b7280;
+    gap: 8px 10px;
+    color: #7b8495;
     font-size: 13px;
 }
 
 .receipt-amount {
     font-size: 18px;
     font-weight: 700;
-    color: #1565c0;
+    color: #172f78;
+    overflow-wrap: anywhere;
 }
 
 .view-btn {
-    padding: 9px 15px;
-
-    background: #1565c0;
-    color: white;
-
+    padding: 10px 17px;
+    min-height: 40px;
+    background: #172f78;
+    color: #ffffff;
     border: none;
-    border-radius: 7px;
-
+    border-radius: 8px;
     cursor: pointer;
     font-size: 13px;
+    font-weight: 600;
+    flex-shrink: 0;
 }
 
 .view-btn:hover {
-    background: #0d47a1;
+    background: #10245f;
 }
 
+/* TABLET */
 
-/* ==========================================
-   MOBILE
-   ========================================== */
-
-@media (max-width: 600px) {
+@media (max-width: 900px) {
+    .history-container {
+        width: 92%;
+    }
 
     .page-header {
-        padding: 17px 5%;
+        padding: 18px 4%;
+    }
+}
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+    .page-header {
+        padding: 17px 4%;
+    }
+
+    .page-header h1 {
+        font-size: 21px;
+    }
+
+    .page-header p {
+        font-size: 13px;
     }
 
     .history-container {
@@ -234,16 +251,60 @@ body {
         margin: 25px auto;
     }
 
+    .history-intro h2 {
+        font-size: 22px;
+    }
+
+    .history-intro p {
+        font-size: 14px;
+    }
+
     .receipt-card {
         flex-direction: column;
         align-items: flex-start;
+        gap: 14px;
+        padding: 17px;
     }
 
-    .view-btn {
+    .receipt-info {
         width: 100%;
     }
 
     .receipt-amount {
         margin-top: 5px;
+    }
+
+    .view-btn {
+        width: 100%;
+        min-height: 44px;
+    }
+
+    .message-box {
+        padding: 35px 17px;
+    }
+}
+
+/* SMALL PHONES */
+
+@media (max-width: 360px) {
+    .header-left {
+        gap: 10px;
+    }
+
+    .back-btn {
+        width: 38px;
+        height: 38px;
+    }
+
+    .page-header h1 {
+        font-size: 19px;
+    }
+
+    .history-container {
+        width: 94%;
+    }
+
+    .receipt-card {
+        padding: 14px;
     }
 }

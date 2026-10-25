@@ -8,320 +8,93 @@
     <title>Receipt History | SHOPIX</title>
 
     <link rel="stylesheet" href="css/receiptHistory.css">
+    <link rel="stylesheet" href="css/shopix.css">
 
-    <!-- =========================
-         GLOBAL SIDEBAR CSS
-    ========================== -->
-
-    <link
-        rel="stylesheet"
-        href="css/sidebar.css">
 </head>
 
-<body>
+<body class="app-page">
 
-        <!-- =========================
-             SIDEBAR
-        ========================== -->
-
-        <aside class="sidebar">
-
-
-            <!-- LOGO -->
-
-            <a
-                href="index.html"
-                class="sidebar-logo">
-
-                <span class="logo-icon">
-                    S
-                </span>
-
-                <span>
-                    SHOPIX
-                </span>
-
+    <header class="site-header">
+        <div class="site-header-inner">
+            <a href="dashboard.html" class="site-brand" aria-label="SHOPIX dashboard">
+                <img src="images/logo.png" alt="" class="site-logo" width="40" height="40">
+                <span class="site-brand-name">SHOPIX</span>
             </a>
 
-
-            <!-- =========================
-                 NAVIGATION
-            ========================== -->
-
-            <nav class="sidebar-nav">
-
-                <p class="nav-title">
-                    MAIN MENU
-                </p>
-
-
-                <!-- Dashboard -->
-
-                <a
-                    href="dashboard.html"
-                    class="nav-item">
-
-                    <span class="nav-icon">
-                        ▦
-                    </span>
-
-                    Dashboard
-
-                </a>
-
-
-                <!-- Receipts -->
-
-                <a
-                    href="receiptHistory.html"
-                    class="nav-item active">
-
-                    <span class="nav-icon">
-                        ▤
-                    </span>
-
-                    Receipts
-
-                </a>
-
-
-                <!-- Upload Receipt -->
-
-                <a
-                    href="receiptScanner.html"
-                    class="nav-item">
-
-                    <span class="nav-icon">
-                        ↑
-                    </span>
-
-                    Upload Receipt
-
-                </a>
-
-
-                <!-- Expenses -->
-
-                <a
-                    href="expenseAnalytics.html"
-                    class="nav-item">
-
-                    <span class="nav-icon">
-                        ◫
-                    </span>
-
-                    Expenses
-
-                </a>
-
-
-                <!-- Reports -->
-
-                <a
-                    href="reports.html"
-                    class="nav-item">
-
-                    <span class="nav-icon">
-                        ▤
-                    </span>
-
-                    Reports
-
-                </a>
-
-
-                <!-- Warranties -->
-
-                <a
-                    href="warranty.html"
-                    class="nav-item">
-
-                    <span class="nav-icon">
-                        ♢
-                    </span>
-
-                    Warranties
-
-                </a>
-
-
-                <!-- Settings -->
-
-                <a
-                    href="settings.html"
-                    class="nav-item">
-
-                    <span class="nav-icon">
-                        ⚙
-                    </span>
-
-                    Settings
-
-                </a>
-
-            </nav>
-
-
-            <!-- =========================
-                 SIDEBAR BOTTOM
-            ========================== -->
-
-            <div class="sidebar-bottom">
-
-
-                <!-- HELP -->
-
-                <a
-                    href="help.html"
-                    class="help-box">
-
-                    <div class="help-icon">
-                        ?
-                    </div>
-
-                    <div>
-
-                        <strong>
-                            Need Help?
-                        </strong>
-
-                        <span>
-                            We're here for you
-                        </span>
-
-                    </div>
-
-                </a>
-
-
-                <!-- LOGOUT -->
-
-                <button
-                    type="button"
-                    id="logoutBtn"
-                    class="logout-btn">
-
-                    <span>
-                        ↪
-                    </span>
-
-                    Logout
-
-                </button>
-
-
-                <!-- DELETE ACCOUNT -->
-
-                <button
-                    type="button"
-                    id="deleteAccountBtn"
-                    class="delete-account-btn">
-
-                    <span>
-                        <svg
-                            width="14"
-                            height="14"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            aria-hidden="true">
-
-                            <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-                            <line x1="12" y1="9" x2="12" y2="13"></line>
-                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
-
-                        </svg>
-                    </span>
-
-                    Delete Account
-
-                </button>
-
-            </div>
-
-        </aside>
+            <a href="settings.html" class="account-link" aria-label="Open account settings" title="Account settings">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="8" r="3.5"></circle>
+                    <path d="M5.5 20c.6-3.2 2.9-5 6.5-5s5.9 1.8 6.5 5"></path>
+                </svg>
+            </a>
+        </div>
+    </header>
 
     <div class="app-shell">
 
-    <!-- HEADER -->
-    <header class="page-header">
+        <!-- MAIN CONTENT -->
+        <main class="history-container">
 
-        <div class="header-left">
+            <!-- PAGE TITLE -->
+            <section class="history-intro">
+                <div>
+                    <p class="page-kicker">Receipt library</p>
+                    <h1>Receipt History</h1>
+                    <p>View, review and manage every receipt saved to your account.</p>
+                </div>
 
-                <button
-                    class="mobile-menu-btn"
-                    type="button"
-                    aria-label="Open navigation menu">
-                    &#9776;
-                </button>
-
-            <a href="dashboard.html" class="back-btn">←</a>
-
-            <div>
-                <h1>Receipt History</h1>
-                <p>View your saved receipts</p>
-            </div>
-        </div>
-
-    </header>
-
-
-    <!-- MAIN CONTENT -->
-    <main class="history-container">
-
-        <!-- PAGE TITLE -->
-        <section class="history-intro">
-            <h2>Your Receipts</h2>
-            <p>All your saved receipts will appear here.</p>
-        </section>
-
-
-        <!-- RECEIPT LIST -->
-        <section id="receiptList" class="receipt-list">
-
-            <!-- Loading -->
-            <div id="loadingMessage" class="message-box">
-                Loading receipts...
-            </div>
-
-            <!-- Empty State -->
-            <div id="emptyMessage" class="message-box" style="display: none;">
-                <div class="empty-icon">🧾</div>
-
-                <h3>No receipts yet</h3>
-
-                <p>
-                    Upload and save your first receipt
-                    to see it here.
-                </p>
-
-                <a href="receiptScanner.html" class="scan-btn">
+                <a href="receiptScanner.html" class="upload-main-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
                     Scan Receipt
                 </a>
-            </div>
+            </section>
 
-        </section>
+            <!-- RECEIPT LIST -->
+            <section id="receiptList" class="receipt-list">
 
-    </main>
+                <!-- Loading -->
+                <div id="loadingMessage" class="message-box">
+                    Loading receipts...
+                </div>
 
+                <!-- Empty State -->
+                <div id="emptyMessage" class="message-box" style="display: none;">
 
-    <!-- JAVASCRIPT -->
-        <!-- =========================
-         GLOBAL SIDEBAR
-    ========================== -->
+                    <div class="empty-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3Z"></path>
+                            <path d="M9 8h6M9 12h6"></path>
+                        </svg>
+                    </div>
 
-    <script
-        type="module"
-        src="js/sidebar.js">
-    </script>
+                    <h3>No receipts yet</h3>
 
-<script type="module" src="js/receiptHistory.js"></script>
+                    <p>
+                        Upload and save your first receipt
+                        to see it here.
+                    </p>
+
+                    <a href="receiptScanner.html" class="scan-btn">
+                        Scan Receipt
+                    </a>
+
+                </div>
+
+            </section>
+
+        </main>
+
+        <!-- EXISTING RECEIPT JAVASCRIPT -->
+        <script type="module" src="js/receiptHistory.js"></script>
 
     </div>
 
+
+    <!-- SHOPIX COMMON HEADER -->
+    <script type="module" src="js/header.js"></script>
 </body>
 
 </html>
