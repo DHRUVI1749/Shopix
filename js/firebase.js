@@ -39,6 +39,30 @@ const rtdb = getDatabase(app);
 
 
 // ==========================================
+// PWA MANIFEST
+// ==========================================
+
+if (
+    typeof document !== "undefined" &&
+    !document.querySelector('link[rel="manifest"]')
+) {
+    const manifestLink = document.createElement("link");
+
+    manifestLink.rel = "manifest";
+    manifestLink.href = "/manifest.webmanifest";
+
+    document.head.appendChild(manifestLink);
+
+    const themeColor = document.createElement("meta");
+
+    themeColor.name = "theme-color";
+    themeColor.content = "#4f46e5";
+
+    document.head.appendChild(themeColor);
+}
+
+
+// ==========================================
 // EXPORT
 // ==========================================
 

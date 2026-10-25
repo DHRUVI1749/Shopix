@@ -110,6 +110,42 @@ const totalWarrantyCount =
 const warrantyReminderText =
     document.getElementById("warrantyReminderText");
 
+const warrantyActionMessage =
+    document.getElementById("warrantyActionMessage");
+
+const editWarrantyModal =
+    document.getElementById("editWarrantyModal");
+
+const closeEditWarrantyModal =
+    document.getElementById("closeEditWarrantyModal");
+
+const cancelEditWarranty =
+    document.getElementById("cancelEditWarranty");
+
+const editWarrantyForm =
+    document.getElementById("editWarrantyForm");
+
+const editProductName =
+    document.getElementById("editProductName");
+
+const editStoreName =
+    document.getElementById("editStoreName");
+
+const editPurchaseDate =
+    document.getElementById("editPurchaseDate");
+
+const editWarrantyDuration =
+    document.getElementById("editWarrantyDuration");
+
+const editWarrantyExpiry =
+    document.getElementById("editWarrantyExpiry");
+
+const editWarrantyMessage =
+    document.getElementById("editWarrantyMessage");
+
+const saveWarrantyEdit =
+    document.getElementById("saveWarrantyEdit");
+
 
 
 /* =========================================================
@@ -161,6 +197,10 @@ let warranties = [];
 let selectedReceipt = null;
 
 let selectedItem = null;
+
+let editingWarrantyId = null;
+
+let warrantyActionTimer = null;
 
 
 
@@ -285,6 +325,45 @@ function toISODate(date) {
             d.getDate()
         ).padStart(2, "0")
     ].join("-");
+
+}
+
+
+
+function showWarrantyAction(
+    message,
+    type = ""
+) {
+
+    if (!warrantyActionMessage) {
+        return;
+    }
+
+
+    clearTimeout(warrantyActionTimer);
+
+    warrantyActionMessage.textContent =
+        message;
+
+    warrantyActionMessage.className =
+        `warranty-action-message ${type}`.trim();
+
+
+    if (message && type === "success") {
+
+        warrantyActionTimer = setTimeout(
+            () => {
+
+                warrantyActionMessage.textContent = "";
+
+                warrantyActionMessage.className =
+                    "warranty-action-message";
+
+            },
+            5000
+        );
+
+    }
 
 }
 
@@ -1347,6 +1426,12 @@ addWarrantyBtn.addEventListener(
             await loadWarranties();
 
 
+            showWarrantyAction(
+                "Warranty added successfully.",
+                "success"
+            );
+
+
             /*
                Ask whether another item should
                be added from the same receipt.
@@ -1635,35 +1720,49 @@ function renderStats() {
 
 
 
-const reminderWarranties = warranties.filter(warranty => {
-    const expiry = normalizeDate(
-        warranty.warrantyExpiryDate
-    );
+    const reminderWarranties =
+        warranties.filter(
+            warranty => {
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+                const expiry =
+                    normalizeDate(
+                        warranty.warrantyExpiryDate
+                    );
 
-    const daysLeft = Math.round(
-        (expiry - today) / (1000 * 60 * 60 * 24)
-    );
+                if (!expiry) {
+                    return false;
+                }
 
-    if ([15, 7, 1, 0].includes(daysLeft)) {
-        sendWarrantyNotification(warranty, daysLeft);
-        return true;
+                const today =
+                    new Date();
+
+                today.setHours(0, 0, 0, 0);
+
+                const daysLeft =
+                    Math.round(
+                        (expiry - today) /
+                        (1000 * 60 * 60 * 24)
+                    );
+
+                return [30, 7, 1].includes(daysLeft);
+
+            }
+        );
+
+
+    if (reminderWarranties.length > 0) {
+
+        warrantyReminderText.textContent =
+            `${reminderWarranties.length} warranty reminder(s) are due today. Reminders appear in your notifications.`;
+
     }
 
-    return false;
-});
+    else {
 
-renderInAppNotifications(reminderWarranties);
+        warrantyReminderText.textContent =
+            "No warranty reminders are due today.";
 
-if (reminderWarranties.length > 0) {
-    warrantyReminderText.textContent =
-        `${reminderWarranties.length} warranty reminder(s) due today.`;
-} else {
-    warrantyReminderText.textContent =
-        "No warranty reminders are due today.";
-}
+    }
 
 
 }
@@ -1965,10 +2064,78 @@ document.addEventListener(
 );
 
 
+editWarrantyForm?.addEventListener(
+    "submit",
+    saveWarrantyEdits
+);
+
+
+closeEditWarrantyModal?.addEventListener(
+    "click",
+    closeEditWarrantyDialog
+);
+
+
+cancelEditWarranty?.addEventListener(
+    "click",
+    closeEditWarrantyDialog
+);
+
+
+editWarrantyModal?.addEventListener(
+    "click",
+    event => {
+
+        if (event.target === editWarrantyModal) {
+
+            closeEditWarrantyDialog();
+
+        }
+
+    }
+);
+
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if (
+            event.key === "Escape" &&
+            editWarrantyModal?.style.display === "flex"
+        ) {
+
+            closeEditWarrantyDialog();
+
+        }
+
+    }
+);
+
+
 
 /* =========================================================
    EDIT
 ========================================================= */
+
+function setEditWarrantyMessage(
+    message,
+    type = ""
+) {
+
+    if (!editWarrantyMessage) {
+        return;
+    }
+
+    editWarrantyMessage.textContent =
+        message;
+
+    editWarrantyMessage.className =
+        `profile-message ${type}`.trim();
+
+}
+
+
 
 function editWarranty(id) {
 
@@ -1979,53 +2146,70 @@ function editWarranty(id) {
         );
 
 
-    if (!warranty) {
+    if (!warranty || !editWarrantyModal) {
         return;
     }
 
 
-    /*
-       Existing records can still be edited,
-       but editing is done through a simple
-       browser prompt so the main new flow
-       stays clean.
-    */
+    editingWarrantyId =
+        id;
 
-    const newDuration =
-        prompt(
-            "Enter new warranty duration:",
-            warranty.warrantyDuration || ""
+    editProductName.value =
+        warranty.productName || "";
+
+    editStoreName.value =
+        warranty.storeName || "";
+
+    editPurchaseDate.value =
+        toISODate(
+            warranty.purchaseDate
         );
 
+    editWarrantyDuration.value =
+        warranty.warrantyDuration || "";
 
-    if (!newDuration) {
-        return;
-    }
-
-
-    const expiry =
-        calculateExpiry(
-            warranty.purchaseDate,
-            newDuration
+    editWarrantyExpiry.value =
+        toISODate(
+            warranty.warrantyExpiryDate
         );
 
+    setEditWarrantyMessage("");
 
-    if (!expiry) {
+    saveWarrantyEdit.disabled =
+        false;
 
-        alert(
-            "Please use a valid duration such as 1 Year or 6 Months."
-        );
+    saveWarrantyEdit.textContent =
+        "Save Changes";
 
-        return;
-
-    }
+    editWarrantyModal.style.display =
+        "flex";
 
 
-    updateExistingWarranty(
-        id,
-        newDuration,
-        expiry
+    requestAnimationFrame(
+        () => {
+
+            editProductName.focus();
+
+        }
     );
+
+}
+
+
+
+function closeEditWarrantyDialog() {
+
+    if (!editWarrantyModal) {
+        return;
+    }
+
+    editWarrantyModal.style.display =
+        "none";
+
+    editingWarrantyId =
+        null;
+
+    setEditWarrantyMessage("");
 
 }
 
@@ -2035,11 +2219,108 @@ function editWarranty(id) {
    UPDATE
 ========================================================= */
 
-async function updateExistingWarranty(
-    id,
-    duration,
-    expiry
-) {
+async function saveWarrantyEdits(event) {
+
+    event.preventDefault();
+
+
+    if (
+        !editingWarrantyId ||
+        !currentUser
+    ) {
+        return;
+    }
+
+
+    const productName =
+        editProductName.value.trim();
+
+    const storeName =
+        editStoreName.value.trim();
+
+    const purchaseValue =
+        editPurchaseDate.value;
+
+    const duration =
+        editWarrantyDuration.value.trim();
+
+    const expiryValue =
+        editWarrantyExpiry.value;
+
+
+    if (!productName) {
+
+        setEditWarrantyMessage(
+            "Please enter the product name.",
+            "error"
+        );
+
+        editProductName.focus();
+
+        return;
+
+    }
+
+
+    if (!purchaseValue || !expiryValue) {
+
+        setEditWarrantyMessage(
+            "Please enter both the purchase and expiry dates.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const purchaseDate =
+        normalizeDate(purchaseValue);
+
+    const expiryDate =
+        normalizeDate(expiryValue);
+
+
+    if (
+        !purchaseDate ||
+        !expiryDate ||
+        expiryDate < purchaseDate
+    ) {
+
+        setEditWarrantyMessage(
+            "The expiry date must be on or after the purchase date.",
+            "error"
+        );
+
+        editWarrantyExpiry.focus();
+
+        return;
+
+    }
+
+
+    if (!duration) {
+
+        setEditWarrantyMessage(
+            "Please enter a warranty duration.",
+            "error"
+        );
+
+        editWarrantyDuration.focus();
+
+        return;
+
+    }
+
+
+    saveWarrantyEdit.disabled =
+        true;
+
+    saveWarrantyEdit.textContent =
+        "Saving...";
+
+    setEditWarrantyMessage("");
+
 
     try {
 
@@ -2049,24 +2330,49 @@ async function updateExistingWarranty(
                 "users",
                 currentUser.uid,
                 "warranties",
-                id
+                editingWarrantyId
             ),
             {
+
+                productName:
+                    productName,
+
+                storeName:
+                    storeName,
+
+                purchaseDate:
+                    toISODate(
+                        purchaseDate
+                    ),
 
                 warrantyDuration:
                     duration,
 
                 warrantyExpiryDate:
-                    toISODate(expiry),
+                    toISODate(
+                        expiryDate
+                    ),
 
                 status:
-                    getWarrantyStatus(expiry)
+                    getWarrantyStatus(
+                        expiryDate
+                    ),
+
+                updatedAt:
+                    serverTimestamp()
 
             }
         );
 
 
         await loadWarranties();
+
+        closeEditWarrantyDialog();
+
+        showWarrantyAction(
+            "Warranty updated successfully.",
+            "success"
+        );
 
     }
 
@@ -2077,11 +2383,21 @@ async function updateExistingWarranty(
             error
         );
 
-
-        alert(
-            "Unable to update warranty.\n\n" +
-            error.message
+        setEditWarrantyMessage(
+            "Unable to update this warranty. " +
+            error.message,
+            "error"
         );
+
+    }
+
+    finally {
+
+        saveWarrantyEdit.disabled =
+            false;
+
+        saveWarrantyEdit.textContent =
+            "Save Changes";
 
     }
 
@@ -2258,8 +2574,13 @@ onAuthStateChanged(
 
         if (!user) {
 
+            const next =
+                window.location.pathname.split("/").pop() +
+                window.location.search +
+                window.location.hash;
+
             window.location.href =
-                "login.html";
+                "loginpg.html?next=" + encodeURIComponent(next);
 
             return;
 
@@ -2309,58 +2630,3 @@ onAuthStateChanged(
 
     }
 );
-
-async function requestWarrantyNotificationPermission() {
-    if (!("Notification" in window)) {
-        alert("Your browser does not support notifications.");
-        return;
-    }
-
-    if (Notification.permission === "granted") {
-        return;
-    }
-
-    if (Notification.permission === "denied") {
-        alert("Notifications are blocked. Allow them in your browser site settings.");
-        return;
-    }
-
-    const permission = await Notification.requestPermission();
-
-    if (permission === "granted") {
-        alert("SHOPIX notifications enabled!");
-    }
-}
-window.requestWarrantyNotificationPermission =
-    requestWarrantyNotificationPermission;
-
-
-function sendWarrantyNotification(warranty, daysLeft) {
-    if (!("Notification" in window)) return;
-    if (Notification.permission !== "granted") return;
-
-    let message;
-
-    if (daysLeft === 15) {
-        message = "Your warranty expires in 15 days.";
-    } else if (daysLeft === 7) {
-        message = "Your warranty expires in 7 days.";
-    } else if (daysLeft === 1) {
-        message = "Your warranty expires tomorrow.";
-    } else if (daysLeft === 0) {
-        message = "Your warranty expires today!";
-    } else {
-        return;
-    }
-
-    const key = `shopix-reminder-${warranty.id}-${warranty.warrantyExpiryDate}-${daysLeft}`;
-
-    if (localStorage.getItem(key)) return;
-
-    new Notification("SHOPIX Warranty Reminder", {
-        body: `${warranty.productName || "Your product"}: ${message}`
-    });
-
-    localStorage.setItem(key, "sent");
-}
-

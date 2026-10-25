@@ -71,6 +71,40 @@ const deleteReceiptBtn =
 
 
 // ==========================================
+// RECEIPT ID
+// ==========================================
+
+function getSelectedReceiptId() {
+
+    const queryId =
+        new URLSearchParams(
+            window.location.search
+        ).get("id")?.trim();
+
+
+    if (
+        queryId &&
+        /^[A-Za-z0-9_-]+$/.test(queryId)
+    ) {
+
+        localStorage.setItem(
+            "selectedReceiptId",
+            queryId
+        );
+
+        return queryId;
+
+    }
+
+
+    return localStorage.getItem(
+        "selectedReceiptId"
+    );
+
+}
+
+
+// ==========================================
 // FORMAT CURRENCY
 // ==========================================
 
@@ -231,9 +265,7 @@ async function loadReceipt(user) {
     // ==========================================
 
     const receiptId =
-        localStorage.getItem(
-            "selectedReceiptId"
-        );
+        getSelectedReceiptId();
 
 
     if (!receiptId) {
@@ -548,9 +580,7 @@ deleteReceiptBtn.addEventListener(
 
 
         const receiptId =
-            localStorage.getItem(
-                "selectedReceiptId"
-            );
+            getSelectedReceiptId();
 
 
         if (!user) {
@@ -681,8 +711,37 @@ onAuthStateChanged(
                 "none";
 
 
-            errorMessage.textContent =
-                "Please login to view this receipt.";
+            const receiptId =
+                getSelectedReceiptId();
+
+            const nextPath =
+                receiptId ?
+                "receiptDetails.html?id=" +
+                encodeURIComponent(receiptId) :
+                "receiptDetails.html";
+
+            const loginLink =
+                document.createElement("a");
+
+            loginLink.href =
+                "loginpg.html?next=" +
+                encodeURIComponent(nextPath);
+
+            loginLink.textContent =
+                "login";
+
+
+            errorMessage.textContent = "";
+
+            errorMessage.append(
+                document.createTextNode(
+                    "Please "
+                ),
+                loginLink,
+                document.createTextNode(
+                    " to view this receipt."
+                )
+            );
 
 
             errorMessage.style.display =

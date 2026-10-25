@@ -190,7 +190,7 @@
                     </strong>
 
                     <p id="warrantyReminderText">
-                        No warranties are currently expiring soon.
+                        No warranty reminders are due today.
                     </p>
 
                 </div>
@@ -645,6 +645,14 @@
                 </div>
 
 
+                <p
+                    id="warrantyActionMessage"
+                    class="warranty-action-message"
+                    role="status"
+                    aria-live="polite">
+                </p>
+
+
 
                 <div class="warranty-table-wrapper">
 
@@ -696,6 +704,156 @@
             </div>
 
         </section>
+
+
+
+        <!-- ================= EDIT WARRANTY MODAL ================= -->
+
+        <div
+            id="editWarrantyModal"
+            class="profile-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="editWarrantyTitle">
+
+            <div class="profile-modal-content warranty-edit-modal-content">
+
+                <div class="profile-modal-header">
+
+                    <div>
+
+                        <h2 id="editWarrantyTitle">
+                            Edit Warranty
+                        </h2>
+
+                        <p class="warranty-edit-subtitle">
+                            Update the product details and warranty dates.
+                        </p>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        id="closeEditWarrantyModal"
+                        class="profile-close-btn"
+                        aria-label="Close edit warranty dialog">
+                        x
+                    </button>
+
+                </div>
+
+
+                <form
+                    id="editWarrantyForm"
+                    novalidate>
+
+                    <div class="warranty-edit-grid">
+
+                        <div class="profile-form-group">
+                            <label for="editProductName">
+                                Product name
+                            </label>
+
+                            <input
+                                type="text"
+                                id="editProductName"
+                                maxlength="120"
+                                required>
+                        </div>
+
+
+                        <div class="profile-form-group">
+                            <label for="editStoreName">
+                                Store
+                            </label>
+
+                            <input
+                                type="text"
+                                id="editStoreName"
+                                maxlength="120">
+                        </div>
+
+
+                        <div class="profile-form-group">
+                            <label for="editPurchaseDate">
+                                Purchase date
+                            </label>
+
+                            <input
+                                type="date"
+                                id="editPurchaseDate"
+                                required>
+                        </div>
+
+
+                        <div class="profile-form-group">
+                            <label for="editWarrantyDuration">
+                                Warranty duration
+                            </label>
+
+                            <input
+                                type="text"
+                                id="editWarrantyDuration"
+                                list="warrantyDurationOptions"
+                                placeholder="For example: 1 Year"
+                                maxlength="40"
+                                required>
+
+                            <datalist id="warrantyDurationOptions">
+                                <option value="6 Months"></option>
+                                <option value="1 Year"></option>
+                                <option value="2 Years"></option>
+                                <option value="3 Years"></option>
+                                <option value="5 Years"></option>
+                            </datalist>
+                        </div>
+
+
+                        <div class="profile-form-group warranty-edit-full">
+                            <label for="editWarrantyExpiry">
+                                Expiry date
+                            </label>
+
+                            <input
+                                type="date"
+                                id="editWarrantyExpiry"
+                                required>
+                        </div>
+
+                    </div>
+
+
+                    <p
+                        id="editWarrantyMessage"
+                        class="profile-message"
+                        role="status"
+                        aria-live="polite">
+                    </p>
+
+
+                    <div class="warranty-edit-actions">
+
+                        <button
+                            type="button"
+                            id="cancelEditWarranty"
+                            class="secondary-warranty-btn">
+                            Cancel
+                        </button>
+
+                        <button
+                            type="submit"
+                            id="saveWarrantyEdit"
+                            class="primary-warranty-btn">
+                            Save Changes
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
 
 
 

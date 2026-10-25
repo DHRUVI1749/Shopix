@@ -24,6 +24,11 @@ const reportCategory = document.getElementById("reportCategory");
 const applyReportBtn = document.getElementById("applyReportBtn");
 const resetReportBtn = document.getElementById("resetReportBtn");
 
+const monthlyReport =
+    document.getElementById("monthlyReport");
+const monthlyOverviewGrid =
+    document.getElementById("monthlyOverviewGrid");
+
 const reportTotalExpense = document.getElementById("reportTotalExpense");
 const totalExpenseSub = document.getElementById("totalExpenseSub");
 
@@ -60,6 +65,10 @@ const profileName = document.getElementById("profileName");
 
 let allReceipts = [];
 let filteredReceipts = [];
+
+const requestedMonthlyKey = getRequestedMonthlyKey();
+
+let monthlyDeepLinkHandled = false;
 
 
 // =====================================================
@@ -99,7 +108,13 @@ const chartColors = [
 auth.onAuthStateChanged(async (user) => {
 
     if (!user) {
-        window.location.href = "loginpg.html";
+        const next =
+            window.location.pathname.split("/").pop() +
+            window.location.search +
+            window.location.hash;
+
+        window.location.href =
+            "loginpg.html?next=" + encodeURIComponent(next);
         return;
     }
 
@@ -108,6 +123,7 @@ auth.onAuthStateChanged(async (user) => {
 
     populateFilters();
     applyFilters();
+    handleMonthlyDeepLink();
 });
 
 
@@ -371,6 +387,325 @@ function getPeriodDates() {
 }
 
 
+function getRequestedMonthlyKey() {
+
+    const value =
+        new URLSearchParams(
+            window.location.search
+        ).get("monthly");
+
+
+    return /^\d{4}-(0[1-9]|1[0-2])$/.test(
+        value || ""
+    )
+        ? value
+        : null;
+}
+
+
+function toMonthKey(date) {
+
+    return (
+        date.getFullYear() +
+        "-" +
+        String(
+            date.getMonth() + 1
+        ).padStart(2, "0")
+    );
+}
+
+
+function shiftMonthKey(key, offset) {
+
+    const [year, month] =
+        key.split("-").map(Number);
+
+    const shifted =
+        new Date(
+            year,
+            month - 1 + offset,
+            1
+        );
+
+
+    return toMonthKey(shifted);
+}
+
+
+function formatMonthLabel(key) {
+
+    const [year, month] =
+        key.split("-").map(Number);
+
+    return new Date(
+        year,
+        month - 1,
+        1
+    ).toLocaleDateString(
+        "en-IN",
+        {
+            month: "long",
+            year: "numeric"
+        }
+    );
+}
+
+
+function getMonthReceipts(monthKey) {
+
+    const selectedCurrency =
+        reportCurrency?.value || "ALL";
+
+    const selectedCategory =
+        reportCategory?.value || "ALL";
+
+
+    return allReceipts.filter(receipt => {
+
+        const receiptDate =
+            normalizeDate(
+                receipt.purchaseDate ||
+                receipt.createdAt
+            );
+
+
+        if (
+            !receiptDate ||
+            toMonthKey(receiptDate) !== monthKey
+        ) {
+            return false;
+        }
+
+
+        if (
+            selectedCurrency !== "ALL" &&
+            normalizeCurrency(
+                receipt.currency
+            ) !== selectedCurrency
+        ) {
+            return false;
+        }
+
+
+        if (
+            selectedCategory !== "ALL" &&
+            String(
+                receipt.category || ""
+            ).trim() !== selectedCategory
+        ) {
+            return false;
+        }
+
+
+        return true;
+
+    });
+}
+
+
+function renderMonthlyOverview() {
+
+    if (!monthlyOverviewGrid) {
+        return;
+    }
+
+
+    const currentMonthKey =
+        toMonthKey(new Date());
+
+    const previousMonthKey =
+        shiftMonthKey(
+            currentMonthKey,
+            -1
+        );
+
+    const monthKeys = [
+        previousMonthKey,
+        currentMonthKey
+    ];
+
+
+    if (
+        requestedMonthlyKey &&
+        !monthKeys.includes(requestedMonthlyKey)
+    ) {
+
+        monthKeys.unshift(
+            requestedMonthlyKey
+        );
+    }
+
+
+    monthlyOverviewGrid.innerHTML =
+        monthKeys.map(monthKey => {
+
+            const receipts =
+                getMonthReceipts(monthKey);
+
+            const currencyGroups =
+                groupByCurrency(receipts);
+
+            const currencies =
+                Object.keys(currencyGroups);
+
+            const topCategory =
+                receipts.length > 0
+                    ? getTopCategory(
+                        getCategoryTotals(receipts)
+                    )
+                    : null;
+
+            const isCurrentMonth =
+                monthKey === currentMonthKey;
+
+            const isHighlighted =
+                monthKey === requestedMonthlyKey;
+
+            const statusLabel =
+                isCurrentMonth
+                    ? "LIVE MONTH-TO-DATE"
+                    : "COMPLETED MONTH";
+
+
+            let amountHTML =
+                `<span class="summary-empty">—</span>`;
+
+
+            if (currencies.length === 1) {
+
+                const currency =
+                    currencies[0];
+
+                amountHTML =
+                    formatCurrency(
+                        currencyGroups[currency].total,
+                        currency
+                    );
+
+            }
+            else if (currencies.length > 1) {
+
+                amountHTML =
+                    currencies
+                        .map(currency => `
+                            <div class="multi-amount">
+                                <strong>
+                                    ${formatCurrency(
+                                        currencyGroups[currency].total,
+                                        currency
+                                    )}
+                                </strong>
+
+                                <small>
+                                    ${escapeHTML(currency)}
+                                </small>
+                            </div>
+                        `)
+                        .join("");
+            }
+
+
+            const receiptText =
+                `${receipts.length} receipt${receipts.length === 1 ? "" : "s"}`;
+
+
+            const categoryText =
+                topCategory
+                    ? `Top category: ${escapeHTML(topCategory.category)}`
+                    : "No category data";
+
+
+            return `
+                <article
+                    class="monthly-summary-item${isHighlighted ? " is-highlighted" : ""}"
+                    data-month-key="${monthKey}">
+
+                    <div class="monthly-summary-header">
+
+                        <div>
+                            <span class="monthly-summary-label">
+                                ${statusLabel}
+                            </span>
+
+                            <h4>
+                                ${formatMonthLabel(monthKey)}
+                            </h4>
+                        </div>
+
+                        ${isCurrentMonth ? `
+                            <span class="monthly-month-badge">
+                                Live
+                            </span>
+                        ` : ""}
+
+                    </div>
+
+                    <div class="monthly-summary-amount">
+                        ${amountHTML}
+                    </div>
+
+                    <p class="monthly-summary-meta">
+                        ${receiptText}
+                    </p>
+
+                    <p class="monthly-summary-category">
+                        ${categoryText}
+                    </p>
+
+                </article>
+            `;
+        })
+        .join("");
+}
+
+
+function handleMonthlyDeepLink() {
+
+    if (
+        monthlyDeepLinkHandled ||
+        !monthlyReport
+    ) {
+        return;
+    }
+
+
+    const hasMonthlyTarget =
+        Boolean(requestedMonthlyKey) ||
+        window.location.hash === "#monthlyReport";
+
+
+    if (!hasMonthlyTarget) {
+        return;
+    }
+
+
+    monthlyDeepLinkHandled =
+        true;
+
+
+    requestAnimationFrame(() => {
+
+        const target =
+            requestedMonthlyKey
+                ? monthlyOverviewGrid?.querySelector(
+                    `[data-month-key="${requestedMonthlyKey}"]`
+                )
+                : monthlyReport;
+
+
+        (target || monthlyReport).scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+
+        monthlyReport.focus({
+            preventScroll: true
+        });
+
+    });
+}
+
+
 // =====================================================
 // DATE HELPERS
 // =====================================================
@@ -617,6 +952,7 @@ function applyFilters() {
 
 function renderReport() {
 
+    renderMonthlyOverview();
     renderSummary();
     renderCategoryReport();
     renderCurrencySummary();

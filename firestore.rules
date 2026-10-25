@@ -1,0 +1,129 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function ownsAccount(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    function hasOnlyFields(allowedFields) {
+      return request.resource.data.diff(resource.data)
+        .affectedKeys()
+        .hasOnly(allowedFields);
+    }
+
+    match /users/{uid} {
+      allow read, write: if ownsAccount(uid);
+
+      match /pushTokens/{tokenId} {
+        allow read, delete: if ownsAccount(uid);
+
+        allow create: if ownsAccount(uid) &&
+          tokenId.matches('^[a-f0-9]{64}$') &&
+          request.resource.data.keys().hasAll([
+            'fid',
+            'type',
+            'userAgent',
+            'createdAt',
+            'updatedAt',
+            'lastSeenAt'
+          ]) &&
+          request.resource.data.keys().hasOnly([
+            'fid',
+            'type',
+            'userAgent',
+            'createdAt',
+            'updatedAt',
+            'lastSeenAt'
+          ]) &&
+          request.resource.data.fid is string &&
+          request.resource.data.fid.size() > 0 &&
+          request.resource.data.fid.size() <= 4096 &&
+          request.resource.data.type == 'web' &&
+          request.resource.data.userAgent is string &&
+          request.resource.data.userAgent.size() <= 400 &&
+          request.resource.data.createdAt == request.time &&
+          request.resource.data.updatedAt == request.time &&
+          request.resource.data.lastSeenAt == request.time;
+
+        allow update: if ownsAccount(uid) &&
+          tokenId.matches('^[a-f0-9]{64}$') &&
+          request.resource.data.fid == resource.data.fid &&
+          request.resource.data.type == resource.data.type &&
+          request.resource.data.createdAt == resource.data.createdAt &&
+          request.resource.data.updatedAt == request.time &&
+          request.resource.data.lastSeenAt == request.time &&
+          request.resource.data.keys().hasOnly([
+            'fid',
+            'type',
+            'userAgent',
+            'createdAt',
+            'updatedAt',
+            'lastSeenAt'
+          ]) &&
+          request.resource.data.userAgent is string &&
+          request.resource.data.userAgent.size() <= 400;
+      }
+
+      match /notificationPreferences/{preferenceId} {
+        allow read, delete: if ownsAccount(uid) &&
+          preferenceId == 'settings';
+
+        allow create: if ownsAccount(uid) &&
+          preferenceId == 'settings' &&
+          request.resource.data.keys().hasAll([
+            'pushEnabled',
+            'monthlyReports',
+            'warrantyReminders',
+            'updatedAt'
+          ]) &&
+          request.resource.data.keys().hasOnly([
+            'pushEnabled',
+            'monthlyReports',
+            'warrantyReminders',
+            'updatedAt'
+          ]) &&
+          request.resource.data.pushEnabled is bool &&
+          request.resource.data.monthlyReports is bool &&
+          request.resource.data.warrantyReminders is bool &&
+          request.resource.data.updatedAt == request.time;
+
+        allow update: if ownsAccount(uid) &&
+          preferenceId == 'settings' &&
+          hasOnlyFields([
+            'pushEnabled',
+            'monthlyReports',
+            'warrantyReminders',
+            'updatedAt'
+          ]) &&
+          request.resource.data.pushEnabled is bool &&
+          request.resource.data.monthlyReports is bool &&
+          request.resource.data.warrantyReminders is bool &&
+          request.resource.data.updatedAt == request.time;
+      }
+
+      match /notifications/{notificationId} {
+        allow read, delete: if ownsAccount(uid);
+
+        allow update: if ownsAccount(uid) &&
+          hasOnlyFields(['readAt']) &&
+          request.resource.data.readAt == request.time;
+      }
+
+      match /{collection}/{documentId} {
+        allow read, write: if ownsAccount(uid) &&
+          collection != 'pushTokens' &&
+          collection != 'notificationPreferences' &&
+          collection != 'notifications';
+      }
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

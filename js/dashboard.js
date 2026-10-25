@@ -48,6 +48,13 @@ import {
     remove
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
 
+import {
+    getSafeNotificationRoute,
+    markAllNotificationsRead as markAllNotificationsReadInFirestore,
+    markNotificationRead,
+    subscribeToNotifications
+} from "./notifications.js";
+
 
 // ==========================================
 // GET HTML ELEMENTS
@@ -3046,15 +3053,6 @@ async function loadDashboardWarranties(user) {
             warranties
         );
 
-
-        // ==================================
-        // SHOW NOTIFICATIONS
-        // ==================================
-
-        renderWarrantyNotifications(
-            warranties
-        );
-
     }
     catch (error) {
 
@@ -3103,11 +3101,6 @@ async function loadDashboardWarranties(user) {
 
         }
 
-
-        // Clear notification UI
-        renderWarrantyNotifications(
-            []
-        );
 
     }
 
@@ -3544,493 +3537,70 @@ function escapeDashboardHTML(
 
 
 // ==========================================
-// SHOPIX - IN-APP WARRANTY NOTIFICATIONS
+// NOTIFICATION CENTER
 // ==========================================
 
+let notificationUnsubscribe = null;
+let currentNotifications = [];
 
-// ==========================================
-// GET NOTIFICATION STORAGE KEY
-// ==========================================
 
-function getNotificationStorageKey() {
+function formatNotificationDate(value) {
 
-    if (!currentUser) {
-        return "shopix_read_notifications";
+    if (!(value instanceof Date)) {
+        return "Just now";
     }
 
-    return (
-        "shopix_read_notifications_" +
-        currentUser.uid
-    );
-
-}
-
-
-// ==========================================
-// GET READ NOTIFICATION IDS
-// ==========================================
-
-function getReadNotificationIds() {
-
-    try {
-
-        const key =
-            getNotificationStorageKey();
-
-        const saved =
-            localStorage.getItem(
-                key
-            );
-
-        if (!saved) {
-            return [];
+    return new Intl.DateTimeFormat(
+        "en-IN",
+        {
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+            hour: "numeric",
+            minute: "2-digit"
         }
-
-        const parsed =
-            JSON.parse(saved);
-
-        return Array.isArray(parsed)
-            ? parsed
-            : [];
-
-    }
-    catch (error) {
-
-        console.error(
-            "Notification storage error:",
-            error
-        );
-
-        return [];
-
-    }
+    ).format(value);
 
 }
 
 
-// ==========================================
-// SAVE READ NOTIFICATION IDS
-// ==========================================
-
-function saveReadNotificationIds(
-    ids
-) {
-
-    try {
-
-        localStorage.setItem(
-            getNotificationStorageKey(),
-            JSON.stringify(ids)
-        );
-
-    }
-    catch (error) {
-
-        console.error(
-            "Unable to save notification state:",
-            error
-        );
-
-    }
-
-}
-
-
-// ==========================================
-// BUILD WARRANTY NOTIFICATIONS
-// ==========================================
-
-function buildWarrantyNotifications(
-    warranties
-) {
-
-    const today =
-        new Date();
-
-    today.setHours(
-        0,
-        0,
-        0,
-        0
-    );
-
-
-    const notifications = [];
-
-
-    warranties.forEach(
-        function (warranty) {
-
-            const expiryDate =
-                parseWarrantyDate(
-                    warranty.warrantyExpiryDate
-                );
-
-            if (!expiryDate) {
-                return;
-            }
-
-
-            const difference =
-                expiryDate.getTime() -
-                today.getTime();
-
-
-            const daysLeft =
-                Math.ceil(
-                    difference /
-                    (
-                        1000 *
-                        60 *
-                        60 *
-                        24
-                    )
-                );
-
-
-            const productName =
-                warranty.productName ||
-                "Warranty Item";
-
-
-            const storeName =
-                warranty.storeName ||
-                "Unknown Store";
-
-
-            const formattedDate =
-                formatWarrantyDate(
-                    expiryDate
-                );
-
-
-            // ==================================
-            // EXPIRED
-            // ==================================
-
-            if (daysLeft < 0) {
-
-                notifications.push({
-
-                    id:
-                        `${warranty.id}_expired`,
-
-                    warrantyId:
-                        warranty.id,
-
-                    type:
-                        "expired",
-
-                    icon:
-                        "!",
-
-                    title:
-                        "Warranty expired",
-
-                    message:
-                        `${productName} warranty expired on ${formattedDate}.`,
-
-                    productName:
-                        productName,
-
-                    storeName:
-                        storeName,
-
-                    expiryDate:
-                        expiryDate
-
-                });
-
-                return;
-
-            }
-
-
-            // ==================================
-            // EXPIRES TODAY
-            // ==================================
-
-            if (daysLeft === 0) {
-
-                notifications.push({
-
-                    id:
-                        `${warranty.id}_today`,
-
-                    warrantyId:
-                        warranty.id,
-
-                    type:
-                        "today",
-
-                    icon:
-                        "!",
-
-                    title:
-                        "Warranty expires today",
-
-                    message:
-                        `${productName} warranty expires today.`,
-
-                    productName:
-                        productName,
-
-                    storeName:
-                        storeName,
-
-                    expiryDate:
-                        expiryDate
-
-                });
-
-                return;
-
-            }
-
-
-            // ==================================
-            // 7 DAYS BEFORE
-            // ==================================
-
-            if (daysLeft <= 7) {
-
-                notifications.push({
-
-                    id:
-                        `${warranty.id}_7`,
-
-                    warrantyId:
-                        warranty.id,
-
-                    type:
-                        "warning",
-
-                    icon:
-                        "!",
-
-                    title:
-                        "Warranty expiring soon",
-
-                    message:
-                        `${productName} warranty expires in ${daysLeft} days.`,
-
-                    productName:
-                        productName,
-
-                    storeName:
-                        storeName,
-
-                    expiryDate:
-                        expiryDate
-
-                });
-
-                return;
-
-            }
-
-
-            // ==================================
-            // 30 DAYS BEFORE
-            // ==================================
-
-            if (daysLeft <= 30) {
-
-                notifications.push({
-
-                    id:
-                        `${warranty.id}_30`,
-
-                    warrantyId:
-                        warranty.id,
-
-                    type:
-                        "warning",
-
-                    icon:
-                        "i",
-
-                    title:
-                        "Warranty reminder",
-
-                    message:
-                        `${productName} warranty expires in ${daysLeft} days.`,
-
-                    productName:
-                        productName,
-
-                    storeName:
-                        storeName,
-
-                    expiryDate:
-                        expiryDate
-
-                });
-
-            }
-
-        }
-    );
-
-
-    // ==================================
-    // SORT NOTIFICATIONS
-    // ==================================
-
-    notifications.sort(
-        function (a, b) {
-
-            const dateA =
-                a.expiryDate
-                    ? a.expiryDate.getTime()
-                    : Infinity;
-
-            const dateB =
-                b.expiryDate
-                    ? b.expiryDate.getTime()
-                    : Infinity;
-
-            return dateA - dateB;
-
-        }
-    );
-
-
-    return notifications;
-
-}
-
-
-// ==========================================
-// RENDER WARRANTY NOTIFICATIONS
-// ==========================================
-
-function renderWarrantyNotifications(
-    warranties
-) {
+function setNotificationEmptyState(title, message) {
 
     if (!notificationList) {
         return;
     }
 
+    notificationList.innerHTML = `
+        <div class="notification-empty">
 
-    const notifications =
-        buildWarrantyNotifications(
-            warranties
-        );
-
-
-    const readIds =
-        getReadNotificationIds();
-
-
-    // ==================================
-    // NO NOTIFICATIONS
-    // ==================================
-
-    if (
-        notifications.length === 0
-    ) {
-
-        notificationList.innerHTML = `
-            <div class="notification-empty">
-
-                <div class="notification-empty-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
-                        <path d="M10 21h4"></path>
-                    </svg>
-                </div>
-
-                <strong>
-                    No notifications
-                </strong>
-
-                <span>
-                    Your warranty reminders will appear here.
-                </span>
-
+            <div class="notification-empty-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
+                    <path d="M10 21h4"></path>
+                </svg>
             </div>
-        `;
+
+            <strong>
+                ${escapeDashboardHTML(title)}
+            </strong>
+
+            <span>
+                ${escapeDashboardHTML(message)}
+            </span>
+
+        </div>
+    `;
+
+}
 
 
-        if (notificationSummary) {
+function updateNotificationBadge(notifications) {
 
-            notificationSummary.textContent =
-                "No new notifications";
-
+    const unreadCount = notifications.filter(
+        function (notification) {
+            return !notification.readAt;
         }
-
-
-        if (notificationBadge) {
-
-            notificationBadge.style.display =
-                "none";
-
-            notificationBadge.textContent =
-                "0";
-
-        }
-
-
-        return;
-    }
-
-
-    // ==================================
-    // REMOVE OLD READ IDS
-    // ==================================
-
-    const existingNotificationIds =
-        notifications.map(
-            function (notification) {
-
-                return notification.id;
-
-            }
-        );
-
-
-    const validReadIds =
-        readIds.filter(
-            function (id) {
-
-                return existingNotificationIds.includes(
-                    id
-                );
-
-            }
-        );
-
-
-    saveReadNotificationIds(
-        validReadIds
-    );
-
-
-    // ==================================
-    // UNREAD COUNT
-    // ==================================
-
-    const unreadNotifications =
-        notifications.filter(
-            function (notification) {
-
-                return !validReadIds.includes(
-                    notification.id
-                );
-
-            }
-        );
-
-
-    const unreadCount =
-        unreadNotifications.length;
-
-
-    // ==================================
-    // UPDATE BADGE
-    // ==================================
+    ).length;
 
     if (notificationBadge) {
 
@@ -4039,7 +3609,7 @@ function renderWarrantyNotifications(
             notificationBadge.textContent =
                 unreadCount > 99
                     ? "99+"
-                    : unreadCount;
+                    : String(unreadCount);
 
             notificationBadge.style.display =
                 "flex";
@@ -4057,20 +3627,20 @@ function renderWarrantyNotifications(
 
     }
 
-
-    // ==================================
-    // UPDATE SUMMARY
-    // ==================================
-
     if (notificationSummary) {
 
-        if (unreadCount === 0) {
+        if (notifications.length === 0) {
+
+            notificationSummary.textContent =
+                "No notifications yet";
+
+        }
+        else if (unreadCount === 0) {
 
             notificationSummary.textContent =
                 "All notifications read";
 
         }
-
         else {
 
             notificationSummary.textContent =
@@ -4085,143 +3655,151 @@ function renderWarrantyNotifications(
 
     }
 
+}
 
-    // ==================================
-    // CLEAR LIST
-    // ==================================
+
+async function openNotification(notification) {
+
+    if (!currentUser) {
+        return;
+    }
+
+    const route =
+        getSafeNotificationRoute(
+            notification.route
+        );
+
+    if (!notification.readAt) {
+
+        try {
+
+            await markNotificationRead(
+                currentUser.uid,
+                notification.id
+            );
+
+        }
+        catch (error) {
+
+            console.error(
+                "Unable to mark notification as read:",
+                error
+            );
+
+        }
+
+    }
+
+    if (route) {
+        window.location.href = route;
+    }
+
+}
+
+
+function renderNotifications(notifications) {
+
+    currentNotifications =
+        Array.isArray(notifications)
+            ? notifications
+            : [];
+
+    updateNotificationBadge(
+        currentNotifications
+    );
+
+    if (!notificationList) {
+        return;
+    }
+
+    if (currentNotifications.length === 0) {
+
+        setNotificationEmptyState(
+            "No notifications",
+            "Monthly reports and warranty reminders will appear here."
+        );
+
+        return;
+
+    }
 
     notificationList.innerHTML =
         "";
 
-
-    // ==================================
-    // CREATE NOTIFICATION ITEMS
-    // ==================================
-
-    notifications.forEach(
+    currentNotifications.forEach(
         function (notification) {
 
-            const isRead =
-                validReadIds.includes(
-                    notification.id
-                );
+            const unread =
+                !notification.readAt;
 
+            const isMonthly =
+                notification.type === "monthly_report";
 
             const item =
-                document.createElement(
-                    "div"
-                );
-
+                document.createElement("div");
 
             item.className =
                 "notification-item" +
-                (
-                    isRead
-                        ? ""
-                        : " unread"
-                );
-
+                (unread ? " unread" : "");
 
             item.dataset.notificationId =
                 notification.id;
 
-
-            const iconClass =
-                notification.type === "expired"
-                    ? "expired"
-                    : "warning";
-
+            item.setAttribute("role", "button");
+            item.setAttribute("tabindex", "0");
 
             item.innerHTML = `
-
-                <div class="
-                    notification-icon
-                    ${iconClass}
-                ">
-                    ${notification.icon}
+                <div class="notification-icon${isMonthly ? "" : " warning"}">
+                    ${isMonthly ? "i" : "!"}
                 </div>
 
                 <div class="notification-content">
 
                     <strong>
-                        ${escapeDashboardHTML(
-                            notification.title
-                        )}
+                        ${escapeDashboardHTML(notification.title)}
                     </strong>
 
-                    <span>
-                        ${escapeDashboardHTML(
-                            notification.message
-                        )}
-                    </span>
+                    <p>
+                        ${escapeDashboardHTML(notification.message)}
+                    </p>
 
                     <small>
-                        ${escapeDashboardHTML(
-                            notification.storeName
-                        )}
-                        •
-                        Expires
-                        ${formatWarrantyDate(
-                            notification.expiryDate
-                        )}
+                        ${isMonthly ? "Monthly report" : "Warranty reminder"}
+                        &middot;
+                        ${escapeDashboardHTML(formatNotificationDate(notification.createdAt))}
                     </small>
 
                 </div>
 
-                ${
-                    isRead
-                        ? ""
-                        : `
-                            <span
-                                class="notification-unread-dot"
-                                aria-label="Unread"
-                            ></span>
-                        `
-                }
-
+                ${unread ? '<span class="notification-unread-dot"></span>' : ""}
             `;
-
-
-            // ==================================
-            // CLICK NOTIFICATION
-            // ==================================
 
             item.addEventListener(
                 "click",
                 function () {
+                    openNotification(notification);
+                }
+            );
 
-                    markNotificationAsRead(
-                        notification.id
-                    );
+            item.addEventListener(
+                "keydown",
+                function (event) {
 
+                    if (
+                        event.key === "Enter" ||
+                        event.key === " "
+                    ) {
 
-                    item.classList.remove(
-                        "unread"
-                    );
+                        event.preventDefault();
 
-
-                    const unreadDot =
-                        item.querySelector(
-                            ".notification-unread-dot"
-                        );
-
-
-                    if (unreadDot) {
-
-                        unreadDot.remove();
+                        openNotification(notification);
 
                     }
-
-
-                    updateNotificationBadgeFromDOM();
 
                 }
             );
 
-
-            notificationList.appendChild(
-                item
-            );
+            notificationList.appendChild(item);
 
         }
     );
@@ -4229,115 +3807,93 @@ function renderWarrantyNotifications(
 }
 
 
-// ==========================================
-// MARK NOTIFICATION AS READ
-// ==========================================
+function initializeNotificationCenter(user) {
 
-function markNotificationAsRead(
-    notificationId
-) {
-
-    if (!notificationId) {
+    if (!notificationList || !user) {
         return;
     }
 
+    if (notificationUnsubscribe) {
 
-    const readIds =
-        getReadNotificationIds();
+        notificationUnsubscribe();
 
-
-    if (
-        !readIds.includes(
-            notificationId
-        )
-    ) {
-
-        readIds.push(
-            notificationId
-        );
+        notificationUnsubscribe = null;
 
     }
 
-
-    saveReadNotificationIds(
-        readIds
+    setNotificationEmptyState(
+        "Loading notifications...",
+        "Please wait."
     );
-
-}
-
-
-// ==========================================
-// UPDATE BADGE FROM DOM
-// ==========================================
-
-function updateNotificationBadgeFromDOM() {
-
-    if (!notificationList) {
-        return;
-    }
-
-
-    const unreadItems =
-        notificationList.querySelectorAll(
-            ".notification-item.unread"
-        );
-
-
-    const unreadCount =
-        unreadItems.length;
-
-
-    if (notificationBadge) {
-
-        if (unreadCount > 0) {
-
-            notificationBadge.textContent =
-                unreadCount > 99
-                    ? "99+"
-                    : unreadCount;
-
-            notificationBadge.style.display =
-                "flex";
-
-        }
-
-        else {
-
-            notificationBadge.textContent =
-                "0";
-
-            notificationBadge.style.display =
-                "none";
-
-        }
-
-    }
-
 
     if (notificationSummary) {
+        notificationSummary.textContent =
+            "Loading notifications...";
+    }
 
-        if (unreadCount === 0) {
+    if (notificationBadge) {
+        notificationBadge.style.display =
+            "none";
+    }
 
-            notificationSummary.textContent =
-                "All notifications read";
+    try {
 
-        }
+        notificationUnsubscribe =
+            subscribeToNotifications(
+                user.uid,
+                renderNotifications,
+                function (error) {
 
-        else {
+                    console.error(
+                        "Notification listener error:",
+                        error
+                    );
 
-            notificationSummary.textContent =
-                unreadCount +
-                (
-                    unreadCount === 1
-                        ? " new notification"
-                        : " new notifications"
-                );
+                    currentNotifications = [];
 
-        }
+                    updateNotificationBadge([]);
+
+                    setNotificationEmptyState(
+                        "Unable to load notifications",
+                        "Please check your connection and try again."
+                    );
+
+                }
+            );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Notification setup error:",
+            error
+        );
+
+        setNotificationEmptyState(
+            "Unable to load notifications",
+            "Please refresh the page and try again."
+        );
 
     }
 
 }
+
+
+function stopNotificationCenter() {
+
+    if (notificationUnsubscribe) {
+
+        notificationUnsubscribe();
+
+        notificationUnsubscribe = null;
+
+    }
+
+    currentNotifications = [];
+
+}
+
+
 
 
 // ==========================================
@@ -4376,74 +3932,34 @@ if (markAllNotificationsRead) {
 
     markAllNotificationsRead.addEventListener(
         "click",
-        function (event) {
+        async function (event) {
 
             event.preventDefault();
 
             event.stopPropagation();
 
 
-            if (!notificationList) {
+            if (!currentUser) {
                 return;
             }
 
 
-            const unreadItems =
-                notificationList.querySelectorAll(
-                    ".notification-item.unread"
+            try {
+
+                await markAllNotificationsReadInFirestore(
+                    currentUser.uid,
+                    currentNotifications
                 );
 
+            }
+            catch (error) {
 
-            const readIds =
-                getReadNotificationIds();
+                console.error(
+                    "Unable to mark all notifications as read:",
+                    error
+                );
 
-
-            unreadItems.forEach(
-                function (item) {
-
-                    const notificationId =
-                        item.dataset.notificationId;
-
-
-                    if (
-                        notificationId &&
-                        !readIds.includes(
-                            notificationId
-                        )
-                    ) {
-
-                        readIds.push(
-                            notificationId
-                        );
-
-                    }
-
-
-                    item.classList.remove(
-                        "unread"
-                    );
-
-
-                    const dot =
-                        item.querySelector(
-                            ".notification-unread-dot"
-                        );
-
-
-                    if (dot) {
-                        dot.remove();
-                    }
-
-                }
-            );
-
-
-            saveReadNotificationIds(
-                readIds
-            );
-
-
-            updateNotificationBadgeFromDOM();
+            }
 
         }
     );
@@ -4662,6 +4178,11 @@ onAuthStateChanged(
                 user
             );
 
+
+            initializeNotificationCenter(
+                user
+            );
+
         }
 
         else {
@@ -4677,6 +4198,9 @@ onAuthStateChanged(
 
             currentUser =
                 null;
+
+
+            stopNotificationCenter();
 
 
             if (receiptList) {

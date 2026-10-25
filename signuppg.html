@@ -517,6 +517,7 @@
         import {
             createUserWithEmailAndPassword,
             signInWithEmailAndPassword,
+            sendEmailVerification,
             updateProfile,
             GoogleAuthProvider,
             signInWithPopup
@@ -1101,6 +1102,8 @@
 
                     let user = null;
 
+                    let isNewAccount = false;
+
                     try {
 
                         const userCredential =
@@ -1112,6 +1115,8 @@
 
                         user =
                             userCredential.user;
+
+                        isNewAccount = true;
 
                     }
                     catch (createError) {
@@ -1220,6 +1225,41 @@
                             "Retry Saving Profile";
 
                         return;
+
+                    }
+
+
+                    // ==================================
+                    // EMAIL VERIFICATION
+                    // ==================================
+
+                    if (isNewAccount && !user.emailVerified) {
+
+                        try {
+
+                            await sendEmailVerification(
+                                user
+                            );
+
+                            showMessage(
+                                "Account created successfully! " +
+                                "Check your inbox to verify your email.",
+                                "success"
+                            );
+
+                        }
+                        catch (verificationError) {
+
+                            // Verification can be retried
+                            // from Settings without blocking
+                            // an otherwise successful signup.
+
+                            console.error(
+                                "Verification email error:",
+                                verificationError
+                            );
+
+                        }
 
                     }
 

@@ -369,6 +369,187 @@ input {
 }
 
 
+.monthly-overview-card {
+    margin-bottom: 22px;
+
+    scroll-margin-top: 24px;
+
+    outline: none;
+}
+
+.monthly-overview-card:focus-visible {
+    outline: 2px solid #1565c0;
+    outline-offset: 3px;
+}
+
+.monthly-live-badge {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    padding: 6px 10px;
+
+    border-radius: 999px;
+
+    background: #e8f8ef;
+
+    color: #16834b;
+
+    font-size: 9px;
+    font-weight: 700;
+
+    letter-spacing: 0.5px;
+
+    text-transform: uppercase;
+}
+
+.monthly-live-badge::before {
+    content: "";
+
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background: #16834b;
+}
+
+.monthly-overview-card .card-header {
+    flex-wrap: wrap;
+}
+
+.monthly-overview-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fit, minmax(220px, 1fr));
+
+    gap: 14px;
+}
+
+.monthly-summary-item {
+    padding: 18px;
+
+    border: 1px solid #e4eaf2;
+
+    border-radius: 12px;
+
+    background: #fbfcfe;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.monthly-summary-item.is-highlighted {
+    border-color: #1565c0;
+
+    background: #f3f8ff;
+
+    box-shadow:
+        0 0 0 3px rgba(21, 101, 192, 0.1);
+}
+
+.monthly-summary-header {
+    display: flex;
+
+    align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 12px;
+}
+
+.monthly-summary-label {
+    display: block;
+
+    color: #98a2b3;
+
+    font-size: 8px;
+    font-weight: 700;
+
+    letter-spacing: 0.6px;
+}
+
+.monthly-summary-header h4 {
+    margin-top: 4px;
+
+    color: #1d2939;
+
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.monthly-month-badge {
+    flex-shrink: 0;
+
+    padding: 4px 8px;
+
+    border-radius: 999px;
+
+    background: #eaf3ff;
+
+    color: #1565c0;
+
+    font-size: 8px;
+    font-weight: 700;
+
+    text-transform: uppercase;
+}
+
+.monthly-summary-amount {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 8px 16px;
+
+    margin-top: 16px;
+
+    color: #1d2939;
+
+    font-size: 20px;
+    font-weight: 700;
+
+    word-break: break-word;
+}
+
+.monthly-summary-amount .multi-amount {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 2px;
+}
+
+.monthly-summary-amount .multi-amount strong {
+    font-size: 16px;
+}
+
+.monthly-summary-amount .multi-amount small {
+    color: #98a2b3;
+
+    font-size: 8px;
+    font-weight: 600;
+}
+
+.monthly-summary-meta,
+.monthly-summary-category {
+    margin-top: 6px;
+
+    color: #7b8798;
+
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+.monthly-summary-category {
+    margin-top: 3px;
+}
+
+
 /* =========================================================
    SUMMARY
 ========================================================= */
@@ -1832,6 +2013,7 @@ input {
 
     /* KEEP SECTIONS TOGETHER */
 
+    .monthly-overview-card,
     .report-summary-grid,
     .reports-grid,
     .monthly-report-card,

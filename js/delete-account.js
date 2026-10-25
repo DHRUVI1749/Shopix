@@ -100,6 +100,8 @@ function ensureDeleteAccountModal() {
                 <li>Your profile information</li>
                 <li>All uploaded receipts</li>
                 <li>All warranty records</li>
+                <li>Push notification registrations</li>
+                <li>Notification history</li>
                 <li>Your profile avatar</li>
             </ul>
 
@@ -182,6 +184,9 @@ export function initDeleteAccount() {
     //                 expenseAnalytics, smart-insights,
     //                 warranty, dashboard)
     //   - warranties (warranty, dashboard)
+    //   - pushTokens (FCM device registrations)
+    //   - notificationPreferences (per-user settings)
+    //   - notifications (server-created notification history)
     //
     // Firestore does NOT remove sub-collections when
     // the parent document is deleted, so every one of
@@ -189,7 +194,10 @@ export function initDeleteAccount() {
 
     const USER_SUBCOLLECTIONS = [
         "receipts",
-        "warranties"
+        "warranties",
+        "pushTokens",
+        "notificationPreferences",
+        "notifications"
     ];
 
     const deleteAccountButton =
@@ -530,7 +538,10 @@ export function initDeleteAccount() {
 
         const counts = {
             receipts: 0,
-            warranties: 0
+            warranties: 0,
+            pushTokens: 0,
+            notificationPreferences: 0,
+            notifications: 0
         };
 
         // --------------------------------
@@ -871,15 +882,16 @@ export function initDeleteAccount() {
 
         try {
 
-            // Notification read state is stored
-            // per user id.
+            localStorage.removeItem(
+                "selectedReceiptId"
+            );
+
+            // Remove read-state keys written by
+            // versions that used browser-only
+            // notifications.
 
             localStorage.removeItem(
                 "shopix_read_notifications_" + uid
-            );
-
-            localStorage.removeItem(
-                "selectedReceiptId"
             );
 
         }
@@ -1040,7 +1052,7 @@ export function initDeleteAccount() {
 
             const counts =
                 await runDeleteStep(
-                    "Deleting your receipts and warranties",
+                    "Deleting your receipts, warranties, and notifications",
                     "firestore",
                     function () {
                         return deleteUserFirestoreData(
@@ -1389,8 +1401,8 @@ export function initDeleteAccount() {
             if (deleted.firestore) {
 
                 message =
-                    "Your receipts, warranties and profile were " +
-                    "deleted, but " +
+                "Your receipts, warranties, notification data, and " +
+                "profile were deleted, but " +
                     message.charAt(0).toLowerCase() +
                     message.slice(1);
 
@@ -1419,7 +1431,9 @@ export function initDeleteAccount() {
         const removed = [];
 
         if (deleted.firestore) {
-            removed.push("your receipts, warranties and profile");
+            removed.push(
+                "your receipts, warranties, notification data, and profile"
+            );
         }
 
         if (deleted.storage) {

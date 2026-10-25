@@ -502,6 +502,76 @@
 
 
         // ==========================================
+        // POST-LOGIN DESTINATION
+        // ==========================================
+
+        const ALLOWED_POST_LOGIN_PAGES = new Set([
+            "dashboard.html",
+            "reports.html",
+            "warranty.html",
+            "receiptHistory.html",
+            "receiptDetails.html",
+            "settings.html",
+            "expenses.html"
+        ]);
+
+        function getPostLoginDestination() {
+
+            const next =
+                new URLSearchParams(
+                    window.location.search
+                ).get("next");
+
+
+            if (!next) {
+                return "dashboard.html";
+            }
+
+
+            try {
+
+                const target =
+                    new URL(
+                        next,
+                        window.location.href
+                    );
+
+
+                const page =
+                    target.pathname
+                        .split("/")
+                        .pop();
+
+
+                if (
+                    target.origin !==
+                    window.location.origin ||
+                    !ALLOWED_POST_LOGIN_PAGES.has(page)
+                ) {
+
+                    return "dashboard.html";
+
+                }
+
+
+                return (
+                    page +
+                    target.search +
+                    target.hash
+                );
+
+            }
+
+            catch (error) {
+
+                return "dashboard.html";
+
+            }
+
+        }
+
+
+        // ==========================================
         // LOGOUT / BACK BUTTON PROTECTION
         // ==========================================
 
@@ -802,7 +872,7 @@
                         function () {
 
                             window.location.href =
-                                "dashboard.html";
+                                getPostLoginDestination();
 
                         },
                         800
@@ -1093,14 +1163,14 @@
 
 
                     // ==================================
-                    // REDIRECT TO DASHBOARD
+                    // REDIRECT AFTER LOGIN
                     // ==================================
 
                     setTimeout(
                         function () {
 
                             window.location.href =
-                                "dashboard.html";
+                                getPostLoginDestination();
 
                         },
                         800

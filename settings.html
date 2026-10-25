@@ -175,6 +175,51 @@
                         Change Password
                     </button>
 
+
+                    <div class="email-verification-panel">
+
+                        <div class="email-verification-copy">
+
+                            <div class="email-verification-heading">
+
+                                <strong>
+                                    Email verification
+                                </strong>
+
+                                <span
+                                    id="emailVerificationStatus"
+                                    class="email-verification-status unverified">
+                                    Checking...
+                                </span>
+
+                            </div>
+
+                            <p>
+                                Verify your email to protect account
+                                recovery and sign-in. Notifications are
+                                managed below.
+                            </p>
+
+                        </div>
+
+                        <button
+                            type="button"
+                            id="sendVerificationBtn"
+                            class="secondary-btn">
+                            Send Verification Email
+                        </button>
+
+                    </div>
+
+
+                    <p
+                        id="emailVerificationMessage"
+                        class="email-verification-message"
+                        role="status"
+                        aria-live="polite">
+                    </p>
+
+
                     <div class="account-actions">
 
                         <button
@@ -213,6 +258,139 @@
                         </button>
 
                     </div>
+
+                </div>
+
+
+                <!-- NOTIFICATIONS -->
+                <div class="settings-card notification-settings-card">
+
+                    <div class="card-heading">
+
+                        <div class="heading-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
+                                <path d="M10 21h4"></path>
+                            </svg>
+                        </div>
+
+                        <div>
+                            <h2>Notifications</h2>
+                            <p>Choose how SHOPIX keeps you updated.</p>
+                        </div>
+
+                    </div>
+
+                    <div class="notification-settings-status-row">
+
+                        <span>Push status</span>
+
+                        <strong
+                            id="pushNotificationStatus"
+                            class="notification-settings-status">
+                            Checking...
+                        </strong>
+
+                    </div>
+
+                    <label
+                        class="notification-setting-row"
+                        for="pushEnabledToggle">
+
+                        <span class="notification-setting-copy">
+
+                            <strong>Push notifications</strong>
+
+                            <small>
+                                Monthly reports and warranty reminders
+                                through your registered browsers.
+                            </small>
+
+                        </span>
+
+                        <span class="notification-switch">
+
+                            <input
+                                type="checkbox"
+                                id="pushEnabledToggle">
+
+                            <span class="notification-switch-track"></span>
+
+                        </span>
+
+                    </label>
+
+                    <div class="notification-setting-group">
+
+                        <label
+                            class="notification-setting-row compact"
+                            for="monthlyReportsToggle">
+
+                            <span class="notification-setting-copy">
+
+                                <strong>Monthly expense reports</strong>
+
+                                <small>
+                                    A report ready notice at the start
+                                    of each month.
+                                </small>
+
+                            </span>
+
+                            <span class="notification-switch">
+
+                                <input
+                                    type="checkbox"
+                                    id="monthlyReportsToggle">
+
+                                <span class="notification-switch-track"></span>
+
+                            </span>
+
+                        </label>
+
+                        <label
+                            class="notification-setting-row compact"
+                            for="warrantyRemindersToggle">
+
+                            <span class="notification-setting-copy">
+
+                                <strong>Warranty reminders</strong>
+
+                                <small>
+                                    Reminders 30, 7, and 1 day before
+                                    a warranty expires.
+                                </small>
+
+                            </span>
+
+                            <span class="notification-switch">
+
+                                <input
+                                    type="checkbox"
+                                    id="warrantyRemindersToggle">
+
+                                <span class="notification-switch-track"></span>
+
+                            </span>
+
+                        </label>
+
+                    </div>
+
+                    <p
+                        id="pushNotificationMessage"
+                        class="notification-settings-message"
+                        role="status"
+                        aria-live="polite">
+                    </p>
+
+                    <p class="notification-settings-note">
+                        In-app notifications still appear in the
+                        dashboard when push is off. Browser permission
+                        can be changed at any time in your browser
+                        settings.
+                    </p>
 
                 </div>
 

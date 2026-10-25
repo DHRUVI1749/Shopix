@@ -1,0 +1,18 @@
+{
+  "name": "SHOPIX - Smart Receipt & Shopping Assistant",
+  "short_name": "SHOPIX",
+  "description": "Track receipts, expenses, warranties, and monthly spending reports with SHOPIX.",
+  "start_url": "/dashboard.html",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f6f7fb",
+  "theme_color": "#4f46e5",
+  "icons": [
+    {
+      "src": "/images/logo.png",
+      "sizes": "1024x1024",
+      "type": "image/webp",
+      "purpose": "any"
+    }
+  ]
+}
