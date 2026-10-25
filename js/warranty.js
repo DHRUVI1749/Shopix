@@ -1655,6 +1655,7 @@ const reminderWarranties = warranties.filter(warranty => {
     return false;
 });
 
+renderInAppNotifications(reminderWarranties);
 
 if (reminderWarranties.length > 0) {
     warrantyReminderText.textContent =
@@ -2362,3 +2363,4 @@ function sendWarrantyNotification(warranty, daysLeft) {
 
     localStorage.setItem(key, "sent");
 }
+
