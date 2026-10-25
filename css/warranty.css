@@ -1099,3 +1099,61 @@
     }
 
 }
+/* IN-APP WARRANTY NOTIFICATIONS */
+
+.notification-btn {
+    position: relative;
+}
+
+.notification-count {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    box-sizing: border-box;
+    border-radius: 50%;
+    background: #e53935;
+    color: white;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.notification-panel {
+    display: none;
+    position: absolute;
+    top: 45px;
+    right: 0;
+    width: 320px;
+    max-width: 85vw;
+    padding: 15px;
+    box-sizing: border-box;
+    background: white;
+    color: #222;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+}
+
+.notification-panel.show {
+    display: block;
+}
+
+.notification-item {
+    padding: 12px 5px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+}
+
+.notification-item.unread {
+    background: #f0f7ff;
+}
+
+.notification-item p {
+    margin: 5px 0;
+    font-size: 13px;
+}

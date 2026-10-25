@@ -1655,6 +1655,7 @@ const reminderWarranties = warranties.filter(warranty => {
     return false;
 });
 
+renderInAppNotifications(reminderWarranties);
 
 if (reminderWarranties.length > 0) {
     warrantyReminderText.textContent =
@@ -2354,4 +2355,142 @@ function sendWarrantyNotification(warranty, daysLeft) {
 
     localStorage.setItem(key, "sent");
 }
+let inAppNotifications = [];
 
+function renderInAppNotifications(reminderWarranties) {
+    inAppNotifications = reminderWarranties.map(warranty => {
+        const expiry = normalizeDate(warranty.warrantyExpiryDate);
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const daysLeft = Math.round(
+            (expiry - today) / (1000 * 60 * 60 * 24)
+        );
+
+        let message = "";
+
+        if (daysLeft === 15) {
+            message = "Warranty expires in 15 days.";
+        } else if (daysLeft === 7) {
+            message = "Warranty expires in 7 days.";
+        } else if (daysLeft === 1) {
+            message = "Warranty expires tomorrow.";
+        } else if (daysLeft === 0) {
+            message = "Warranty expires today!";
+        }
+
+        return {
+            id: `shopix-inapp-${warranty.id}-${daysLeft}`,
+            productName: warranty.productName || "Your product",
+            message: message
+        };
+    });
+
+    ensureInAppNotificationPanel();
+    renderInAppNotificationPanel();
+}
+
+function ensureInAppNotificationPanel() {
+    const bell = document.querySelector(".notification-btn");
+
+    if (!bell) return;
+
+    const container = bell.parentElement;
+    container.style.position = "relative";
+
+    let badge = container.querySelector(".notification-count");
+
+    if (!badge) {
+        badge = document.createElement("span");
+        badge.className = "notification-count";
+        badge.style.display = "none";
+        bell.appendChild(badge);
+    }
+
+    let panel = container.querySelector(".notification-panel");
+
+    if (!panel) {
+        panel = document.createElement("div");
+        panel.className = "notification-panel";
+
+        panel.innerHTML = `
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+                <strong>Notifications</strong>
+                <button type="button" id="markAllRead"
+                    style="border:none;background:none;color:#2563eb;">
+                    Mark all read
+                </button>
+            </div>
+            <div id="notificationList"></div>
+        `;
+
+        container.appendChild(panel);
+
+        bell.addEventListener("click", function (event) {
+            event.stopPropagation();
+            panel.classList.toggle("show");
+        });
+
+        panel.addEventListener("click", event => {
+            event.stopPropagation();
+        });
+
+        panel.querySelector("#markAllRead").addEventListener("click", () => {
+            inAppNotifications.forEach(item => {
+                localStorage.setItem(item.id, "read");
+            });
+
+            renderInAppNotificationPanel();
+        });
+
+        document.addEventListener("click", event => {
+            if (!container.contains(event.target)) {
+                panel.classList.remove("show");
+            }
+        });
+    }
+}
+
+function renderInAppNotificationPanel() {
+    const bell = document.querySelector(".notification-btn");
+    if (!bell) return;
+
+    const container = bell.parentElement;
+    const badge = container.querySelector(".notification-count");
+    const list = container.querySelector("#notificationList");
+
+    if (!badge || !list) return;
+
+    const unread = inAppNotifications.filter(item =>
+        localStorage.getItem(item.id) !== "read"
+    );
+
+    badge.textContent = unread.length;
+    badge.style.display = unread.length ? "flex" : "none";
+
+    if (inAppNotifications.length === 0) {
+        list.innerHTML = `<p>No warranty reminders right now.</p>`;
+        return;
+    }
+
+    list.innerHTML = inAppNotifications.map(item => {
+        const isUnread = localStorage.getItem(item.id) !== "read";
+
+        return `
+            <div class="notification-item ${isUnread ? "unread" : ""}"
+                 data-id="${item.id}">
+                <strong>${item.productName}</strong>
+                <p>${item.message}</p>
+                <small>${isUnread ? "Unread" : "Read"}</small>
+            </div>
+        `;
+    }).join("");
+
+    list.querySelectorAll(".notification-item").forEach(item => {
+        item.addEventListener("click", () => {
+            localStorage.setItem(item.dataset.id, "read");
+            renderInAppNotificationPanel();
+        });
+    });
+}
