@@ -178,5 +178,6 @@ module.exports = {
     buildPushMessage,
     chunkArray,
     isInvalidTarget,
+    loadPushTargets,
     sendPushToUser
 };

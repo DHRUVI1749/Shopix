@@ -16,7 +16,7 @@ const {
     getReminderStage
 } = require("./warranty");
 
-const { sendPushToUser } = require("./push");
+const { loadPushTargets, sendPushToUser } = require("./push");
 const { buildAppUrl } = require("./url");
 
 const AUTH_PAGE_SIZE = 1000;
@@ -27,32 +27,40 @@ const DEFAULT_PREFERENCES = Object.freeze({
     warrantyReminders: true
 });
 
-function createMonthlyStats(period) {
+function createMonthlyStats(period, dryRun) {
     return {
+        dryRun: Boolean(dryRun),
         period: period.periodKey,
         users: 0,
         created: 0,
+        wouldCreate: 0,
         alreadyExists: 0,
         skipped: 0,
         failed: 0,
         pushSent: 0,
+        wouldSend: 0,
         pushSkipped: 0,
-        pushFailed: 0
+        pushFailed: 0,
+        pushTargets: 0
     };
 }
 
-function createWarrantyStats(todayDateKey) {
+function createWarrantyStats(todayDateKey, dryRun) {
     return {
+        dryRun: Boolean(dryRun),
         date: todayDateKey,
         users: 0,
         due: 0,
         created: 0,
+        wouldCreate: 0,
         alreadyExists: 0,
         skipped: 0,
         failed: 0,
         pushSent: 0,
+        wouldSend: 0,
         pushSkipped: 0,
-        pushFailed: 0
+        pushFailed: 0,
+        pushTargets: 0
     };
 }
 
@@ -144,6 +152,31 @@ async function createNotificationOnce(db, ref, data) {
             created: true
         };
     });
+}
+
+async function inspectDryRunNotification(options) {
+    const snapshot = await options.ref.get();
+
+    if (snapshot.exists) {
+        options.stats.alreadyExists += 1;
+        return;
+    }
+
+    options.stats.wouldCreate += 1;
+
+    if (!options.preferences.pushEnabled) {
+        options.stats.pushSkipped += 1;
+        return;
+    }
+
+    const targets = await loadPushTargets(options.db, options.uid);
+    options.stats.pushTargets += targets.length;
+
+    if (targets.length) {
+        options.stats.wouldSend += 1;
+    } else {
+        options.stats.pushSkipped += 1;
+    }
 }
 
 function buildMonthlyNotification(options) {
@@ -284,12 +317,14 @@ async function sendMonthlyReports(options) {
     const appBaseUrl = options.appBaseUrl;
     const logger = options.logger;
     const sendPush = options.sendPush || sendPushToUser;
+    const dryRun = options.dryRun === true;
     const period = getPreviousMonthPeriod(now, timeZone);
-    const stats = createMonthlyStats(period);
+    const stats = createMonthlyStats(period, dryRun);
 
     logInfo(logger, "Starting monthly SHOPIX report notifications.", {
         periodKey: period.periodKey,
-        timeZone
+        timeZone,
+        dryRun
     });
 
     for await (const user of listAllUsers(auth)) {
@@ -315,6 +350,17 @@ async function sendMonthlyReports(options) {
                 .doc(user.uid)
                 .collection("notifications")
                 .doc(notification.id);
+
+            if (dryRun) {
+                await inspectDryRunNotification({
+                    db,
+                    uid: user.uid,
+                    ref: notificationRef,
+                    preferences,
+                    stats
+                });
+                continue;
+            }
 
             const claim = await createNotificationOnce(
                 db,
@@ -353,12 +399,21 @@ async function sendMonthlyReports(options) {
                 logger,
                 "Monthly report notification failed.",
                 error,
-                { uid: user.uid, periodKey: period.periodKey }
+                {
+                    ...(dryRun ? {} : { uid: user.uid }),
+                    periodKey: period.periodKey
+                }
             );
         }
     }
 
-    logInfo(logger, "Monthly SHOPIX report notifications finished.", stats);
+    logInfo(
+        logger,
+        dryRun
+            ? "Monthly SHOPIX report dry run finished. No notifications were written and no pushes were sent."
+            : "Monthly SHOPIX report notifications finished.",
+        stats
+    );
 
     if (stats.failed > 0) {
         const error = new Error(
@@ -379,12 +434,14 @@ async function sendWarrantyReminders(options) {
     const appBaseUrl = options.appBaseUrl;
     const logger = options.logger;
     const sendPush = options.sendPush || sendPushToUser;
+    const dryRun = options.dryRun === true;
     const todayDateKey = getTodayDateKey(now, timeZone);
-    const stats = createWarrantyStats(todayDateKey);
+    const stats = createWarrantyStats(todayDateKey, dryRun);
 
     logInfo(logger, "Starting SHOPIX warranty reminders.", {
         todayDateKey,
-        timeZone
+        timeZone,
+        dryRun
     });
 
     for await (const user of listAllUsers(auth)) {
@@ -442,6 +499,17 @@ async function sendWarrantyReminders(options) {
                     .collection("notifications")
                     .doc(notification.id);
 
+                if (dryRun) {
+                    await inspectDryRunNotification({
+                        db,
+                        uid: user.uid,
+                        ref: notificationRef,
+                        preferences,
+                        stats
+                    });
+                    continue;
+                }
+
                 const claim = await createNotificationOnce(
                     db,
                     notificationRef,
@@ -480,12 +548,18 @@ async function sendWarrantyReminders(options) {
                 logger,
                 "Warranty reminder preparation failed.",
                 error,
-                { uid: user.uid }
+                dryRun ? {} : { uid: user.uid }
             );
         }
     }
 
-    logInfo(logger, "SHOPIX warranty reminders finished.", stats);
+    logInfo(
+        logger,
+        dryRun
+            ? "SHOPIX warranty reminder dry run finished. No notifications were written and no pushes were sent."
+            : "SHOPIX warranty reminders finished.",
+        stats
+    );
 
     if (stats.failed > 0) {
         const error = new Error(

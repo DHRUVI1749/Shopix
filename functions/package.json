@@ -1,13 +1,14 @@
 {
   "name": "shopix-notifications",
-  "description": "Scheduled SHOPIX expense reports and warranty reminders with Firebase Cloud Messaging",
+  "description": "Scheduled SHOPIX expense reports and warranty reminders for GitHub Actions and Firebase Cloud Messaging",
   "private": true,
   "main": "src/index.js",
   "engines": {
     "node": "22"
   },
   "scripts": {
-    "lint": "node --check src/index.js && node --check src/notifications.js && node --check src/push.js && node --check src/url.js && node --check src/dates.js && node --check src/warranty.js",
+    "lint": "node --check src/index.js && node --check src/run-notifications.js && node --check src/notifications.js && node --check src/push.js && node --check src/url.js && node --check src/dates.js && node --check src/warranty.js",
+    "notify": "node src/run-notifications.js",
     "test": "node --test"
   },
   "dependencies": {

@@ -1872,14 +1872,12 @@ const daysLeft = Math.round(
 
 let reminderMessage = "";
 
-if (daysLeft === 15) {
-    reminderMessage = "Reminder: Expires in 15 days";
+if (daysLeft === 30) {
+    reminderMessage = "Reminder: Expires in 30 days";
 } else if (daysLeft === 7) {
     reminderMessage = "Reminder: Expires in 7 days";
 } else if (daysLeft === 1) {
     reminderMessage = "Reminder: Expires tomorrow";
-} else if (daysLeft === 0) {
-    reminderMessage = "Warranty expires today!";
 }
 
 

@@ -10,6 +10,7 @@ const {
 
 function createFakeDatabase(seed) {
     const documents = new Map();
+    let transactionCount = 0;
 
     Object.entries(seed || {}).forEach(function ([uid, collections]) {
         Object.entries(collections || {}).forEach(
@@ -114,6 +115,8 @@ function createFakeDatabase(seed) {
             };
         },
         runTransaction: async function (callback) {
+            transactionCount += 1;
+
             return callback({
                 get: async function (ref) {
                     const data = documents.get(ref.path);
@@ -143,6 +146,9 @@ function createFakeDatabase(seed) {
         documents,
         get: function (uid, collectionName, id) {
             return documents.get(`${uid}/${collectionName}/${id}`);
+        },
+        getTransactionCount: function () {
+            return transactionCount;
         }
     };
 }
@@ -204,8 +210,11 @@ test("monthly notifications are created once per user and period", async functio
         "monthly_report_2026-09"
     );
 
+    assert.equal(first.dryRun, false);
     assert.equal(first.created, 1);
+    assert.equal(first.wouldCreate, 0);
     assert.equal(first.pushSent, 1);
+    assert.equal(first.wouldSend, 0);
     assert.equal(second.created, 0);
     assert.equal(second.alreadyExists, 1);
     assert.equal(pushes.length, 1);
@@ -378,9 +387,12 @@ test("warranty reminders use 30, 7, and 1 day stages without duplicates", async 
         "warranty_due-7_2026-11-01_7"
     );
 
+    assert.equal(first.dryRun, false);
     assert.equal(first.due, 3);
     assert.equal(first.created, 3);
+    assert.equal(first.wouldCreate, 0);
     assert.equal(first.pushSent, 3);
+    assert.equal(first.wouldSend, 0);
     assert.equal(second.due, 3);
     assert.equal(second.alreadyExists, 3);
     assert.equal(pushes.length, 3);
@@ -534,5 +546,179 @@ test("changing a warranty expiry creates a new reminder", async function () {
             return path.startsWith("user-1/notifications/");
         }).length,
         2
+    );
+});
+
+test("monthly dry run inspects candidates without writes or pushes", async function () {
+    const fake = createFakeDatabase({
+        "user-1": {
+            notificationPreferences: {
+                settings: {
+                    pushEnabled: true,
+                    monthlyReports: true
+                }
+            },
+            pushTokens: {
+                "token-1": { fid: "fid-1" },
+                "token-2": { fid: "fid-2" }
+            }
+        },
+        "user-2": {
+            notificationPreferences: {
+                settings: {
+                    pushEnabled: true,
+                    monthlyReports: true
+                }
+            },
+            notifications: {
+                "monthly_report_2026-09": {
+                    type: "monthly_report"
+                }
+            }
+        },
+        "user-3": {
+            notificationPreferences: {
+                settings: {
+                    pushEnabled: true,
+                    monthlyReports: false
+                }
+            }
+        }
+    });
+    const before = new Map(fake.documents);
+    let pushCount = 0;
+
+    const stats = await sendMonthlyReports({
+        db: fake.db,
+        auth: createAuth([
+            createUser({ uid: "user-1" }),
+            createUser({ uid: "user-2" }),
+            createUser({ uid: "user-3" })
+        ]),
+        dryRun: true,
+        sendPush: async function () {
+            pushCount += 1;
+            return {
+                status: "sent",
+                successCount: 1,
+                failureCount: 0
+            };
+        },
+        now: new Date("2026-10-01T03:30:00.000Z"),
+        timeZone: "Asia/Kolkata",
+        appBaseUrl: "https://shopix.example.com"
+    });
+
+    assert.equal(stats.dryRun, true);
+    assert.equal(stats.period, "2026-09");
+    assert.equal(stats.users, 3);
+    assert.equal(stats.wouldCreate, 1);
+    assert.equal(stats.alreadyExists, 1);
+    assert.equal(stats.skipped, 1);
+    assert.equal(stats.created, 0);
+    assert.equal(stats.pushSent, 0);
+    assert.equal(stats.wouldSend, 1);
+    assert.equal(stats.pushTargets, 2);
+    assert.equal(stats.pushSkipped, 0);
+    assert.equal(stats.failed, 0);
+    assert.equal(pushCount, 0);
+    assert.equal(fake.getTransactionCount(), 0);
+    assert.deepEqual(
+        Array.from(fake.documents.entries()),
+        Array.from(before.entries())
+    );
+});
+
+test("warranty dry run inspects due stages and existing reminders", async function () {
+    const fake = createFakeDatabase({
+        "user-1": {
+            notificationPreferences: {
+                settings: {
+                    pushEnabled: true,
+                    warrantyReminders: true
+                }
+            },
+            pushTokens: {
+                "token-1": { fid: "fid-1" }
+            },
+            warranties: [
+                {
+                    id: "due-30",
+                    data: {
+                        productName: "Laptop",
+                        warrantyExpiryDate: "2026-11-24"
+                    }
+                },
+                {
+                    id: "due-7",
+                    data: {
+                        productName: "Headphones",
+                        warrantyExpiryDate: "2026-11-01"
+                    }
+                },
+                {
+                    id: "due-1",
+                    data: {
+                        productName: "Phone",
+                        warrantyExpiryDate: "2026-10-26"
+                    }
+                }
+            ],
+            notifications: {
+                "warranty_due-7_2026-11-01_7": {
+                    type: "warranty_reminder"
+                }
+            }
+        },
+        "user-2": {
+            notificationPreferences: {
+                settings: {
+                    pushEnabled: true,
+                    warrantyReminders: false
+                }
+            }
+        }
+    });
+    const before = new Map(fake.documents);
+    let pushCount = 0;
+
+    const stats = await sendWarrantyReminders({
+        db: fake.db,
+        auth: createAuth([
+            createUser({ uid: "user-1" }),
+            createUser({ uid: "user-2" })
+        ]),
+        dryRun: true,
+        sendPush: async function () {
+            pushCount += 1;
+            return {
+                status: "sent",
+                successCount: 1,
+                failureCount: 0
+            };
+        },
+        now: new Date("2026-10-25T03:30:00.000Z"),
+        timeZone: "Asia/Kolkata",
+        appBaseUrl: "https://shopix.example.com"
+    });
+
+    assert.equal(stats.dryRun, true);
+    assert.equal(stats.date, "2026-10-25");
+    assert.equal(stats.users, 2);
+    assert.equal(stats.due, 3);
+    assert.equal(stats.wouldCreate, 2);
+    assert.equal(stats.alreadyExists, 1);
+    assert.equal(stats.skipped, 1);
+    assert.equal(stats.created, 0);
+    assert.equal(stats.pushSent, 0);
+    assert.equal(stats.wouldSend, 2);
+    assert.equal(stats.pushTargets, 2);
+    assert.equal(stats.pushSkipped, 0);
+    assert.equal(stats.failed, 0);
+    assert.equal(pushCount, 0);
+    assert.equal(fake.getTransactionCount(), 0);
+    assert.deepEqual(
+        Array.from(fake.documents.entries()),
+        Array.from(before.entries())
     );
 });

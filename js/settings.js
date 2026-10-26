@@ -26,8 +26,7 @@ import {
     getNotificationPreferences,
     isPushConfigured,
     normalizeNotificationPreferences,
-    saveNotificationPreferences,
-    watchPushRegistration
+    saveNotificationPreferences
 } from "./notifications.js";
 
 
@@ -280,9 +279,6 @@ async function loadNotificationSettings(user) {
                 "Push notifications are not available in this deployment yet. Your category preferences are still saved.",
                 ""
             );
-        }
-        else if (notificationPreferences.pushEnabled) {
-            watchPushRegistration(user.uid);
         }
 
     }

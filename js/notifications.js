@@ -18,11 +18,18 @@ import {
 import {
     getMessaging,
     isSupported,
+    onMessage,
     onRegistered,
     onUnregistered,
     register,
     unregister
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-messaging.js";
+
+import {
+    createForegroundGate,
+    isForegroundVisible,
+    normalizeForegroundPayload
+} from "./notification-foreground.mjs";
 
 
 // ==========================================
@@ -32,9 +39,11 @@ import {
 // Paste the Web Push certificate public key from
 // Firebase Console > Project settings > Cloud
 // Messaging > Web Push certificates.
-export const FCM_VAPID_KEY = "";
+export const FCM_VAPID_KEY = "BCNM03pYXaHIQzX_RieM2iA0kc_pxedNv7vqNPi1FMR2Ws_MV8s9SNMngwI9C9TqJT7NTJp05iNHUluDeDeccIg";
 
 const PUSH_REGISTRATION_TIMEOUT = 20000;
+const PUSH_UNREGISTER_TIMEOUT = 5000;
+const FOREGROUND_TOAST_DURATION = 8000;
 const NOTIFICATION_LIMIT = 50;
 const USER_AGENT_LIMIT = 400;
 
@@ -45,11 +54,17 @@ export const DEFAULT_NOTIFICATION_PREFERENCES = Object.freeze({
 });
 
 let messagingInstance = null;
+let messageUnsubscribe = null;
 let registeredUnsubscribe = null;
 let unregisteredUnsubscribe = null;
 let pushUid = null;
+let pushRegistrationIntent = null;
+let pushRegistrationGeneration = 0;
 let resolveRegistration = null;
 let rejectRegistration = null;
+let finishUnregisterCleanup = null;
+
+const foregroundGate = createForegroundGate();
 
 
 // ==========================================
@@ -308,6 +323,240 @@ export function getSafeNotificationRoute(route) {
     }
 }
 
+function handleNotificationClickMessage(event) {
+    const payload = event.data;
+
+    if (
+        !payload ||
+        payload.isFirebaseMessaging !== true ||
+        payload.messageType !== "notification-clicked"
+    ) {
+        return;
+    }
+
+    const data = payload.data && typeof payload.data === "object"
+        ? payload.data
+        : {};
+    const link = payload.fcmOptions &&
+        typeof payload.fcmOptions.link === "string"
+        ? payload.fcmOptions.link
+        : "";
+    const route =
+        getSafeNotificationRoute(link) ||
+        getSafeNotificationRoute(data.route);
+
+    if (!route) {
+        return;
+    }
+
+    const uid = pushUid;
+    const notificationId =
+        typeof data.notificationId === "string" &&
+        data.notificationId.length <= 200
+            ? data.notificationId
+            : "";
+
+    if (uid && notificationId) {
+        markNotificationRead(uid, notificationId).catch(function (error) {
+            console.warn(
+                "Unable to mark the clicked notification as read:",
+                error
+            );
+        });
+    }
+
+    window.location.assign(route);
+}
+
+if (typeof navigator !== "undefined" && "serviceWorker" in navigator) {
+    navigator.serviceWorker.addEventListener(
+        "message",
+        handleNotificationClickMessage
+    );
+}
+
+
+// ==========================================
+// FOREGROUND NOTIFICATIONS
+// ==========================================
+
+function getToastRegion() {
+    let region = document.getElementById("shopixToastRegion");
+
+    if (region) {
+        return region;
+    }
+
+    region = document.createElement("div");
+    region.id = "shopixToastRegion";
+    region.className = "shopix-toast-region";
+    region.setAttribute("role", "region");
+    region.setAttribute("aria-label", "Notifications");
+
+    document.body.appendChild(region);
+    return region;
+}
+
+function removeForegroundToast(toast) {
+    if (!toast || !toast.isConnected) {
+        return;
+    }
+
+    toast.remove();
+
+    const region = document.getElementById("shopixToastRegion");
+
+    if (region && !region.children.length) {
+        region.remove();
+    }
+}
+
+async function openForegroundNotification(uid, notification) {
+    const route = getSafeNotificationRoute(notification.route);
+
+    if (!route) {
+        return;
+    }
+
+    try {
+        await markNotificationRead(uid, notification.id);
+    } catch (error) {
+        console.warn(
+            "Unable to mark the foreground notification as read:",
+            error
+        );
+    }
+
+    window.location.assign(route);
+}
+
+function showForegroundToast(uid, notification) {
+    const region = getToastRegion();
+    const toast = document.createElement("div");
+    const icon = document.createElement("span");
+    const copy = document.createElement("div");
+    const title = document.createElement("strong");
+    const body = document.createElement("p");
+    const closeButton = document.createElement("button");
+    const route = getSafeNotificationRoute(notification.route);
+
+    toast.className = "shopix-toast";
+    toast.setAttribute("role", "status");
+
+    icon.className = "shopix-toast-icon";
+    icon.setAttribute("aria-hidden", "true");
+    icon.textContent = "!";
+
+    copy.className = "shopix-toast-copy";
+    title.textContent = notification.title;
+    body.textContent = notification.body;
+
+    closeButton.type = "button";
+    closeButton.className = "shopix-toast-close";
+    closeButton.setAttribute("aria-label", "Dismiss notification");
+    closeButton.textContent = "\u00d7";
+
+    copy.appendChild(title);
+    copy.appendChild(body);
+
+    if (route) {
+        const action = document.createElement("button");
+
+        action.type = "button";
+        action.className = "shopix-toast-action";
+        action.textContent = "View";
+        action.addEventListener("click", function () {
+            openForegroundNotification(uid, {
+                ...notification,
+                route
+            });
+        });
+
+        copy.appendChild(action);
+    }
+
+    toast.appendChild(icon);
+    toast.appendChild(copy);
+    toast.appendChild(closeButton);
+    region.appendChild(toast);
+
+    const timer = window.setTimeout(function () {
+        removeForegroundToast(toast);
+    }, FOREGROUND_TOAST_DURATION);
+
+    closeButton.addEventListener("click", function () {
+        window.clearTimeout(timer);
+        removeForegroundToast(toast);
+    });
+}
+
+async function handleForegroundMessage(payload) {
+    const uid = pushUid;
+
+    if (!uid || !isForegroundVisible(document)) {
+        return;
+    }
+
+    try {
+        const preferences = await getNotificationPreferences(uid);
+
+        if (pushUid !== uid) {
+            return;
+        }
+
+        if (!foregroundGate.shouldShow(payload, preferences)) {
+            return;
+        }
+
+        showForegroundToast(uid, normalizeForegroundPayload(payload));
+    } catch (error) {
+        console.warn(
+            "Unable to display the foreground notification:",
+            error
+        );
+    }
+}
+
+export function watchForegroundNotifications(uid) {
+    if (!uid || !isPushConfigured()) {
+        return;
+    }
+
+    getMessagingService()
+        .then(function (messaging) {
+            if (pushUid && pushUid !== uid) {
+                foregroundGate.reset();
+            }
+
+            pushUid = uid;
+            ensureMessagingListeners(messaging, uid);
+        })
+        .catch(function (error) {
+            console.warn(
+                "Foreground notification watcher unavailable:",
+                error
+            );
+        });
+}
+
+export function stopForegroundNotifications() {
+    pushUid = null;
+    pushRegistrationIntent = null;
+    pushRegistrationGeneration += 1;
+    foregroundGate.reset();
+
+    if (messageUnsubscribe) {
+        messageUnsubscribe();
+        messageUnsubscribe = null;
+    }
+
+    const region = document.getElementById("shopixToastRegion");
+
+    if (region) {
+        region.remove();
+    }
+}
+
 
 // ==========================================
 // PUSH REGISTRATION
@@ -331,14 +580,52 @@ function rejectPushRegistration(error) {
     }
 }
 
+function waitForUnregisterCleanup() {
+    if (finishUnregisterCleanup) {
+        finishUnregisterCleanup();
+    }
+
+    return new Promise(function (resolve) {
+        const timer = window.setTimeout(function () {
+            finishUnregisterCleanup = null;
+            resolve();
+        }, PUSH_UNREGISTER_TIMEOUT);
+
+        finishUnregisterCleanup = function () {
+            window.clearTimeout(timer);
+            finishUnregisterCleanup = null;
+            resolve();
+        };
+    });
+}
+
+function completeUnregisterCleanup() {
+    if (finishUnregisterCleanup) {
+        finishUnregisterCleanup();
+    }
+}
+
 function ensureMessagingListeners(messaging, uid) {
+    if (!messageUnsubscribe) {
+        messageUnsubscribe = onMessage(
+            messaging,
+            function (payload) {
+                handleForegroundMessage(payload);
+            }
+        );
+    }
+
     if (!registeredUnsubscribe) {
         registeredUnsubscribe = onRegistered(
             messaging,
             async function (fid) {
                 const currentUid = pushUid;
 
-                if (!currentUid || !fid) {
+                if (
+                    !currentUid ||
+                    !fid ||
+                    pushRegistrationIntent !== "register"
+                ) {
                     return;
                 }
 
@@ -359,6 +646,7 @@ function ensureMessagingListeners(messaging, uid) {
                 const currentUid = pushUid;
 
                 if (!currentUid || !fid) {
+                    completeUnregisterCleanup();
                     return;
                 }
 
@@ -369,6 +657,8 @@ function ensureMessagingListeners(messaging, uid) {
                         "Unable to remove the push registration:",
                         error
                     );
+                } finally {
+                    completeUnregisterCleanup();
                 }
             }
         );
@@ -463,6 +753,9 @@ export async function enablePushNotifications(uid) {
         }
     }
 
+    pushRegistrationIntent = "register";
+    pushRegistrationGeneration += 1;
+
     ensureMessagingListeners(messaging, uid);
 
     const registration = waitForPushRegistration();
@@ -496,29 +789,76 @@ export async function disablePushNotifications(uid) {
     }
 
     pushUid = uid;
+    pushRegistrationIntent = "unregister";
+    pushRegistrationGeneration += 1;
 
     const messaging = await getMessagingService();
 
     ensureMessagingListeners(messaging, uid);
 
-    await unregister(messaging);
+    const cleanup = waitForUnregisterCleanup();
+
+    try {
+        await unregister(messaging);
+    } catch (error) {
+        completeUnregisterCleanup();
+        throw error;
+    }
+
+    await cleanup;
 }
 
 export function watchPushRegistration(uid) {
-    if (!uid || !isPushConfigured() || !("Notification" in window)) {
+    if (
+        !uid ||
+        !isPushConfigured() ||
+        !("Notification" in window) ||
+        Notification.permission !== "granted" ||
+        pushRegistrationIntent === "unregister"
+    ) {
         return;
     }
 
-    getMessagingService()
+    if (pushUid && pushUid !== uid) {
+        foregroundGate.reset();
+    }
+
+    const generation = ++pushRegistrationGeneration;
+
+    pushUid = uid;
+
+    getNotificationPreferences(uid)
+        .then(function (preferences) {
+            if (
+                generation !== pushRegistrationGeneration ||
+                pushUid !== uid ||
+                !preferences.pushEnabled
+            ) {
+                return null;
+            }
+
+            return getMessagingService();
+        })
         .then(function (messaging) {
-            pushUid = uid;
+            if (
+                !messaging ||
+                generation !== pushRegistrationGeneration ||
+                pushUid !== uid
+            ) {
+                return null;
+            }
+
+            pushRegistrationIntent = "register";
             ensureMessagingListeners(messaging, uid);
 
-            if (Notification.permission === "granted") {
-                return enablePushNotifications(uid);
-            }
+            return register(messaging, {
+                vapidKey: FCM_VAPID_KEY
+            });
         })
         .catch(function (error) {
-            console.warn("Push registration watcher unavailable:", error);
+            console.warn(
+                "Push registration refresh unavailable:",
+                error
+            );
         });
 }

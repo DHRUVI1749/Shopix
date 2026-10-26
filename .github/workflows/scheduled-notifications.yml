@@ -1,0 +1,102 @@
+name: Scheduled notifications
+
+on:
+  schedule:
+    - cron: "0 9 * * *"
+      timezone: "Asia/Kolkata"
+    - cron: "0 9 1 * *"
+      timezone: "Asia/Kolkata"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Notification job to run
+        required: true
+        default: all
+        type: choice
+        options:
+          - all
+          - warranty
+          - monthly
+      dry_run:
+        description: Inspect only; do not write notifications or send pushes
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: scheduled-notifications
+  cancel-in-progress: false
+
+env:
+  GCP_PROJECT_ID: shopix-f1fee
+  APP_BASE_URL: https://shopix-f1fee.web.app
+  FIRESTORE_PREFER_REST: "true"
+
+jobs:
+  notify:
+    name: Send notifications
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: functions/package-lock.json
+
+      - name: Select notification job
+        id: select
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          SCHEDULE: ${{ github.event.schedule }}
+          MANUAL_MODE: ${{ inputs.mode }}
+          MANUAL_DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            mode="$MANUAL_MODE"
+            dry_run="$MANUAL_DRY_RUN"
+          elif [ "$SCHEDULE" = "0 9 1 * *" ]; then
+            mode="monthly"
+            dry_run="false"
+          else
+            mode="warranty"
+            dry_run="false"
+          fi
+          echo "mode=$mode" >> "$GITHUB_OUTPUT"
+          echo "dry_run=$dry_run" >> "$GITHUB_OUTPUT"
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v3
+        with:
+          project_id: ${{ env.GCP_PROJECT_ID }}
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_SERVICE_ACCOUNT }}
+          create_credentials_file: true
+
+      - name: Install notification dependencies
+        working-directory: functions
+        run: npm ci --omit=dev
+
+      - name: Run notification job
+        working-directory: functions
+        env:
+          GCP_PROJECT_ID: ${{ env.GCP_PROJECT_ID }}
+          APP_BASE_URL: ${{ env.APP_BASE_URL }}
+          MODE: ${{ steps.select.outputs.mode }}
+          DRY_RUN: ${{ steps.select.outputs.dry_run }}
+        run: |
+          if [ "$DRY_RUN" = "true" ]; then
+            node src/run-notifications.js "$MODE" --dry-run
+          else
+            node src/run-notifications.js "$MODE" --execute
+          fi

@@ -25,6 +25,13 @@ import {
     initDeleteAccount
 } from "./delete-account.js";
 
+import {
+    disablePushNotifications,
+    stopForegroundNotifications,
+    watchForegroundNotifications,
+    watchPushRegistration
+} from "./notifications.js";
+
 
 /* ==========================================
    ACCOUNT LINK
@@ -130,6 +137,27 @@ function setupAccountAvatar() {
             link.replaceChildren(badge);
 
         });
+
+    });
+
+}
+
+
+/* ==========================================
+   FOREGROUND NOTIFICATIONS
+   ========================================== */
+
+function setupForegroundNotifications() {
+
+    onAuthStateChanged(auth, function (user) {
+
+        if (!user) {
+            stopForegroundNotifications();
+            return;
+        }
+
+        watchForegroundNotifications(user.uid);
+        watchPushRegistration(user.uid);
 
     });
 
@@ -294,6 +322,18 @@ function setupLogout() {
                             "true"
                         );
 
+                        try {
+                            await disablePushNotifications(
+                                user.uid
+                            );
+                        }
+                        catch (pushError) {
+                            console.warn(
+                                "Unable to unregister push notifications:",
+                                pushError
+                            );
+                        }
+
                         await signOut(auth);
 
                         window.location.replace(
@@ -334,6 +374,8 @@ function setupHeader() {
     setupAccountLink();
 
     setupAccountAvatar();
+
+    setupForegroundNotifications();
 
     setupDashboardSidebar();
 
