@@ -1,5 +1,15 @@
 {
   "projects": {
     "default": "shopix-f1fee"
-  }
+  },
+  "targets": {
+    "shopix-f1fee": {
+      "hosting": {
+        "default": [
+          "shopix-f1fee"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }
